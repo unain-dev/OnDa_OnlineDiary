@@ -1,6 +1,7 @@
 import React, { Component, useState } from 'react'
-import MemoFrameTest from 'component/memo/memoCommon/MemoFrameTest'
+import MemoSeparator from 'component/memo/memoSeparator/MemoSeparator'
 import RND from 'component/diary/RND'
+
 
 const diary = () => {
   // 컴포넌트(떡메)의 위치, 크기 정보
@@ -53,11 +54,12 @@ const diary = () => {
           }}
         >
           {/* 여기에 이런식으로 넣고자하는 컴포넌트 넣기*/}
-          <MemoFrameTest
+          <MemoSeparator
             width={Number(c.width.substring(0, c.width.length - 2))}
             height={Number(c.height.substring(0, c.height.length - 2))}
             content={'helloWorld'}
             header={'this is header'}
+            memoTypeSeq={1}
           />
         </RND>
       ))}

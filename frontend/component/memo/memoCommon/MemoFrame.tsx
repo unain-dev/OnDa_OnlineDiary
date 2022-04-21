@@ -3,18 +3,14 @@ import { Resizable } from 're-resizable'
 import type { NextPage } from 'next'
 
 interface Props {
-  width: number
-  height: number
-  header?: string
+  header?: any
   content?: any
+  onUpdateButtonClick: any
+  onDeleteButtonClick: any
+  onApproveUpdateClick: any
+  isEditable: boolean
 }
-const style = {
-  position: 'relative',
-  border: 'solid 1px #ddd',
-  background: '#f0f0f0',
-  borderRadius: '15px',
-  overflow: 'hidden',
-} as const
+
 const headerStyle = {
   position: 'absolute',
   top: '0%',
@@ -23,44 +19,58 @@ const headerStyle = {
 } as const
 const contentStyle = {
   position: 'absolute',
-  top: '50%',
-  left: '50%',
+  margin: '20px',
+  top: '20px',
+  left: '0%',
 } as const
-const deleteButton = {
+const deleteButtonStyle = {
   position: 'absolute',
   top: '0%',
-  right: '0%',
+  right: '0px',
   margin: '10px',
   cursor: 'pointer',
-}
-const MemoFrame: NextPage<Props> = ({ width, height, content, header }) => {
-  const [size, setSize] = useState({
-    width: width,
-    height: height,
-  })
-  useEffect(() => {
-    console.log(size)
-  }, [size])
-  const onDeleteButtonClick = () => {
-    console.log('delete 구현')
-  }
+} as const
+const updateButtonStyle = {
+  position: 'absolute',
+  top: '0%',
+  right: '30px',
+  margin: '10px',
+  cursor: 'pointer',
+} as const
+const approveUpdateButtonStyle = {
+  position: 'absolute',
+  bottom: '0%',
+  right: '0px',
+  margin: '10px',
+  cursor: 'pointer',
+} as const
+const MemoFrame: NextPage<Props> = ({
+  content,
+  header,
+  onUpdateButtonClick,
+  onDeleteButtonClick,
+  onApproveUpdateClick,
+  isEditable,
+}) => {
+
   return (
-    <Resizable
-      style={style}
-      size={{
-        width: size.width,
-        height: size.height,
-      }}
-      onResizeStop={(e, direction, ref, d) => {
-        setSize({ width: size.width + d.width, height: size.height + d.height })
-      }}
-    >
-      <div style={deleteButton} onClick={onDeleteButtonClick}>
+    <div>
+      <div style={deleteButtonStyle} onClick={onDeleteButtonClick}>
         ❌
       </div>
+      {!isEditable && (
+        <div style={updateButtonStyle} onClick={onUpdateButtonClick}>
+          ✏️
+        </div>
+      )}
       <div style={headerStyle}>{header}</div>
       <div style={contentStyle}> {content}</div>
-    </Resizable>
+      {isEditable && (
+        <div style={approveUpdateButtonStyle} onClick={onApproveUpdateClick}>
+          ✔️
+        </div>
+      )}
+    </div>
   )
 }
 
