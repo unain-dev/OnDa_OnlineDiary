@@ -9,13 +9,7 @@ interface Props {
   header?: string
   content?: any
 }
-const style = {
-  position: 'relative',
-  border: 'solid 1px #ddd',
-  background: '#f0f0f0',
-  borderRadius: '15px',
-  overflow: 'hidden',
-} as const
+
 const headerStyle = {
   position: 'absolute',
   top: '0%',
@@ -40,18 +34,22 @@ const test = {
 } as const
 
 const MemoFrameTest: NextPage<Props> = ({ width, height, content, header }) => {
-  // const [size, setSize] = useState({
-  //   width: width,
-  //   height: height,
-  // })
-  // useEffect(() => {
-  //   console.log(size)
-  // }, [size])
   const onDeleteButtonClick = () => {
     console.log('delete 구현')
   }
+
+  const style = {
+    // position: 'relative',
+    border: 'solid 1px #ddd',
+    background: '#878787',
+    borderRadius: '15px',
+    // overflow: 'hidden',
+    width: width,
+    height: height,
+  } as const
+
   return (
-    <div style={test}>
+    <div style={style}>
       <div style={deleteButton} onClick={onDeleteButtonClick}>
         ❌
       </div>
