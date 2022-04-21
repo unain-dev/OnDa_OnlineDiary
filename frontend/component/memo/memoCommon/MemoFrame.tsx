@@ -26,13 +26,13 @@ const contentStyle = {
   top: '50%',
   left: '50%',
 } as const
-const deleteButton = {
+const deleteButtonStyle = {
   position: 'absolute',
   top: '0%',
   right: '0%',
   margin: '10px',
   cursor: 'pointer',
-}
+} as const
 const MemoFrame: NextPage<Props> = ({ width, height, content, header }) => {
   const [size, setSize] = useState({
     width: width,
@@ -55,7 +55,7 @@ const MemoFrame: NextPage<Props> = ({ width, height, content, header }) => {
         setSize({ width: size.width + d.width, height: size.height + d.height })
       }}
     >
-      <div style={deleteButton} onClick={onDeleteButtonClick}>
+      <div style={deleteButtonStyle} onClick={onDeleteButtonClick}>
         ❌
       </div>
       <div style={headerStyle}>{header}</div>
