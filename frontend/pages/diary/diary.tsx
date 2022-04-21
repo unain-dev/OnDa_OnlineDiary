@@ -1,5 +1,4 @@
 import React, { Component, useState } from 'react'
-import { Rnd } from 'react-rnd'
 import MemoFrameTest from 'component/memo/memoCommon/MemoFrameTest'
 import RND from 'component/diary/RND'
 
