@@ -1,11 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react'
 
-const pannel = () => {
-    return (
-        <div>
-            
-        </div>
-    );
-};
+const Pannel = () => {
+  return <div></div>
+}
 
-export default pannel;
+export default Pannel
