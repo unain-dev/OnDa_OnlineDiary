@@ -5,8 +5,12 @@ import type { NextPage } from 'next'
 interface Props {
   width: number
   height: number
-  header?: string
+  header?: any
   content?: any
+  onUpdateButtonClick: any
+  onDeleteButtonClick: any
+  onApproveUpdateClick: any
+  isEditable: boolean
 }
 const style = {
   position: 'relative',
@@ -23,17 +27,41 @@ const headerStyle = {
 } as const
 const contentStyle = {
   position: 'absolute',
-  top: '50%',
-  left: '50%',
+  margin: '20px',
+  top: '20px',
+  left: '0%',
 } as const
 const deleteButtonStyle = {
   position: 'absolute',
   top: '0%',
-  right: '0%',
+  right: '0px',
   margin: '10px',
   cursor: 'pointer',
 } as const
-const MemoFrame: NextPage<Props> = ({ width, height, content, header }) => {
+const updateButtonStyle = {
+  position: 'absolute',
+  top: '0%',
+  right: '30px',
+  margin: '10px',
+  cursor: 'pointer',
+} as const
+const approveUpdateButtonStyle = {
+  position: 'absolute',
+  bottom: '0%',
+  right: '0px',
+  margin: '10px',
+  cursor: 'pointer',
+} as const
+const MemoFrame: NextPage<Props> = ({
+  width,
+  height,
+  content,
+  header,
+  onUpdateButtonClick,
+  onDeleteButtonClick,
+  onApproveUpdateClick,
+  isEditable,
+}) => {
   const [size, setSize] = useState({
     width: width,
     height: height,
@@ -41,9 +69,7 @@ const MemoFrame: NextPage<Props> = ({ width, height, content, header }) => {
   useEffect(() => {
     console.log(size)
   }, [size])
-  const onDeleteButtonClick = () => {
-    console.log('delete 구현')
-  }
+
   return (
     <Resizable
       style={style}
@@ -58,8 +84,18 @@ const MemoFrame: NextPage<Props> = ({ width, height, content, header }) => {
       <div style={deleteButtonStyle} onClick={onDeleteButtonClick}>
         ❌
       </div>
+      {!isEditable && (
+        <div style={updateButtonStyle} onClick={onUpdateButtonClick}>
+          ✏️
+        </div>
+      )}
       <div style={headerStyle}>{header}</div>
       <div style={contentStyle}> {content}</div>
+      {isEditable && (
+        <div style={approveUpdateButtonStyle} onClick={onApproveUpdateClick}>
+          ✔️
+        </div>
+      )}
     </Resizable>
   )
 }

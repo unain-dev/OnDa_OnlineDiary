@@ -1,21 +1,10 @@
 import React from 'react'
 import MemoFrame from 'component/memo/memoCommon/MemoFrame'
-
+import MemoText from 'component/memo/memoText/MemoText'
 const memoTest = () => {
   return (
     <div>
-      <MemoFrame
-        width={200}
-        height={200}
-        content={'helloWorld'}
-        header={'this is header'}
-      />
-      <MemoFrame
-        width={200}
-        height={200}
-        content={'helloWorld'}
-        header={'this is header'}
-      />
+      <MemoText />
     </div>
   )
 }
