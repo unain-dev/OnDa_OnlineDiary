@@ -49,7 +49,7 @@ const MemoFrameTest: NextPage<Props> = ({ width, height, content, header }) => {
   } as const
 
   return (
-    <div style={style}>
+    <div>
       <div style={deleteButton} onClick={onDeleteButtonClick}>
         ❌
       </div>
