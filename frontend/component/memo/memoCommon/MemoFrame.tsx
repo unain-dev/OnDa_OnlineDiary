@@ -12,13 +12,7 @@ interface Props {
   onApproveUpdateClick: any
   isEditable: boolean
 }
-const style = {
-  position: 'relative',
-  border: 'solid 1px #ddd',
-  background: '#f0f0f0',
-  borderRadius: '15px',
-  overflow: 'hidden',
-} as const
+
 const headerStyle = {
   position: 'absolute',
   top: '0%',
@@ -69,7 +63,13 @@ const MemoFrame: NextPage<Props> = ({
   useEffect(() => {
     console.log(size)
   }, [size])
-
+  const style = {
+    // position: 'relative',
+    border: 'solid 1px #ddd',
+    background: '#f0f0f0',
+    borderRadius: '15px',
+    // overflow: 'hidden',
+  } as const
   return (
     <Resizable
       style={style}

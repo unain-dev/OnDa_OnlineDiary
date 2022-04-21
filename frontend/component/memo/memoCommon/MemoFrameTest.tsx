@@ -43,7 +43,7 @@ const MemoFrameTest: NextPage<Props> = ({ width, height, content, header }) => {
     border: 'solid 1px #ddd',
     background: '#878787',
     borderRadius: '15px',
-    // overflow: 'hidden',
+    overflow: 'hidden',
     width: width,
     height: height,
   } as const
