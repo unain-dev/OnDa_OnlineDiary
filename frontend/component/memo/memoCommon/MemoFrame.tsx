@@ -3,8 +3,6 @@ import { Resizable } from 're-resizable'
 import type { NextPage } from 'next'
 
 interface Props {
-  width: number
-  height: number
   header?: any
   content?: any
   onUpdateButtonClick: any
@@ -47,8 +45,6 @@ const approveUpdateButtonStyle = {
   cursor: 'pointer',
 } as const
 const MemoFrame: NextPage<Props> = ({
-  width,
-  height,
   content,
   header,
   onUpdateButtonClick,
@@ -56,31 +52,9 @@ const MemoFrame: NextPage<Props> = ({
   onApproveUpdateClick,
   isEditable,
 }) => {
-  const [size, setSize] = useState({
-    width: width,
-    height: height,
-  })
-  useEffect(() => {
-    console.log(size)
-  }, [size])
-  const style = {
-    // position: 'relative',
-    border: 'solid 1px #ddd',
-    background: '#f0f0f0',
-    borderRadius: '15px',
-    // overflow: 'hidden',
-  } as const
+
   return (
-    <Resizable
-      style={style}
-      size={{
-        width: size.width,
-        height: size.height,
-      }}
-      onResizeStop={(e, direction, ref, d) => {
-        setSize({ width: size.width + d.width, height: size.height + d.height })
-      }}
-    >
+    <div>
       <div style={deleteButtonStyle} onClick={onDeleteButtonClick}>
         ❌
       </div>
@@ -96,7 +70,7 @@ const MemoFrame: NextPage<Props> = ({
           ✔️
         </div>
       )}
-    </Resizable>
+    </div>
   )
 }
 
