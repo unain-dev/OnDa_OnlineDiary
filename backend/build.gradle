@@ -35,6 +35,13 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	testImplementation 'org.springframework.security:spring-security-test'
 
+	// guava 추가
+	implementation("com.google.guava:guava:29.0-jre")
+	annotationProcessor("com.google.guava:guava:29.0-jre")
+
+	// jwt 추가
+	implementation("com.auth0:java-jwt:3.10.3")
+
 	// spring web
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
