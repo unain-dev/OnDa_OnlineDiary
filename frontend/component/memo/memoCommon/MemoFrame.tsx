@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import { Resizable } from 're-resizable'
+import React, { useEffect } from 'react'
 import type { NextPage } from 'next'
-
+import styles from '../../../styles/scss/Memo.module.scss'
 interface Props {
   header?: any
   content?: any
@@ -11,39 +10,6 @@ interface Props {
   isEditable: boolean
 }
 
-const headerStyle = {
-  position: 'absolute',
-  top: '0%',
-  left: '0%',
-  margin: '10px',
-} as const
-const contentStyle = {
-  position: 'absolute',
-  margin: '20px',
-  top: '20px',
-  left: '0%',
-} as const
-const deleteButtonStyle = {
-  position: 'absolute',
-  top: '0%',
-  right: '0px',
-  margin: '10px',
-  cursor: 'pointer',
-} as const
-const updateButtonStyle = {
-  position: 'absolute',
-  top: '0%',
-  right: '30px',
-  margin: '10px',
-  cursor: 'pointer',
-} as const
-const approveUpdateButtonStyle = {
-  position: 'absolute',
-  bottom: '0%',
-  right: '0px',
-  margin: '10px',
-  cursor: 'pointer',
-} as const
 const MemoFrame: NextPage<Props> = ({
   content,
   header,
@@ -52,21 +18,20 @@ const MemoFrame: NextPage<Props> = ({
   onApproveUpdateClick,
   isEditable,
 }) => {
-
   return (
     <div>
-      <div style={deleteButtonStyle} onClick={onDeleteButtonClick}>
+      <div className={styles.deleteButton} onClick={onDeleteButtonClick}>
         ❌
       </div>
       {!isEditable && (
-        <div style={updateButtonStyle} onClick={onUpdateButtonClick}>
+        <div className={styles.updateButton} onClick={onUpdateButtonClick}>
           ✏️
         </div>
       )}
-      <div style={headerStyle}>{header}</div>
-      <div style={contentStyle}> {content}</div>
+      <div className={styles.header}>{header}</div>
+      <div className={styles.content} > {content}</div>
       {isEditable && (
-        <div style={approveUpdateButtonStyle} onClick={onApproveUpdateClick}>
+        <div className={styles.approveUpdateButton} onClick={onApproveUpdateClick}>
           ✔️
         </div>
       )}

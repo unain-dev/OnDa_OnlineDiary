@@ -1,32 +1,35 @@
-import { NodeNextRequest } from 'next/dist/server/base-http/node'
 import { NextPage } from 'next/types'
 import React, { useEffect, useState } from 'react'
 import MemoFrame from '../memoCommon/MemoFrame'
+
+import styles from '../../../styles/scss/Memo.module.scss'
 interface Props {
   width: number,
   height: number,
   content: any,
   header: any,
 }
-const textAreaStyle = {
-  resize: 'none',
-  width: '160px',
-  height: '140px',
-} as const
-const headerAreaStyle = {
-  width: '60px',
-} as const
+
 const MemoText: NextPage<Props> = ({width, height, content, header}) => {
   const [headerText, setHeaderText] = useState(header)
-  const [headerContent, setHeaderContent] = useState(<>{header}</>)
+  const [headerContent, setHeaderContent] = useState(header)
   const [text, setText] = useState(content)
-  const [textContent, setTextContent] = useState(<>{content}</>)
+  const [textContent, setTextContent] = useState(content)
   const [textEditMode, setTextEditMode] = useState(false)
 
   useEffect(() => {}, [textEditMode])
   useEffect(() => {
-    console.log(text, headerText)
   }, [[text, headerText]])
+  useEffect(()=>{
+    if(textEditMode){
+      setTextContent(showInputTag('CONTENT'))
+      setHeaderContent(showInputTag('HEADER'))
+    }
+    else{
+      setTextContent(showTextTag)
+      setHeaderContent(showHeaderTag)
+    }
+  })
   const showInputTag = (type) => {
     if (type === 'CONTENT') {
       return (
@@ -35,7 +38,8 @@ const MemoText: NextPage<Props> = ({width, height, content, header}) => {
           onChange={(e) => {
             setText(e.target.value)
           }}
-          style={textAreaStyle}
+          className={styles.textAreaStyle}
+          style={{width: width-40, height: height-60}}
         />
       )
     } else if (type === 'HEADER') {
@@ -45,7 +49,8 @@ const MemoText: NextPage<Props> = ({width, height, content, header}) => {
           onChange={(e) => {
             setHeaderText(e.target.value)
           }}
-          style={headerAreaStyle}
+          className={styles.headerAreaStyle}
+          style={{width: width-80}}
         />
       )
     }

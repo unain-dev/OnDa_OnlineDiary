@@ -1,0 +1,46 @@
+
+.deleteButton{
+    position: absolute;
+    top: 0%;
+    right: 0px;
+    margin: 10px;
+    cursor: pointer;
+}
+.updateButton{
+    position: absolute;
+    top: 0%;
+    right: 30px;
+    margin: 10px;
+    &:hover{
+        cursor: pointer;
+    }
+    
+}
+.header{
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    margin: 10px;
+}
+.content{
+    position: absolute;
+    margin: 20px;
+    top: 20px;
+    left: 0%;
+}
+.approveUpdateButton{
+    position: absolute;
+    bottom: 0%;
+    right: 0px;
+    margin: 10px;
+    &:hover{
+        cursor: pointer;
+    }
+}
+.textAreaStyle{
+    resize: none;
+
+}
+.headerAreaStyle{
+    
+}
