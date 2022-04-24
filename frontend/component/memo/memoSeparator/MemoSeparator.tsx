@@ -12,8 +12,9 @@ interface Props {
     content: any,
     header: any,
     memoTypeSeq: number,
+    drag: any,
   }
-const MemoSeparator: NextPage<Props> = ({width, height, content, header, memoTypeSeq}) => {
+const MemoSeparator: NextPage<Props> = ({width, height, content, header, memoTypeSeq, drag}) => {
     if(memoTypeSeq===1){
         return (
             <MemoText
@@ -21,6 +22,7 @@ const MemoSeparator: NextPage<Props> = ({width, height, content, header, memoTyp
                 height={height}
                 content={content}
                 header={header}
+                drag={drag}
               />
         );
     }

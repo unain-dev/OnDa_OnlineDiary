@@ -1,16 +1,24 @@
 import { NextPage } from 'next/types'
 import React, { useEffect, useState } from 'react'
 import MemoFrame from '../memoCommon/MemoFrame'
-
+import dynamic from 'next/dynamic'
 import styles from '../../../styles/scss/Memo.module.scss'
+import 'react-quill/dist/quill.snow.css';
+
 interface Props {
   width: number,
   height: number,
   content: any,
   header: any,
+  drag: any,
 }
+const QuillWrapper = dynamic(() =>import('react-quill'), {
+  ssr: false,
+  loading: () => <p>Loading ...</p>,
+})
 
-const MemoText: NextPage<Props> = ({width, height, content, header}) => {
+
+const MemoText: NextPage<Props> = ({width, height, content, header, drag}) => {
   const [headerText, setHeaderText] = useState(header)
   const [headerContent, setHeaderContent] = useState(header)
   const [text, setText] = useState(content)
@@ -19,27 +27,30 @@ const MemoText: NextPage<Props> = ({width, height, content, header}) => {
 
   useEffect(() => {}, [textEditMode])
   useEffect(() => {
-  }, [[text, headerText]])
+  }, [text, headerText])
   useEffect(()=>{
     if(textEditMode){
       setTextContent(showInputTag('CONTENT'))
       setHeaderContent(showInputTag('HEADER'))
     }
     else{
-      setTextContent(showTextTag)
+      // setTextContent(showTextTag)
+      setTextContent(text)
       setHeaderContent(showHeaderTag)
     }
   })
   const showInputTag = (type) => {
     if (type === 'CONTENT') {
       return (
-        <textarea
-          defaultValue={text}
-          onChange={(e) => {
-            setText(e.target.value)
-          }}
-          className={styles.textAreaStyle}
-          style={{width: width-40, height: height-60}}
+        // <textarea
+        //   defaultValue={text}
+        //   onChange={(e) => {
+        //     setText(e.target.value)
+        //   }}
+        //   className={styles.textAreaStyle}
+        //   style={{width: width-40, height: height-60}}
+        // />
+        <QuillWrapper  theme="snow" value={text} onChange={(event) => setText(event)}  style={{width: width-40, height: height-100}}
         />
       )
     } else if (type === 'HEADER') {
@@ -55,20 +66,7 @@ const MemoText: NextPage<Props> = ({width, height, content, header}) => {
       )
     }
   }
-  const showTextTag = () => {
-    return (
-      <div>
-        {text.split('\n').map((line) => {
-          return (
-            <span>
-              {line}
-              <br />
-            </span>
-          )
-        })}
-      </div>
-    )
-  }
+
   const showHeaderTag = () => {
     return <div>{headerText}</div>
   }
@@ -79,11 +77,15 @@ const MemoText: NextPage<Props> = ({width, height, content, header}) => {
     setTextEditMode(true)
     setTextContent(showInputTag('CONTENT'))
     setHeaderContent(showInputTag('HEADER'))
+    drag.disableDragging();
   }
   const onApproveUpdateClick = () => {
     setTextEditMode(false)
-    setTextContent(showTextTag)
+    // setTextContent(showTextTag)
+    setTextContent(text);
     setHeaderContent(showHeaderTag)
+    console.log(drag)
+    drag.enableDragging();
   }
   return (
     <MemoFrame
