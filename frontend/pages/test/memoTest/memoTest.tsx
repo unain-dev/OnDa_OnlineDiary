@@ -1,10 +1,16 @@
 import React from 'react'
-import MemoFrame from 'component/memo/memoCommon/MemoFrame'
-import MemoText from 'component/memo/memoText/MemoText'
+import 'react-quill/dist/quill.snow.css';
+import dynamic from 'next/dynamic'
+
+const QuillWrapper = dynamic(import('react-quill'), {
+  ssr: false,
+  loading: () => <p>Loading ...</p>,
+})
+
 const memoTest = () => {
   return (
     <div>
-      <MemoText />
+       <QuillWrapper  theme="snow" />
     </div>
   )
 }

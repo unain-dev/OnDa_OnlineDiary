@@ -20,13 +20,22 @@ const diary = () => {
       y: 310,
     },
   ])
-
+  const [draggableState, setDraggableState] = useState(true);
   const test = {
     background: '#898989',
     overflow: 'hidden',
   } as const
 
   console.log(content)
+
+  const enableDragging = () => {
+    setDraggableState(true);
+    console.log("enable dragging")
+  }
+  const disableDragging = () =>{
+    setDraggableState(false);
+    console.log("disable dragging")
+  }
 
   return (
     <>
@@ -52,6 +61,16 @@ const diary = () => {
               ),
             )
           }}
+          onResize={(e, direction, ref, delta, position) => {
+            setContent(
+              content.map((con, idx) =>
+                idx === index
+                  ? { ...con, width: ref.style.width, height: ref.style.height }
+                  : con,
+              ),
+            )
+          }}
+          disableDragging={!draggableState}
         >
           {/* 여기에 이런식으로 넣고자하는 컴포넌트 넣기*/}
           <MemoSeparator
@@ -60,6 +79,7 @@ const diary = () => {
             content={'helloWorld'}
             header={'this is header'}
             memoTypeSeq={1}
+            drag={{enableDragging, disableDragging}}
           />
         </RND>
       ))}

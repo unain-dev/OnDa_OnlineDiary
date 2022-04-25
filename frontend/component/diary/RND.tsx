@@ -2,7 +2,7 @@ import React, { Children } from 'react'
 import { Rnd } from 'react-rnd'
 
 const RND = (props) => {
-  const { content, index, onDragStop, onResizeStop, style } = props
+  const { content, index, onDragStop, onResize, onResizeStop, style, disableDragging } = props
   return (
     <Rnd
       key={index}
@@ -10,9 +10,12 @@ const RND = (props) => {
       size={{ width: content.width, height: content.height }}
       position={{ x: content.x, y: content.y }}
       onDragStop={(e, d) => onDragStop(e, d)}
+      onResize={(e, direction, ref, delta, position) =>
+        onResize(e, direction, ref, delta, position)}
       onResizeStop={(e, direction, ref, delta, position) =>
         onResizeStop(e, direction, ref, delta, position)
       }
+      disableDragging={disableDragging}
     >
       {props.children}
     </Rnd>
