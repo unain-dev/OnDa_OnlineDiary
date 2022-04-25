@@ -2,7 +2,6 @@ import React, { Component, useState } from 'react'
 import MemoSeparator from 'component/memo/memoSeparator/MemoSeparator'
 import RND from 'component/diary/RND'
 
-
 const diary = () => {
   // 컴포넌트(떡메)의 위치, 크기 정보
   // 추 후에 고유번호(백엔드와 협의 후 결정)값이 추가되어야 함.
