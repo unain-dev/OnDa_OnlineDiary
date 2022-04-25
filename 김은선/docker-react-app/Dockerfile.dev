@@ -1,0 +1,14 @@
+FROM node:alpine
+
+WORKDIR /usr/src/app
+
+COPY package.json ./
+
+RUN npm install
+
+COPY ./ ./
+
+CMD [ "npm", "run", "start" ]
+
+# 소스코드의 변경사항을 바로 앱에 적용하는 방법
+# ENV CHOKIDAR_USEPOLLING=true
