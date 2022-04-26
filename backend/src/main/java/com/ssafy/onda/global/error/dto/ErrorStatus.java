@@ -26,26 +26,19 @@ public enum ErrorStatus {
 
     // Member
     // register
-    SSGAMEID_DUPLICATION(CONFLICT.value(), "이미 존재하는 ID입니다."),
+    MEMBERID_DUPLICATION(CONFLICT.value(), "이미 존재하는 ID입니다."),
     EMAIL_DUPLICATION(CONFLICT.value(), "해당 이메일로 가입한 계정이 존재합니다."),         // 409, "Email is Duplication"
-    STEAMID_DUPLICATION(CONFLICT.value(), "해당 Steam ID로 가입한 계정이 존재합니다."),    // 409, "Steam ID is Duplication"
-    PASSWORD_CONTAINED_SSGAMEID(BAD_REQUEST.value(), "패스워드에 ID가 포함될 수 없습니다."),          // "ssgameId into password"
+    NICKNAME_DUPLICATION(CONFLICT.value(), "이미 사용중인 닉네임입니다."),    // 409, "Steam ID is Duplication"
+    PASSWORD_CONTAINED_MEMBERID(BAD_REQUEST.value(), "패스워드에 ID가 포함될 수 없습니다."),          // "ssgameId into password"
     FAIL_TO_REGISTER(HttpStatus.INTERNAL_SERVER_ERROR.value(), "회원가입 실패"),
     MEMBER_NOT_FOUND(BAD_REQUEST.value(), "사용자가 존재하지 않습니다."),
     // id check
     INVALID_ID_FORMAT(BAD_REQUEST.value(), "ID 형식에 맞지 않습니다."),
+    INVALID_EMAIL_FORMAT(BAD_REQUEST.value(), "이메일 형식에 맞지 않습니다."),
     // login
     LOGIN_INPUT_INVALID(BAD_REQUEST.value(), "Login input is invalid"),
     SSGAMEID_NOT_FOUND(BAD_REQUEST.value(), "ID를 다시 확인해주세요."),
     PASSWORD_NOT_MATCH(UNAUTHORIZED.value(), "비밀번호를 다시 확인해주세요."),
-    // update steam id
-    SAME_STEAM_ID(BAD_REQUEST.value(), "동일한 Steam ID로는 변경이 불가능합니다."),
-    FAIL_TO_UPDATE_STEAMID(HttpStatus.INTERNAL_SERVER_ERROR.value(), "steamID 수정 실패"),
-    PRIVATE_STEAMID(BAD_REQUEST.value(), "Steam ID의 게임 공개 설정을 확인해주세요."),
-
-    // API
-    API_NOT_CONNECTION(BAD_GATEWAY.value(), "Fail to connect"),
-    INVALID_STEAMID(BAD_REQUEST.value(), "확인되지 않는 Steam ID입니다."),
 
     // Game Info
     GAME_NOT_FOUND(BAD_GATEWAY.value(), "게임 정보가 존재하지 않습니다."),
