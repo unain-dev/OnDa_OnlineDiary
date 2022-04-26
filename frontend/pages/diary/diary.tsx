@@ -77,7 +77,7 @@ const diary = () => {
             height={Number(c.height.substring(0, c.height.length - 2))}
             content={'helloWorld'}
             header={'this is header'}
-            memoTypeSeq={1}
+            memoTypeSeq={2}
             drag={{enableDragging, disableDragging}}
           />
         </RND>
