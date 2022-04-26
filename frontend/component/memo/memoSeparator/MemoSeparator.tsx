@@ -1,9 +1,11 @@
 import { NextPage } from 'next/types';
 import React from 'react';
 import MemoText from '../memoText/MemoText' 
+import MemoFinancialLedger from '../memoFinancialLedger/MemoFinancialLedger'
 /**
  * MemoTypeSeq index
- * 1번 : memoText 텍스트 떡멘
+ * 1번 : memoText 텍스트 떡메
+ * 2번 : memoFinancialLedger 가계부 떡메
  */
 
 interface Props {
@@ -26,8 +28,11 @@ const MemoSeparator: NextPage<Props> = ({width, height, content, header, memoTyp
               />
         );
     }
+    else if(memoTypeSeq===2){
+        return <MemoFinancialLedger />
+    }
     else{
-        return <div></div>
+        return <div />
     }
 };
 

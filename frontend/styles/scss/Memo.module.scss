@@ -45,3 +45,29 @@
 .headerAreaStyle{
     
 }
+// 가계부
+.financialLedger{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+.financeHeader{
+    grid-column: 1 / span 3;
+}
+.financeContentHeader{
+    text-align: center;
+}
+.financeAddButton{
+    grid-column: 1 / span 3;
+}
+.financeContent{
+    grid-column: 1 / span 3;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    text-align: center;
+}
+.financeIncome{
+    color: blue;
+}
+.financeOutcome{
+    color: red;
+}
