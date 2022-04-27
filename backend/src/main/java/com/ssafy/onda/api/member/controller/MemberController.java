@@ -1,8 +1,11 @@
 package com.ssafy.onda.api.member.controller;
 
+import com.ssafy.onda.api.member.dto.MemberDto;
+import com.ssafy.onda.api.member.dto.request.ReqLoginMemberDto;
 import com.ssafy.onda.api.member.dto.request.ReqMemberDto;
 import com.ssafy.onda.api.member.service.MemberService;
 import com.ssafy.onda.global.common.dto.BaseResponseDto;
+import com.ssafy.onda.global.common.util.JwtTokenUtil;
 import com.ssafy.onda.global.common.util.LogUtil;
 import com.ssafy.onda.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
@@ -95,6 +98,42 @@ public class MemberController {
         return BaseResponseDto.builder()
                 .status(status)
                 .msg(msg)
+                .build();
+    }
+
+    @PostMapping("/login")
+    public BaseResponseDto login(@Valid @RequestBody ReqLoginMemberDto reqLoginMemberDto, Errors errors) {
+        log.info("Called API: {}", LogUtil.getClassAndMethodName());
+
+        Integer status = null;
+        String msg = null;
+        Map<String, Object> data = new HashMap<>();
+
+        if (errors.hasErrors()) {
+            if (errors.hasFieldErrors()) {
+                status = BAD_REQUEST.value();
+                data.put("field", errors.getFieldError().getField());
+                msg = errors.getFieldError().getDefaultMessage();
+            } else {
+                throw new CustomException(LogUtil.getElement(), GLOBAL_ERROR);
+            }
+        } else {
+            MemberDto memberDto = memberService.findMemberDtoInLogin(reqLoginMemberDto);
+            String jwtToken = JwtTokenUtil.getToken(memberDto.getMemberId());
+
+            status = OK.value();
+            msg = "로그인 성공";
+
+            data.put("memberSeq", memberDto.getMemberSeq());
+            data.put("memberId", memberDto.getMemberId());
+            data.put("nickname", memberDto.getNickname());
+            data.put("jwtToken", jwtToken);
+        }
+
+        return BaseResponseDto.builder()
+                .status(status)
+                .msg(msg)
+                .data(data)
                 .build();
     }
 }

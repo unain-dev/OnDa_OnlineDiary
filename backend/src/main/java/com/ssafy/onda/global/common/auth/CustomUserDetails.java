@@ -1,6 +1,6 @@
 package com.ssafy.onda.global.common.auth;
 
-import com.ssafy.onda.api.member.entity.Member;
+import com.ssafy.onda.api.member.dto.MemberDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,7 +15,7 @@ import java.util.List;
 public class CustomUserDetails implements UserDetails {
 
     @Autowired
-    Member member;
+    MemberDto memberDto;
 
     boolean accountNonExpired;
 
@@ -27,23 +27,23 @@ public class CustomUserDetails implements UserDetails {
 
     List<GrantedAuthority> roles = new ArrayList<>();
 
-    public CustomUserDetails(Member member) {
+    public CustomUserDetails(MemberDto memberDto) {
         super();
-        this.member = member;
+        this.memberDto = memberDto;
     }
 
-    public Member getMember() {
-        return this.member;
+    public MemberDto getMemberDto() {
+        return this.memberDto;
     }
 
     @Override
     public String getPassword() {
-        return this.member.getMemberPw();
+        return this.memberDto.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return this.member.getMemberId();
+        return this.memberDto.getMemberId();
     }
 
     @Override
