@@ -1,6 +1,6 @@
 import { NextPage } from 'next/types'
 import React, { useEffect, useState } from 'react'
-import MemoFrame from '../memoCommon/MemoFrame'
+import MemoFrame from './MemoText.view'
 import dynamic from 'next/dynamic'
 import styles from '../../../styles/scss/Memo.module.scss'
 import 'react-quill/dist/quill.snow.css';
@@ -42,14 +42,6 @@ const MemoText: NextPage<Props> = ({width, height, content, header, drag}) => {
   const showInputTag = (type) => {
     if (type === 'CONTENT') {
       return (
-        // <textarea
-        //   defaultValue={text}
-        //   onChange={(e) => {
-        //     setText(e.target.value)
-        //   }}
-        //   className={styles.textAreaStyle}
-        //   style={{width: width-40, height: height-60}}
-        // />
         <QuillWrapper  theme="snow" value={text} onChange={(event) => setText(event)}  style={{width: width-40, height: height-100}}
         />
       )

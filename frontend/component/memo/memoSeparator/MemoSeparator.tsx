@@ -2,6 +2,7 @@ import { NextPage } from 'next/types';
 import React from 'react';
 import MemoText from '../memoText/MemoText' 
 import MemoFinancialLedger from '../memoFinancialLedger/MemoFinancialLedger'
+import MemoChecklist from '../memoCheckList/MemoChecklist'
 /**
  * MemoTypeSeq index
  * 1번 : memoText 텍스트 떡메
@@ -29,10 +30,10 @@ const MemoSeparator: NextPage<Props> = ({width, height, content, header, memoTyp
         );
     }
     else if(memoTypeSeq===2){
-        return <MemoFinancialLedger />
+        return <MemoFinancialLedger drag={drag}/>
     }
-    else{
-        return <div />
+    else if(memoTypeSeq===3){
+        return <MemoChecklist drag={drag}/>
     }
 };
 
