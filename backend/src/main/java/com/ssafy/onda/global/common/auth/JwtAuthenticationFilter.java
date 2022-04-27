@@ -2,7 +2,7 @@ package com.ssafy.onda.global.common.auth;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
-import com.ssafy.onda.api.member.entity.Member;
+import com.ssafy.onda.api.member.dto.MemberDto;
 import com.ssafy.onda.api.member.service.MemberService;
 import com.ssafy.onda.global.common.util.JwtTokenUtil;
 import com.ssafy.onda.global.common.util.ResponseBodyWriteUtil;
@@ -24,7 +24,7 @@ import java.io.IOException;
  */
 public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 
-    private MemberService memberService;
+    private final MemberService memberService;
 
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager, MemberService memberService) {
         super(authenticationManager);
@@ -72,11 +72,10 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             if (memberId != null) {
                 // jwt 토큰에 포함된 email 통해 실제 디비에 해당 정보의 계정이 있는지 조회.
                 // 이후에 Security 관련 작업하면 Dto로 수정
-                Member member = null;
-//                Member member = memberService.findMemberBySsgameId(memberId);
-                if(member != null) {
+                MemberDto memberDto = memberService.findMemberDtoByMemberId(memberId);
+                if(memberDto != null) {
                     // 식별된 정상 유저인 경우, 요청 context 내에서 참조 가능한 인증 정보(jwtAuthentication) 생성.
-                    CustomUserDetails customUserDetails = new CustomUserDetails(member);
+                    CustomUserDetails customUserDetails = new CustomUserDetails(memberDto);
                     UsernamePasswordAuthenticationToken jwtAuthentication = new UsernamePasswordAuthenticationToken(memberId,
                             null, customUserDetails.getAuthorities());
                     jwtAuthentication.setDetails(customUserDetails);

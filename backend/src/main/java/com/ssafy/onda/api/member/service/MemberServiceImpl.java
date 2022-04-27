@@ -1,5 +1,7 @@
 package com.ssafy.onda.api.member.service;
 
+import com.ssafy.onda.api.member.dto.MemberDto;
+import com.ssafy.onda.api.member.dto.request.ReqLoginMemberDto;
 import com.ssafy.onda.api.member.dto.request.ReqMemberDto;
 import com.ssafy.onda.api.member.entity.Member;
 import com.ssafy.onda.api.member.repository.MemberRepository;
@@ -70,9 +72,28 @@ public class MemberServiceImpl implements MemberService {
 
         memberRepository.save(Member.builder()
                 .memberId(memberId)
-                .memberPw(encryptedPassword)
+                .password(encryptedPassword)
                 .email(reqMemberDto.getEmail())
                 .nickname(reqMemberDto.getNickname())
                 .build());
+    }
+
+    @Override
+    public MemberDto findMemberDtoInLogin(ReqLoginMemberDto reqLoginMemberDto) {
+
+        MemberDto memberDto = memberRepository.findMemberDtoByMemberId(reqLoginMemberDto.getMemberId())
+                .orElseThrow(() -> new CustomException(LogUtil.getElement(), MEMBERID_NOT_FOUND));
+
+        if (!passwordEncoder.matches(reqLoginMemberDto.getPassword(), memberDto.getPassword())) {
+            throw new CustomException(LogUtil.getElement(), PASSWORD_NOT_MATCH);
+        }
+
+        return memberDto;
+    }
+
+    @Override
+    public MemberDto findMemberDtoByMemberId(String memberId) {
+        return memberRepository.findMemberDtoByMemberId(memberId)
+                .orElseThrow(() -> new CustomException(LogUtil.getElement(), MEMBER_NOT_FOUND));
     }
 }

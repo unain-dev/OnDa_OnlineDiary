@@ -37,7 +37,7 @@ public enum ErrorStatus {
     INVALID_EMAIL_FORMAT(BAD_REQUEST.value(), "이메일 형식에 맞지 않습니다."),
     // login
     LOGIN_INPUT_INVALID(BAD_REQUEST.value(), "Login input is invalid"),
-    SSGAMEID_NOT_FOUND(BAD_REQUEST.value(), "ID를 다시 확인해주세요."),
+    MEMBERID_NOT_FOUND(BAD_REQUEST.value(), "ID를 다시 확인해주세요."),
     PASSWORD_NOT_MATCH(UNAUTHORIZED.value(), "비밀번호를 다시 확인해주세요."),
 
     // Game Info

@@ -1,5 +1,7 @@
 package com.ssafy.onda.global.common.auth;
 
+import com.ssafy.onda.api.member.dto.MemberDto;
+import com.ssafy.onda.api.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,16 +14,16 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 public class CustomUserDetailService implements UserDetailsService {
-    //	@Autowired
-//    private final MemberService memberService;
+
+    private final MemberService memberService;
 
     @Override
-    public UserDetails loadUserByUsername(String ssgameId) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String memberId) throws UsernameNotFoundException {
         // 이후에 Security 관련 작업하면 Dto로 수정
-//        Member member = memberService.findMemberBySsgameId(ssgameId);
-//        if(member != null) {
-//            return new CustomUserDetails(member);
-//        }
+        MemberDto memberDto = memberService.findMemberDtoByMemberId(memberId);
+        if(memberDto != null) {
+            return new CustomUserDetails(memberDto);
+        }
         return null;
     }
 }
