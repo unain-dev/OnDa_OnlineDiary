@@ -7,19 +7,31 @@ const diary = () => {
   // 추 후에 고유번호(백엔드와 협의 후 결정)값이 추가되어야 함.
   const [content, setContent] = useState([
     {
-      width: '200px',
-      height: '200px',
+      width: '400px',
+      height: '400px',
       x: 10,
       y: 10,
+      content: 'helloWorld',
+      memoTypeSeq: 1,
     },
     {
-      width: '500px',
-      height: '100px',
+      width: '400px',
+      height: '400px',
       x: 40,
       y: 310,
+      content: '',
+      memoTypeSeq: 2,
+    },
+    {
+      width: '400px',
+      height: '400px',
+      x: 80,
+      y: 210,
+      content: [],
+      memoTypeSeq: 3,
     },
   ])
-  const [draggableState, setDraggableState] = useState(true);
+  const [draggableState, setDraggableState] = useState(Array(content.length).fill(true));
   const test = {
     background: '#898989',
     overflow: 'hidden',
@@ -27,12 +39,14 @@ const diary = () => {
 
   console.log(content)
 
-  const enableDragging = () => {
-    setDraggableState(true);
+  const enableDragging = (index) => {
+    draggableState[index]=true;
+    setDraggableState([...draggableState]);
     console.log("enable dragging")
   }
-  const disableDragging = () =>{
-    setDraggableState(false);
+  const disableDragging = (index) =>{
+    draggableState[index]=false;
+    setDraggableState([...draggableState]);
     console.log("disable dragging")
   }
 
@@ -69,16 +83,16 @@ const diary = () => {
               ),
             )
           }}
-          disableDragging={!draggableState}
+          disableDragging={!draggableState[index]}
         >
           {/* 여기에 이런식으로 넣고자하는 컴포넌트 넣기*/}
           <MemoSeparator
             width={Number(c.width.substring(0, c.width.length - 2))}
             height={Number(c.height.substring(0, c.height.length - 2))}
-            content={'helloWorld'}
+            content={c.content}
             header={'this is header'}
-            memoTypeSeq={2}
-            drag={{enableDragging, disableDragging}}
+            memoTypeSeq={c.memoTypeSeq}
+            drag={{enableDragging: ()=>enableDragging(index), disableDragging: ()=> disableDragging(index)}}
           />
         </RND>
       ))}

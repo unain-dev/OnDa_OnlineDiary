@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../../../styles/scss/Memo.module.scss'
-
-const MemoFinancialLedger = () => {
+interface Props {
+    width: number,
+    height: number,
+    content: any,
+    header: any,
+    drag: any,
+  }
+const MemoFinancialLedger = ({drag}) => {
     const [financeLedger, setFinanceLedger] = useState([])
     const [inputData, setInputData] = useState({
         content: '',
@@ -13,7 +19,7 @@ const MemoFinancialLedger = () => {
         income: '',
         outcome: '',
     })
-
+    const [isEditable, setIsEditable] = useState(false);
     useEffect(()=>{
         let tempIncome=0;
         let tempOutcome=0;
@@ -41,10 +47,24 @@ const MemoFinancialLedger = () => {
         setFinanceLedger(prevState => [...prevState, {content: inputData.content, income: inputData.income, outcome: inputData.outcome}])
         setInputData({content: '', income: '', outcome: ''})
     }
+    const onUpdateButtonClick = () =>{
+        setIsEditable(true);
+        drag.disableDragging();
+    }
+    const onApproveUpdateClick = () => {
+        setIsEditable(false);
+        drag.enableDragging();
+    }
+    const onDeleteButtonClick = () =>{
 
+    }
     return (
         <div className={styles.financialLedger}>
-            <div className={styles.financeHeader}>가계부</div>
+            <div className={styles.deleteButton} onClick={onDeleteButtonClick}>
+                ❌
+            </div>
+            {!isEditable && (<div className={styles.updateButton} onClick={onUpdateButtonClick}>✏️</div>)}
+
             <div className={styles.financeContentHeader}>내용</div>
             <div className={styles.financeContentHeader}>들어온 돈</div>
             <div className={styles.financeContentHeader}>나간 돈</div>
@@ -55,17 +75,30 @@ const MemoFinancialLedger = () => {
                     <div className={styles.financeOutcome}>{fin.outcome.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
                 </div>)
             })}
-            <div className={styles.financeContent}>
+            {isEditable &&<><div className={styles.financeContent}>
                 <input value={inputData.content} onChange={()=>onInputContent("CONTENT", event)} />
                 <input type='number' value={inputData.income} onChange={()=>onInputContent("INCOME", event)}/>
                 <input type='number' value={inputData.outcome} onChange={()=>onInputContent("OUTCOME", event)}/>
             </div>
-            <button className={styles.financeAddButton} onClick={addFinanceLedger}>추가하기</button>
-            <div className={styles.financeContent}>
-                {parseInt(total.total) >= 0 ? <div className={styles.financeIncome}>정산액: {total.total.replace(/\B(?=(\d{3})+(?!\d))/g, ',')+'원'}</div> : <div className={styles.financeOutcome}>총 액: {total.total.replace(/\B(?=(\d{3})+(?!\d))/g, ',')+'원'}</div>}
-                <div className={styles.financeIncome}>{total.income.replace(/\B(?=(\d{3})+(?!\d))/g, ',')+'원'}</div>
-                <div className={styles.financeOutcome}>{total.outcome.replace(/\B(?=(\d{3})+(?!\d))/g, ',')+'원'}</div>
+            <button className={styles.financeAddButton} onClick={addFinanceLedger}>추가하기</button></>}
+            <div className={styles.financeFooter}>
+                <div className={styles.financeContent}>
+                    {parseInt(total.total) >= 0 ? 
+                        <div className={styles.financeIncome}> 
+                            <div>총액: {total.total.replace(/\B(?=(\d{3})+(?!\d))/g, ',')+'원'}</div>
+                        </div> : 
+                        <div className={styles.financeOutcome}>
+                            <div>총액: {total.total.replace(/\B(?=(\d{3})+(?!\d))/g, ',')+'원'}</div>
+                        </div>}
+                    <div className={styles.financeIncome}>{total.income.replace(/\B(?=(\d{3})+(?!\d))/g, ',')+'원'}</div>
+                    <div className={styles.financeOutcome}>{total.outcome.replace(/\B(?=(\d{3})+(?!\d))/g, ',')+'원'}</div>
+                </div>
             </div>
+            {isEditable && (
+                <div className={styles.approveUpdateButton} onClick={onApproveUpdateClick}>
+                ✔️
+                </div>
+            )}
         </div>
     );
 };

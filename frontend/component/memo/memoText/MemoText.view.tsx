@@ -32,6 +32,7 @@ const MemoFrame: NextPage<Props> = ({
         </div>
       )}
       <div className={styles.header}>{header}</div>
+      
       {!isEditable ? (<div className={styles.content}  > {ReactHtmlParser(content)}</div>) : (<div className={styles.content}  > {(content)}</div>)}
       {isEditable && (
         <div className={styles.approveUpdateButton} onClick={onApproveUpdateClick}>

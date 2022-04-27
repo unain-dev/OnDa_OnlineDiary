@@ -55,19 +55,39 @@
 }
 .financeContentHeader{
     text-align: center;
+    margin-top: 30px;
 }
 .financeAddButton{
     grid-column: 1 / span 3;
 }
+.financeFooter{
+    position: absolute;
+    bottom: 0%;
+    width: 100%;
+}
 .financeContent{
+
     grid-column: 1 / span 3;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     text-align: center;
+
 }
 .financeIncome{
+    display: flex;
     color: blue;
+    justify-content: center;
 }
 .financeOutcome{
     color: red;
+}
+//체크리스트
+.checklist{
+    margin: 10px
+}
+.checklistButton{
+    margin-top: 10px;
+    position: absolute;
+    bottom: 0%;
+    left: 0px;
 }
