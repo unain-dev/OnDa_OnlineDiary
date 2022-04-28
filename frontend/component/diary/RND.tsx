@@ -3,17 +3,19 @@ import { Rnd } from 'react-rnd'
 
 interface RndProps {
   content: {
-    width: string
-    height: string
+    id: number
+    width: number
+    height: number
     x: number
     y: number
   }
   disableDragging: boolean
-  onResize: (e, direction, ref, delta, position) => void
+  enableResizing: boolean
+  onResize?: (e, direction, ref, delta, position) => void
   style?: React.CSSProperties
   children: JSX.Element
-  onDragStop: (e, d) => void
-  onResizeStop: (e, direction, ref, delta, position) => void
+  onDragStop?: (e, d) => void
+  onResizeStop?: (e, direction, ref, delta, position) => void
 }
 
 const RND = (props: RndProps) => {
@@ -24,6 +26,7 @@ const RND = (props: RndProps) => {
     onResizeStop,
     style,
     disableDragging,
+    enableResizing,
   } = props
   return (
     <Rnd
@@ -38,46 +41,26 @@ const RND = (props: RndProps) => {
         onResizeStop(e, direction, ref, delta, position)
       }
       disableDragging={disableDragging}
+      enableResizing={enableResizing}
     >
       {props.children}
     </Rnd>
   )
 }
 
-// <Rnd
-//   key={index}
-//   // style={test}
-//   size={{ width: c.width, height: c.height }}
-//   position={{ x: c.x, y: c.y }}
-//   onDragStop={(e, d) => {
-//     setContent(
-//       content.map((con, idx) =>
-//         idx === index ? { ...con, x: d.x, y: d.y } : con,
-//       ),
-//     )
-//     // setContent({ ...content, x: d.x, y: d.y })
-//   }}
-//   onResizeStop={(e, direction, ref, delta, position) => {
-//     setContent(
-//       content.map((con, idx) =>
-//         idx === index
-//           ? { ...con, width: ref.style.width, height: ref.style.height }
-//           : con,
-//       ),
-//     )
-//     // setContent({
-//     //   ...content,
-//     //   width: ref.style.width,
-//     //   height: ref.style.height,
-//     //   ...position,
-//     // })
-//   }}
-// >
-//   <MemoFrameTest
-//     width={Number(c.width.substring(0, c.width.length - 2))}
-//     height={Number(c.height.substring(0, c.height.length - 2))}
-//     content={'helloWorld'}
-//     header={'this is header'}
-//   />
-// </Rnd>
+RND.defaultProps = {
+  style: '',
+  content: {
+    width: '300px',
+    height: '300px',
+    x: 600,
+    y: 600,
+  },
+  disableDragging: false,
+  enableResizing: true,
+  onDragStop: (e, d) => {},
+  onResize: (e, direction, ref, delta, position) => {},
+  onResizeStop: (e, direction, ref, delta, position) => {},
+}
+
 export default RND
