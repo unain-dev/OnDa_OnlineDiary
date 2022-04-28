@@ -8,20 +8,23 @@ import { getMemoAction, setMemoAction } from '../actions/memo'
 //   y: number
 // }
 
-let initialMemo = []
+let initialMemo = {
+  date: '',
+  memoList: [],
+}
 
 const diarySlice = createSlice({
   name: 'memoList',
   initialState: initialMemo,
   reducers: {
     addMemo: (state, action) => {
-      state.push(action.payload)
+      state.memoList.push(action.payload)
     },
     changeMemoState: (state, action) => {
-      let arr = state.filter((s) => s.id !== action.payload.id)
+      let arr = state.memoList.filter((s) => s.id !== action.payload.id)
       arr.push(action.payload)
 
-      return arr
+      state.memoList = arr
     },
   },
   extraReducers: (builder) =>
@@ -29,8 +32,10 @@ const diarySlice = createSlice({
       .addCase(getMemoAction.fulfilled, (state, action) => {
         // console.log('success')
         // console.log(action.payload)
-        state.push(action.payload)
+        // state.push(action.payload)
         // state = action.payload
+        state.date = action.payload.date
+        action.payload.memoList.map((memo) => state.memoList.push(memo))
       })
       .addCase(setMemoAction.fulfilled, (state, action) => {
         console.log(action.payload)

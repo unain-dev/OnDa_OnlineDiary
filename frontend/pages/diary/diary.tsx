@@ -9,7 +9,7 @@ import { getMemoAction, setMemoAction } from 'core/store/actions/memo'
 const diary = () => {
   const value = useSelector((state) => state)
   console.log(value)
-  const len = value.diary.length
+  const len = value.diary.memoList.length
 
   const dispatch = useDispatch()
 
@@ -65,7 +65,7 @@ const diary = () => {
   return (
     <>
       <button onClick={onClickSave}>저장하기</button>
-      {value.diary.map((c, index) => (
+      {value.diary.memoList.map((c, index) => (
         <RND
           style={test}
           content={c}
