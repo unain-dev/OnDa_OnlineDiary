@@ -9,8 +9,8 @@ const Pannel = ({ onClick }) => {
 
   return (
     <div className={styles.pannel}>
-      {memoSeqList.map((seq) => (
-        <div className={styles.container}>
+      {memoSeqList.map((seq, index) => (
+        <div className={styles.container} key={index}>
           <Image src={textMemoImg} className="image" width="" height="" />
           <div className={styles.middle}>
             <button
