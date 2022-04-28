@@ -3,8 +3,11 @@ package com.ssafy.onda.api.member.service;
 import com.ssafy.onda.api.member.dto.MemberDto;
 import com.ssafy.onda.api.member.dto.request.ReqLoginMemberDto;
 import com.ssafy.onda.api.member.dto.request.ReqMemberDto;
+import com.ssafy.onda.api.member.dto.request.ReqUpdatePasswordDto;
+import com.ssafy.onda.api.member.dto.response.ResMemberDto;
 import com.ssafy.onda.api.member.entity.Member;
 import com.ssafy.onda.api.member.repository.MemberRepository;
+import com.ssafy.onda.global.common.auth.CustomUserDetails;
 import com.ssafy.onda.global.common.util.LogUtil;
 import com.ssafy.onda.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
@@ -95,5 +98,37 @@ public class MemberServiceImpl implements MemberService {
     public MemberDto findMemberDtoByMemberId(String memberId) {
         return memberRepository.findMemberDtoByMemberId(memberId)
                 .orElseThrow(() -> new CustomException(LogUtil.getElement(), MEMBER_NOT_FOUND));
+    }
+
+    @Override
+    public ResMemberDto findResMemberDto(CustomUserDetails details) {
+
+        MemberDto memberDto = memberRepository.findMemberDtoByMemberId(details.getUsername())
+                .orElseThrow(() -> new CustomException(LogUtil.getElement(), MEMBER_NOT_FOUND));
+
+        return ResMemberDto.builder()
+                .memberId(memberDto.getMemberId())
+                .email(memberDto.getEmail())
+                .nickname(memberDto.getNickname())
+                .build();
+    }
+
+    @Transactional
+    @Override
+    public void updateMemberPassword(CustomUserDetails details, ReqUpdatePasswordDto reqUpdatePasswordDto) {
+
+        Member member = memberRepository.findByMemberId(details.getUsername())
+                .orElseThrow(() -> new CustomException(LogUtil.getElement(), MEMBER_NOT_FOUND));
+
+        String password = member.getPassword();
+        if (!passwordEncoder.matches(reqUpdatePasswordDto.getPrePassword(), password)) {
+            throw new CustomException(LogUtil.getElement(), PASSWORD_NOT_MATCH);
+        }
+
+        if (reqUpdatePasswordDto.getNewPassword().contains(member.getMemberId())) {
+            throw new CustomException(LogUtil.getElement(), PASSWORD_CONTAINED_MEMBERID);
+        }
+
+        member.changePassword(passwordEncoder.encode(reqUpdatePasswordDto.getNewPassword()));
     }
 }

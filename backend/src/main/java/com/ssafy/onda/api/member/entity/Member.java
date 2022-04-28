@@ -41,4 +41,8 @@ public class Member {
         this.email = email;
         this.nickname = nickname;
     }
+
+    public void changePassword(String newPassword) {
+        this.password = newPassword;
+    }
 }
