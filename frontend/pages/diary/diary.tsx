@@ -4,7 +4,7 @@ import RND from 'component/diary/RND'
 import Pannel from 'component/diary/Pannel'
 import { useSelector, useDispatch } from 'react-redux'
 import { changeMemoState, addMemo } from 'core/store/modules/diary'
-import { getMemoAction } from 'core/store/actions/memo'
+import { getMemoAction, setMemoAction } from 'core/store/actions/memo'
 
 const diary = () => {
   const value = useSelector((state) => state)
@@ -13,11 +13,7 @@ const diary = () => {
 
   const dispatch = useDispatch()
 
-  console.log(len)
-
   const [draggableState, setDraggableState] = useState(Array(len).fill(true))
-
-  console.log(draggableState)
 
   const test = {
     background: '#898989',
@@ -44,6 +40,7 @@ const diary = () => {
         x: 10,
         y: 10,
         memoTypeSeq: params,
+        info: {},
       }),
     )
     // alert('추가되었습니다.')
@@ -61,8 +58,13 @@ const diary = () => {
     setDraggableState(Array(len).fill(true))
   }, [len])
 
+  const onClickSave = () => {
+    dispatch(setMemoAction(value.diary))
+  }
+
   return (
     <>
+      <button onClick={onClickSave}>저장하기</button>
       {value.diary.map((c, index) => (
         <RND
           style={test}
@@ -96,8 +98,7 @@ const diary = () => {
           <MemoSeparator
             width={c.width}
             height={c.height}
-            content={c.content}
-            header={'this is header'}
+            info={c.info}
             memoTypeSeq={c.memoTypeSeq}
             drag={{
               enableDragging: () => enableDragging(index),
