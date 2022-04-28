@@ -8,7 +8,6 @@ import { getMemoAction } from 'core/store/actions/memo'
 
 const diary = () => {
   const value = useSelector((state) => state)
-  const [isChanged, setIsChanged] = useState(false)
   console.log(value)
   const len = value.diary.length
 
@@ -52,10 +51,11 @@ const diary = () => {
 
   console.log('reload')
 
+  const memberSeq = 1
+
   useEffect(() => {
-    dispatch(getMemoAction(1))
-    // setIsChanged(false)
-  }, [isChanged])
+    dispatch(getMemoAction(memberSeq))
+  }, [])
 
   useEffect(() => {
     setDraggableState(Array(len).fill(true))
@@ -76,7 +76,6 @@ const diary = () => {
                 y: d.y,
               }),
             )
-            setIsChanged(true)
           }}
           onResizeStop={(e, direction, ref, delta, position) => {
             dispatch(
@@ -90,7 +89,6 @@ const diary = () => {
                 ),
               }),
             )
-            setIsChanged(true)
           }}
           disableDragging={!draggableState[index]}
         >
