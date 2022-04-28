@@ -1,6 +1,6 @@
-import { NextPage } from 'next/types';
-import React from 'react';
-import MemoText from '../memoText/MemoText' 
+import { NextPage } from 'next/types'
+import React from 'react'
+import MemoText from '../memoText/MemoText'
 import MemoFinancialLedger from '../memoFinancialLedger/MemoFinancialLedger'
 import MemoChecklist from '../memoCheckList/MemoChecklist'
 /**
@@ -10,31 +10,36 @@ import MemoChecklist from '../memoCheckList/MemoChecklist'
  */
 
 interface Props {
-    width: number,
-    height: number,
-    content: any,
-    header: any,
-    memoTypeSeq: number,
-    drag: any,
+  width: number
+  height: number
+  // content: any,
+  // header: any,
+  info: any
+  memoTypeSeq: number
+  drag: any
+}
+const MemoSeparator: NextPage<Props> = ({
+  width,
+  height,
+  info,
+  memoTypeSeq,
+  drag,
+}) => {
+  if (memoTypeSeq === 1) {
+    return (
+      <MemoText
+        width={width}
+        height={height}
+        content={info.content}
+        header={info.header}
+        drag={drag}
+      />
+    )
+  } else if (memoTypeSeq === 2) {
+    return <MemoFinancialLedger drag={drag} />
+  } else if (memoTypeSeq === 3) {
+    return <MemoChecklist drag={drag} />
   }
-const MemoSeparator: NextPage<Props> = ({width, height, content, header, memoTypeSeq, drag}) => {
-    if(memoTypeSeq===1){
-        return (
-            <MemoText
-                width={width}
-                height={height}
-                content={content}
-                header={header}
-                drag={drag}
-              />
-        );
-    }
-    else if(memoTypeSeq===2){
-        return <MemoFinancialLedger drag={drag}/>
-    }
-    else if(memoTypeSeq===3){
-        return <MemoChecklist drag={drag}/>
-    }
-};
+}
 
-export default MemoSeparator;
+export default MemoSeparator

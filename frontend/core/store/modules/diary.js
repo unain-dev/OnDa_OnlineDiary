@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { getMemoAction } from '../actions/memo'
+import { getMemoAction, setMemoAction } from '../actions/memo'
 
 // interface Memo {
 //   width: number
@@ -8,24 +8,7 @@ import { getMemoAction } from '../actions/memo'
 //   y: number
 // }
 
-let initialMemo = [
-  //   {
-  //    id: 1
-  //     width: 200,
-  //     height: 200,
-  //     x: 10,
-  //     y: 10,
-  //     memoTypeSeq: 1,
-  //   },
-  //   {
-  //     id: 1
-  //     width: 200,
-  //     height: 200,
-  //     x: 10,
-  //     y: 10,
-  //     memoTypeSeq: 2,
-  //   },
-]
+let initialMemo = []
 
 const diarySlice = createSlice({
   name: 'memoList',
@@ -42,11 +25,16 @@ const diarySlice = createSlice({
     },
   },
   extraReducers: (builder) =>
-    builder.addCase(getMemoAction.fulfilled, (state, action) => {
-      // console.log('success')
-      // console.log(action.payload)
-      state.push(action.payload)
-    }),
+    builder
+      .addCase(getMemoAction.fulfilled, (state, action) => {
+        // console.log('success')
+        // console.log(action.payload)
+        state.push(action.payload)
+        // state = action.payload
+      })
+      .addCase(setMemoAction.fulfilled, (state, action) => {
+        console.log(action.payload)
+      }),
 })
 
 export const { addMemo, changeMemoState } = diarySlice.actions
