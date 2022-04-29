@@ -14,7 +14,7 @@ let initialMemo = {
 }
 
 const diarySlice = createSlice({
-  name: 'memoList',
+  name: 'diaryInfo',
   initialState: initialMemo,
   reducers: {
     addMemo: (state, action) => {
@@ -34,6 +34,7 @@ const diarySlice = createSlice({
         // console.log(action.payload)
         // state.push(action.payload)
         // state = action.payload
+        console.log(action)
         state.date = action.payload.date
         action.payload.memoList.map((memo) => state.memoList.push(memo))
       })

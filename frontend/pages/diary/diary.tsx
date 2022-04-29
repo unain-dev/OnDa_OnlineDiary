@@ -5,20 +5,22 @@ import Pannel from 'component/diary/pannel'
 import { useSelector, useDispatch } from 'react-redux'
 import { changeMemoState, addMemo } from 'core/store/modules/diary'
 import { getMemoAction, setMemoAction } from 'core/store/actions/memo'
+import { AppDispatch } from 'core/store'
 
 const diary = () => {
-  const value = useSelector((state) => state)
+  const value = useSelector(({ diary }) => diary)
   console.log(value)
-  const len = value.diary.memoList.length
+  const len = value.memoList.length
 
   const dispatch = useDispatch()
+  const appDispatch: AppDispatch = useDispatch() // 추가됨.
 
   const [draggableState, setDraggableState] = useState(Array(len).fill(true))
 
-  const test = {
-    background: '#898989',
-    overflow: 'hidden',
-  } as const
+  // const test = {
+  //   background: '#898989',
+  //   overflow: 'hidden',
+  // } as const
 
   const enableDragging = (index) => {
     draggableState[index] = true
@@ -51,7 +53,7 @@ const diary = () => {
   const memberSeq = 1
 
   useEffect(() => {
-    dispatch(getMemoAction(memberSeq))
+    appDispatch(getMemoAction(memberSeq)) //수정
   }, [])
 
   useEffect(() => {
@@ -59,15 +61,18 @@ const diary = () => {
   }, [len])
 
   const onClickSave = () => {
-    dispatch(setMemoAction(value.diary))
+    appDispatch(setMemoAction(value)) //수정
   }
 
   return (
     <>
       <button onClick={onClickSave}>저장하기</button>
-      {value.diary.memoList.map((c, index) => (
+      {value.memoList.map((c, index) => (
         <RND
-          style={test}
+          style={{
+            background: '#898989',
+            overflow: 'hidden',
+          }}
           content={c}
           key={index}
           onDragStop={(e, d) => {
