@@ -19,8 +19,8 @@ function getMemo(seq) {
         ...obj,
         memoTypeSeq: 1,
         info: {
-          textHeader: '제목',
-          textContent: '내용',
+          header: '제목',
+          content: '내용',
         },
       }
     case 2:
