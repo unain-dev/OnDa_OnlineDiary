@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 import styles from '../../../styles/scss/Memo.module.scss'
+import { useDispatch } from 'react-redux'
+import { changeText, changeMemoState } from '../../../core/store/modules/diary'
+
 interface Props {
-    width: number,
-    height: number,
-    content: any,
-    header: any,
+    memoInfo: any
+    // width: number,
+    // height: number,
+    // content: any,
+    // header: any,
     drag: any,
   }
-const memoChecklist = ({drag}) => {
-    const [checkboxInfo, setCheckboxInfo] = useState([{
-        content: 'test',
-        isChecked: false
-    },{
-        content: 'test2',
-        isChecked: true
-    }])
+const MemoChecklist = ({memoInfo, drag}) => {
+    const { width, height, info } = memoInfo
+    const dispatch = useDispatch();
+    const [checkboxInfo, setCheckboxInfo] = useState(info)
     const [content, setContent] = useState('');
     const [isEditable, setIsEditable] = useState(false);
     const onCheckboxClick = (index) =>{
@@ -35,10 +35,28 @@ const memoChecklist = ({drag}) => {
     const onUpdateButtonClick = () =>{
         setIsEditable(true);
         drag.disableDragging();
+        dispatch(
+            changeMemoState({
+                ...memoInfo,
+                isEditing: true,
+            }),
+        )
     }
     const onApproveUpdateClick = () => {
         setIsEditable(false);
         drag.enableDragging();
+        dispatch(
+            changeText({
+                ...memoInfo,
+                info: [...checkboxInfo],
+            }),
+        )
+        dispatch(
+            changeMemoState({
+                ...memoInfo,
+                isEditing: false,
+            }),
+        )
     }
     const onDeleteButtonClick = () =>{
 
@@ -70,4 +88,4 @@ const memoChecklist = ({drag}) => {
     );
 };
 
-export default memoChecklist;
+export default MemoChecklist;

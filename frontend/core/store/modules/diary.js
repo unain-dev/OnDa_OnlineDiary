@@ -21,8 +21,35 @@ const diarySlice = createSlice({
       state.memoList.push(action.payload)
     },
     changeMemoState: (state, action) => {
-      let arr = state.memoList.filter((s) => s.id !== action.payload.id)
-      arr.push(action.payload)
+      // let arr = state.memoList.filter((s) => s.id !== action.payload.id)
+      // arr.push(action.payload)
+
+      let arr = state.memoList.map((memo) =>
+        memo.id === action.payload.id
+          ? {
+              ...memo,
+              width: action.payload.width,
+              height: action.payload.height,
+              x: action.payload.x,
+              y: action.payload.y,
+              info: action.payload.info,
+              isEditing: action.payload.isEditing,
+            }
+          : memo,
+      )
+
+      state.memoList = arr
+    },
+    // memoText 수정시 dispatch 되는 리듀서
+    changeText: (state, action) => {
+      let arr = state.memoList.map((memo) =>
+        memo.id === action.payload.id
+          ? {
+              ...memo,
+              info: action.payload.info,
+            }
+          : memo,
+      )
 
       state.memoList = arr
     },
@@ -43,5 +70,5 @@ const diarySlice = createSlice({
       }),
 })
 
-export const { addMemo, changeMemoState } = diarySlice.actions
+export const { addMemo, changeMemoState, changeText } = diarySlice.actions
 export default diarySlice.reducer

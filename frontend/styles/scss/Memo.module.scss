@@ -1,18 +1,36 @@
+// text 떡메
 
 .deleteButton{
     position: absolute;
     top: 0%;
-    right: 0px;
+    right: -70px;
     margin: 10px;
-    cursor: pointer;
+    opacity: 0.1;
+    &:hover{
+        cursor: pointer;
+        opacity: 1;
+    }
+}
+.approveUpdateButton{
+    position: absolute;
+    top: 0px;
+    right: -40px;
+    margin: 10px;
+    opacity: 0.1;
+    &:hover{
+        cursor: pointer;
+        opacity: 1;
+    }
 }
 .updateButton{
     position: absolute;
-    top: 0%;
-    right: 30px;
+    top: 0px;
+    right: -40px;
     margin: 10px;
+    opacity: 0.1;
     &:hover{
         cursor: pointer;
+        opacity: 1;
     }
     
 }
@@ -28,15 +46,6 @@
     top: 20px;
     left: 0%;
 
-}
-.approveUpdateButton{
-    position: absolute;
-    bottom: 0%;
-    right: 0px;
-    margin: 10px;
-    &:hover{
-        cursor: pointer;
-    }
 }
 .textAreaStyle{
     resize: none;
@@ -90,4 +99,22 @@
     position: absolute;
     bottom: 0%;
     left: 0px;
+}
+//이미지
+.fileUploader{
+    margin-top: 10px;
+    position: absolute;
+    bottom: 0%;
+    left: 0px;
+}
+.image{
+    -webkit-user-drag: none;
+}
+//스티커
+.emojiInput{
+    position: absolute;
+    bottom: 0%;
+    left: 0px;
+    width: 90%;
+    z-index: 0;
 }
