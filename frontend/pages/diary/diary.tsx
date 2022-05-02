@@ -34,34 +34,7 @@ const diary = () => {
   }
 
   const onClickPannel = (params, e) => {
-    
-    let returnType: any;
-    if(params===1){
-      returnType={
-        content: '',
-        header: '',
-      }
-    }
-    else if(params===2 || params===3){
-      returnType=[]
-    }
-    else if(params===4){
-      returnType=null
-    }
-    else if(params===5){
-      returnType=''
-    }
-    dispatch(
-      addMemo({
-        id: len + 1,
-        width: 400,
-        height: 200,
-        x: 10,
-        y: 10,
-        memoTypeSeq: params,
-        info: returnType,
-      }),
-    )
+    dispatch(addMemo({ ...params, id: len }))
     // alert('추가되었습니다.')
   }
 
@@ -93,7 +66,7 @@ const diary = () => {
             background: `${c.memoTypeSeq === 5 ? 'transparent' : '#ffc'}`,
             borderRadius: '10px',
             boxShadow: '0 5px 5px `rgba(0,0,0,0.4)`',
-            borderStyle: `${c.isEditing ? 'dashed' : 'none' }`
+            borderStyle: `${c.isEditing ? 'dashed' : 'none'}`,
             // overflow: 'hidden',
           }}
           content={c}
