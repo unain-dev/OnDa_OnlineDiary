@@ -34,6 +34,23 @@ const diary = () => {
   }
 
   const onClickPannel = (params, e) => {
+    
+    let returnType: any;
+    if(params===1){
+      returnType={
+        content: '',
+        header: '',
+      }
+    }
+    else if(params===2 || params===3){
+      returnType=[]
+    }
+    else if(params===4){
+      returnType=null
+    }
+    else if(params===5){
+      returnType=''
+    }
     dispatch(
       addMemo({
         id: len + 1,
@@ -42,7 +59,7 @@ const diary = () => {
         x: 10,
         y: 10,
         memoTypeSeq: params,
-        info: {},
+        info: returnType,
       }),
     )
     // alert('추가되었습니다.')
@@ -50,7 +67,7 @@ const diary = () => {
 
   console.log('reload')
 
-  const memberSeq = 1
+  const memberSeq = 3
 
   useEffect(() => {
     appDispatch(getMemoAction(memberSeq)) //수정
@@ -70,8 +87,14 @@ const diary = () => {
       {value.memoList.map((c, index) => (
         <RND
           style={{
-            background: '#898989',
-            overflow: 'hidden',
+            // background: '#898989',
+            // background: '#ffc',
+            // background: 'transparent',
+            background: `${c.memoTypeSeq === 5 ? 'transparent' : '#ffc'}`,
+            borderRadius: '10px',
+            boxShadow: '0 5px 5px `rgba(0,0,0,0.4)`',
+            borderStyle: `${c.isEditing ? 'dashed' : 'none' }`
+            // overflow: 'hidden',
           }}
           content={c}
           key={index}
@@ -103,7 +126,7 @@ const diary = () => {
           <MemoSeparator
             width={c.width}
             height={c.height}
-            info={c.info}
+            memoInfo={c} // memoInfo = memoList의 한 요소 전체 정보(width, height, x, y, info(content, header))
             memoTypeSeq={c.memoTypeSeq}
             drag={{
               enableDragging: () => enableDragging(index),
