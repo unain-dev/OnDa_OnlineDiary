@@ -12,32 +12,33 @@ import MemoSticker from '../memoSticker/MemoSticker'
  */
 
 interface Props {
-  width: number
-  height: number
-  // content: any,
-  // header: any,
   memoInfo: any
   memoTypeSeq: number
   drag: any
+  onDeleteMemo: any
 }
 const MemoSeparator: NextPage<Props> = ({
-  width,
-  height,
   memoInfo, //memoInfo = memoList의 한 요소 전체 정보(width, height, x, y, info(content, header))
   memoTypeSeq,
   drag,
+  onDeleteMemo,
 }) => {
-  console.log(memoInfo)
+  // console.log(memoInfo)
+  const props = {
+    memoInfo,
+    drag,
+    onDeleteMemo,
+  }
   if (memoTypeSeq === 1) {
-    return <MemoText memoInfo={memoInfo} drag={drag} />
+    return <MemoText {...props} />
   } else if (memoTypeSeq === 2) {
-    return <MemoFinancialLedger memoInfo={memoInfo} drag={drag} />
+    return <MemoFinancialLedger {...props} />
   } else if (memoTypeSeq === 3) {
-    return <MemoChecklist memoInfo={memoInfo} drag={drag} />
+    return <MemoChecklist {...props} />
   } else if (memoTypeSeq === 4) {
-    return <MemoImage memoInfo={memoInfo} drag={drag}  />
+    return <MemoImage {...props} />
   } else if (memoTypeSeq === 5) {
-    return <MemoSticker memoInfo={memoInfo} drag={drag} />
+    return <MemoSticker {...props} />
   }
 }
 

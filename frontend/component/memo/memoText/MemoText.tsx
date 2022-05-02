@@ -14,13 +14,14 @@ interface Props {
   // content: any
   // header: any
   drag: any
+  onDeleteMemo: any
 }
 const QuillWrapper = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
 })
 
-const MemoText: NextPage<Props> = ({ memoInfo, drag }) => {
+const MemoText: NextPage<Props> = ({ memoInfo, drag, onDeleteMemo }) => {
   const dispatch = useDispatch()
 
   // memoInfo의 변수들을 나눠서 설정(최대한 기존 코드의 네이밍을 건드리지 않기 위해서)
@@ -72,7 +73,7 @@ const MemoText: NextPage<Props> = ({ memoInfo, drag }) => {
     return <div>{headerText}</div>
   }
   const onDeleteButtonClick = () => {
-    console.log('delete 구현')
+    onDeleteMemo(memoInfo.id)
   }
   const onUpdateButtonClick = () => {
     setTextEditMode(true)
@@ -81,10 +82,10 @@ const MemoText: NextPage<Props> = ({ memoInfo, drag }) => {
     drag.disableDragging()
     dispatch(
       changeMemoState({
-          ...memoInfo,
-          isEditing: true,
+        ...memoInfo,
+        isEditing: true,
       }),
-  )
+    )
   }
   const onApproveUpdateClick = () => {
     setTextEditMode(false)
@@ -104,10 +105,10 @@ const MemoText: NextPage<Props> = ({ memoInfo, drag }) => {
     )
     dispatch(
       changeMemoState({
-          ...memoInfo,
-          isEditing: false,
+        ...memoInfo,
+        isEditing: false,
       }),
-  )
+    )
   }
   return (
     <MemoFrame

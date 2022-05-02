@@ -10,6 +10,7 @@ import { getMemoAction, setMemoAction } from '../actions/memo'
 
 let initialMemo = {
   date: '',
+  lastId: 0,
   memoList: [],
 }
 
@@ -19,21 +20,20 @@ const diarySlice = createSlice({
   reducers: {
     addMemo: (state, action) => {
       state.memoList.push(action.payload)
+      state.lastId = action.payload.id
     },
     changeMemoState: (state, action) => {
-      // let arr = state.memoList.filter((s) => s.id !== action.payload.id)
-      // arr.push(action.payload)
-
       let arr = state.memoList.map((memo) =>
         memo.id === action.payload.id
           ? {
               ...memo,
-              width: action.payload.width,
-              height: action.payload.height,
-              x: action.payload.x,
-              y: action.payload.y,
-              info: action.payload.info,
-              isEditing: action.payload.isEditing,
+              // width: action.payload.width,
+              // height: action.payload.height,
+              // x: action.payload.x,
+              // y: action.payload.y,
+              // info: action.payload.info,
+              // isEditing: action.payload.isEditing,
+              ...action.payload,
             }
           : memo,
       )
@@ -53,22 +53,25 @@ const diarySlice = createSlice({
 
       state.memoList = arr
     },
+    deleteMemo: (state, action) => {
+      const id = action.payload
+      let arr = state.memoList.filter((memo) => memo.id !== id)
+      state.memoList = arr
+    },
   },
   extraReducers: (builder) =>
     builder
       .addCase(getMemoAction.fulfilled, (state, action) => {
-        // console.log('success')
-        // console.log(action.payload)
-        // state.push(action.payload)
-        // state = action.payload
-        console.log(action)
+        const list = action.payload.memoList
         state.date = action.payload.date
-        action.payload.memoList.map((memo) => state.memoList.push(memo))
+        state.lastId = list[list.length - 1].id
+        list.map((memo) => state.memoList.push(memo))
       })
       .addCase(setMemoAction.fulfilled, (state, action) => {
         console.log(action.payload)
       }),
 })
 
-export const { addMemo, changeMemoState, changeText } = diarySlice.actions
+export const { addMemo, changeMemoState, changeText, deleteMemo } =
+  diarySlice.actions
 export default diarySlice.reducer
