@@ -1,9 +1,6 @@
 package com.ssafy.onda.global.common.entity;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -21,4 +18,9 @@ public class MemoType {
     @Column(nullable = false, unique = true)
     private String memoType;
 
+    @Builder
+    public MemoType(Long memoTypeSeq, String memoType) {
+        this.memoTypeSeq = memoTypeSeq;
+        this.memoType = memoType;
+    }
 }
