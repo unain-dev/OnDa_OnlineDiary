@@ -42,7 +42,8 @@ public enum ErrorStatus {
 
     // diary
     INVALID_DATE_FORMAT(BAD_REQUEST.value(), "날짜를 다시 확인해주세요."),
-    INVALID_MEMO_TYPE(BAD_REQUEST.value(), "올바르지 않은 요청입니다.")
+    INVALID_MEMO_TYPE(BAD_REQUEST.value(), "올바르지 않은 요청입니다."),
+    BACKGROUND_NOT_FOUND(ACCEPTED.value(), "해당 날짜에 작성한 다이어리가 존재하지 않습니다.")
     ;
 
     private Integer status;

@@ -11,10 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.*;
@@ -54,7 +51,7 @@ public class DiaryController {
             CustomUserDetails details = (CustomUserDetails) authentication.getDetails();
             diaryService.save(details, reqDiaryDto);
 
-            status = OK.value();
+            status = CREATED.value();
             msg = "다이어리 저장 성공";
         }
 
@@ -65,4 +62,20 @@ public class DiaryController {
                 .build();
     }
 
+    @DeleteMapping("/{diaryDate}")
+    public BaseResponseDto delete(Authentication authentication, @PathVariable String diaryDate) {
+        log.info("Called API: {}", LogUtil.getClassAndMethodName());
+
+        if (authentication == null) {
+            throw new CustomException(LogUtil.getElement(), UNAUTHORIZED_ACCESS);
+        }
+
+        CustomUserDetails details = (CustomUserDetails) authentication.getDetails();
+        diaryService.deleteByMemberAndDiaryDate(details, diaryDate);
+
+        return BaseResponseDto.builder()
+                .status(OK.value())
+                .msg("다이어리 삭제 성공")
+                .build();
+    }
 }

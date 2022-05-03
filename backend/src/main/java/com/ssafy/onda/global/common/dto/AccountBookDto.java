@@ -4,7 +4,7 @@ import lombok.*;
 
 import java.util.List;
 
-@ToString(of = { "totalAmount", "totalAmount", "totalWithdraw", "accountBookItems" })
+@ToString(of = { "totalAmount", "totalDeposit", "totalWithdraw", "accountBookItems" })
 @NoArgsConstructor
 @Getter
 public class AccountBookDto {
