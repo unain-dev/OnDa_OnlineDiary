@@ -6,7 +6,7 @@ import com.ssafy.onda.api.member.dto.request.ReqMemberDto;
 import com.ssafy.onda.api.member.dto.request.ReqUpdatePasswordDto;
 import com.ssafy.onda.api.member.service.MemberService;
 import com.ssafy.onda.global.common.auth.CustomUserDetails;
-import com.ssafy.onda.global.common.dto.BaseResponseDto;
+import com.ssafy.onda.global.common.dto.base.BaseResponseDto;
 import com.ssafy.onda.global.common.util.JwtTokenUtil;
 import com.ssafy.onda.global.common.util.LogUtil;
 import com.ssafy.onda.global.error.exception.CustomException;

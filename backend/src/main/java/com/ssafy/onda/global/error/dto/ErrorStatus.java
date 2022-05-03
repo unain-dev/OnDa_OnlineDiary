@@ -40,13 +40,9 @@ public enum ErrorStatus {
     MEMBERID_NOT_FOUND(BAD_REQUEST.value(), "ID를 다시 확인해주세요."),
     PASSWORD_NOT_MATCH(UNAUTHORIZED.value(), "비밀번호를 다시 확인해주세요."),
 
-    // Game Info
-    GAME_NOT_FOUND(BAD_GATEWAY.value(), "게임 정보가 존재하지 않습니다."),
-    INVALID_RANGE_OF_RATING(BAD_REQUEST.value(), "별점은 1이상 5이하의 정수입니다."),
-
-    // RecommendedGame
-    LACK_OF_RECOMMENDED_GAME(FAILED_DEPENDENCY.value(), "추천 게임 목록 개수가 부족합니다."),
-    NO_GAME_PLAYED(NO_CONTENT.value(), "사용자가 플레이한 게임이 없습니다.")
+    // diary
+    INVALID_DATE_FORMAT(BAD_REQUEST.value(), "날짜를 다시 확인해주세요."),
+    INVALID_MEMO_TYPE(BAD_REQUEST.value(), "올바르지 않은 요청입니다.")
     ;
 
     private Integer status;

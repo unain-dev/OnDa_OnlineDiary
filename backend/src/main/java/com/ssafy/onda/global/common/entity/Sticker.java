@@ -23,7 +23,7 @@ public class Sticker extends BaseMemoEntity {
     private String stickerPath;
 
     @Builder
-    public Sticker(Double x, Double y, Double width, Double height, Long stickerSeq, String stickerName, String stickerPath) {
+    public Sticker(Long x, Long y, Long width, Long height, Long stickerSeq, String stickerName, String stickerPath) {
         super(x, y, width, height);
         this.stickerSeq = stickerSeq;
         this.stickerName = stickerName;

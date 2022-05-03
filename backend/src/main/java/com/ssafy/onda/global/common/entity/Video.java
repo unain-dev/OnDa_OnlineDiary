@@ -26,7 +26,7 @@ public class Video extends BaseMemoEntity {
     private String savedVideoPath;
 
     @Builder
-    public Video(Double x, Double y, Double width, Double height, Long videoSeq, String originVideoName, String encodingVideoName, String savedVideoPath) {
+    public Video(Long x, Long y, Long width, Long height, Long videoSeq, String originVideoName, String encodingVideoName, String savedVideoPath) {
         super(x, y, width, height);
         this.videoSeq = videoSeq;
         this.originVideoName = originVideoName;
