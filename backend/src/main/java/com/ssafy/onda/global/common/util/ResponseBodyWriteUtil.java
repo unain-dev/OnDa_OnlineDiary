@@ -2,7 +2,7 @@ package com.ssafy.onda.global.common.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
-import com.ssafy.onda.global.common.dto.BaseResponseDto;
+import com.ssafy.onda.global.common.dto.base.BaseResponseDto;
 import org.springframework.http.HttpStatus;;
 
 import javax.servlet.http.HttpServletRequest;

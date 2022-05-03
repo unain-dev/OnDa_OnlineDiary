@@ -15,18 +15,18 @@ import javax.persistence.MappedSuperclass;
 public abstract class BaseMemoEntity {
 
     @Column(nullable = false)
-    private Double x;
+    private Long x;
 
     @Column(nullable = false)
-    private Double y;
+    private Long y;
 
     @Column(nullable = false)
-    private Double width;
+    private Long width;
 
     @Column(nullable = false)
-    private Double height;
+    private Long height;
 
-    public BaseMemoEntity(Double x, Double y, Double width, Double height) {
+    public BaseMemoEntity(Long x, Long y, Long width, Long height) {
         this.x = x;
         this.y = y;
         this.width = width;

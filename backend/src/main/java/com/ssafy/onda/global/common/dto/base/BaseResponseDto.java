@@ -1,4 +1,4 @@
-package com.ssafy.onda.global.common.dto;
+package com.ssafy.onda.global.common.dto.base;
 
 import lombok.Builder;
 import lombok.Getter;

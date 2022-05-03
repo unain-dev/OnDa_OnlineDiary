@@ -26,7 +26,7 @@ public class Image extends BaseMemoEntity {
     private String savedImagePath;
 
     @Builder
-    public Image(Double x, Double y, Double width, Double height, Long imageSeq, String originImageName, String encodingImageName, String savedImagePath) {
+    public Image(Long x, Long y, Long width, Long height, Long imageSeq, String originImageName, String encodingImageName, String savedImagePath) {
         super(x, y, width, height);
         this.imageSeq = imageSeq;
         this.originImageName = originImageName;

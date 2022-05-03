@@ -7,13 +7,7 @@ import javax.persistence.*;
 @Getter
 @ToString(of = {"memberSeq", "memberId", "password", "email", "nickname"})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(
-        name = "tb_member",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = "memberId"),
-                @UniqueConstraint(columnNames = "email")
-        }
-)
+@Table(name = "tb_member")
 @Entity
 public class Member {
 

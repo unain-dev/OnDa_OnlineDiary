@@ -1,6 +1,6 @@
 package com.ssafy.onda.api.member.entity;
 
-import com.ssafy.onda.api.main.entity.Background;
+import com.ssafy.onda.api.diary.entity.Background;
 import com.ssafy.onda.global.common.entity.MemoType;
 import lombok.*;
 
@@ -12,9 +12,11 @@ import javax.persistence.*;
 @Table(
         name = "tb_member_memo",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = "memoSeq"),
-                @UniqueConstraint(columnNames = "memo_type_seq")
-        }
+                @UniqueConstraint(
+                        name = "unique_between_memo_seq_and_memo_type",
+                        columnNames={"memoSeq", "memo_type_seq"}
+                )
+}
 )
 @Entity
 public class MemberMemo {
