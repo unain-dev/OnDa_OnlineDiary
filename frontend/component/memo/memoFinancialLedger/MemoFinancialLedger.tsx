@@ -11,51 +11,51 @@ interface Props {
   memoInfo: any
   onDeleteMemo: any
 }
-const MemoFinancialLedger = ({ memoInfo, drag, onDeleteMemo }) => {
-  const dispatch = useDispatch()
-  const { width, height, info } = memoInfo
+const MemoFinancialLedger = ({memoInfo, drag, onDeleteMemo}) => {
+    const dispatch = useDispatch();
+    const { width, height, info } = memoInfo
 
-  const [financeLedger, setFinanceLedger] = useState(info)
-  const [inputData, setInputData] = useState({
-    content: '',
-    income: '',
-    outcome: '',
-  })
-  const [total, setTotal] = useState({
-    total: '',
-    income: '',
-    outcome: '',
-  })
-  const [isEditable, setIsEditable] = useState(false)
-  useEffect(() => {
-    let tempIncome = 0
-    let tempOutcome = 0
-    for (let i = 0; i < financeLedger.length; i += 1) {
-      console.log(parseInt(financeLedger[i].income), financeLedger[i].outcome)
-      if (financeLedger[i].income !== '')
-        tempIncome += parseInt(financeLedger[i].income)
-      if (financeLedger[i].outcome !== '')
-        tempOutcome += parseInt(financeLedger[i].outcome)
-    }
-    setTotal({
-      ...total,
-      total: (tempIncome - tempOutcome).toString(),
-      income: tempIncome.toString(),
-      outcome: tempOutcome.toString(),
+    const [financeLedger, setFinanceLedger] = useState(info)
+    const [inputData, setInputData] = useState({
+        content: '',
+        income: '',
+        outcome: ''
     })
-    console.log(tempIncome, tempOutcome)
-  }, [financeLedger])
+    const [total, setTotal] = useState({
+        total: '',
+        income: '',
+        outcome: '',
+    })
+    const [isEditable, setIsEditable] = useState(false);
+    useEffect(()=>{
+        let tempIncome=0;
+        let tempOutcome=0;
+        for(let i = 0; i < financeLedger.length; i+=1){
+            console.log(parseInt(financeLedger[i].income), financeLedger[i].outcome)
+            if(financeLedger[i].income!=='') tempIncome+=parseInt(financeLedger[i].income);
+            if(financeLedger[i].outcome!=='') tempOutcome+=parseInt(financeLedger[i].outcome);
+        }
+        setTotal({...total, total: (tempIncome-tempOutcome).toString(), income: tempIncome.toString(), outcome: tempOutcome.toString()})
+        console.log(tempIncome, tempOutcome)
+    },[financeLedger])
 
-  const onInputContent = (type, event) => {
-    if (type === 'CONTENT') {
-      setInputData({ ...inputData, content: event.target.value.toString() })
-    } else if (type === 'INCOME') {
-      setInputData({ ...inputData, income: event.target.value.toString() })
-    } else if (type === 'OUTCOME') {
-      setInputData({ ...inputData, outcome: event.target.value.toString() })
+    const onInputContent = (type, event) => {
+        if(type==='CONTENT'){
+            setInputData({...inputData, content: event.target.value.toString()})
+        }
+        else if(type==='INCOME'){
+            setInputData({...inputData, income: event.target.value.toString()})
+        }
+        else if(type==='OUTCOME'){
+            setInputData({...inputData, outcome: event.target.value.toString()})
+        }
     }
-  }
+
   const addFinanceLedger = () => {
+    if(inputData.income==='' && inputData.outcome===''){
+      alert("수입 혹은 지출을 하나라도 입력해주세요!");
+      return;
+    }
     setFinanceLedger((prevState) => [
       ...prevState,
       {
@@ -89,12 +89,20 @@ const MemoFinancialLedger = ({ memoInfo, drag, onDeleteMemo }) => {
   const onDeleteButtonClick = () => {
     onDeleteMemo(memoInfo.id)
   }
+  const [mouseState, setMouseState] = useState(false);
+  
+  const mouseOverEvent = () =>{
+    setMouseState(true);
+  }
+  const mouseLeaveEvent = () =>{
+    setMouseState(false);
+  }
   return (
-    <div className={styles.financialLedger}>
-      <div className={styles.deleteButton} onClick={onDeleteButtonClick}>
+    <div style={{width: width, height: height}} className={styles.financialLedger} onMouseOver={mouseOverEvent} onMouseLeave={mouseLeaveEvent}>
+      {mouseState && <div className={styles.deleteButton} onClick={onDeleteButtonClick}>
         ❌
-      </div>
-      {!isEditable && (
+      </div>}
+      {mouseState && !isEditable && (
         <div className={styles.updateButton} onClick={onUpdateButtonClick}>
           ✏️
         </div>
@@ -106,7 +114,7 @@ const MemoFinancialLedger = ({ memoInfo, drag, onDeleteMemo }) => {
       {financeLedger.map((fin) => {
         return (
           <div className={styles.financeContent}>
-            <div>{fin.content}</div>
+            <div className={styles.financeContentTag}>{fin.content}</div>
             <div className={styles.financeIncome}>
               {fin.income.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
             </div>
@@ -119,42 +127,22 @@ const MemoFinancialLedger = ({ memoInfo, drag, onDeleteMemo }) => {
       {isEditable && (
         <>
           <div className={styles.financeContent}>
-            <input
-              value={inputData.content}
-              onChange={() => onInputContent('CONTENT', event)}
-            />
-            <input
-              type="number"
-              value={inputData.income}
-              onChange={() => onInputContent('INCOME', event)}
-            />
-            <input
-              type="number"
-              value={inputData.outcome}
-              onChange={() => onInputContent('OUTCOME', event)}
-            />
+            <input className={styles.financeContentInput} style={{ width: (width-30)/3 }} placeholder="내용 입력" value={inputData.content} onChange={()=>onInputContent("CONTENT", event)} />
+            <input className={styles.financeContentInput} style={{ width: (width-30)/3 }} placeholder="수입" type='number' value={inputData.income} onChange={()=>onInputContent("INCOME", event)}/>
+            <input className={styles.financeContentInput} style={{ width: (width-30)/3 }} placeholder="지출" type='number' value={inputData.outcome} onChange={()=>onInputContent("OUTCOME", event)}/>
+            <button className={styles.financeAddButton} onClick={addFinanceLedger}>✓</button>
           </div>
-          <button
-            className={styles.financeAddButton}
-            onClick={addFinanceLedger}
-          >
-            추가하기
-          </button>
         </>
       )}
       <div className={styles.financeFooter}>
         <div className={styles.financeContent}>
           {parseInt(total.total) >= 0 ? (
             <div className={styles.financeIncome}>
-              <div>
-                총액: {total.total.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원'}
-              </div>
+              <div>{total.total.replace(/\B(?=(\d{3})+(?!\d))/g, ',')+'원'}</div>
             </div>
           ) : (
             <div className={styles.financeOutcome}>
-              <div>
-                총액: {total.total.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원'}
-              </div>
+              <div>{total.total.replace(/\B(?=(\d{3})+(?!\d))/g, ',')+'원'}</div>
             </div>
           )}
           <div className={styles.financeIncome}>
@@ -165,7 +153,7 @@ const MemoFinancialLedger = ({ memoInfo, drag, onDeleteMemo }) => {
           </div>
         </div>
       </div>
-      {isEditable && (
+      {mouseState && isEditable && (
         <div
           className={styles.approveUpdateButton}
           onClick={onApproveUpdateClick}

@@ -1,11 +1,13 @@
 import { NextPage } from 'next/types'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import MemoFrame from './MemoText.view'
 import dynamic from 'next/dynamic'
 import styles from '../../../styles/scss/Memo.module.scss'
-import 'react-quill/dist/quill.snow.css'
+import 'react-quill/dist/quill.bubble.css'
 import { changeText, changeMemoState } from '../../../core/store/modules/diary'
+
+
 
 interface Props {
   memoInfo: any
@@ -46,15 +48,32 @@ const MemoText: NextPage<Props> = ({ memoInfo, drag, onDeleteMemo }) => {
       setHeaderContent(showHeaderTag)
     }
   })
+  const toolbarOptions = useMemo(()=> ({
+    toolbar: {
+      container: [
+        ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+        ['blockquote', 'code-block'],
+      
+        [{ 'header': 1 }, { 'header': 2 }, {'header': 3}],               // custom button values
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      
+        [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+        [{ 'font': [] }],
+      ]
+    }
+  }),[]) ;
   const showInputTag = (type) => {
     if (type === 'CONTENT') {
       return (
-        <QuillWrapper
-          theme="snow"
-          value={text}
-          onChange={(event) => setText(event)}
-          style={{ width: width - 40, height: height - 100 }}
-        />
+        <div className='quill' style={{ width: width, height: height - 50, marginTop: '20px' }}>
+          <QuillWrapper
+            theme="bubble"
+            value={text}
+            onChange={(event) => setText(event)}
+            modules={toolbarOptions}
+            placeholder="내용을 입력해주세요"
+          />
+        </div>
       )
     } else if (type === 'HEADER') {
       return (
@@ -64,7 +83,8 @@ const MemoText: NextPage<Props> = ({ memoInfo, drag, onDeleteMemo }) => {
             setHeaderText(e.target.value)
           }}
           className={styles.headerAreaStyle}
-          style={{ width: width - 80 }}
+          style={{ width: width - 45, background: 'transparent', border: '0px solid'}}
+          placeholder="제목을 입력해주세요"
         />
       )
     }
@@ -118,6 +138,7 @@ const MemoText: NextPage<Props> = ({ memoInfo, drag, onDeleteMemo }) => {
       onUpdateButtonClick={onUpdateButtonClick}
       onApproveUpdateClick={onApproveUpdateClick}
       isEditable={textEditMode}
+      memoInfo={memoInfo}
     ></MemoFrame>
   )
 }
