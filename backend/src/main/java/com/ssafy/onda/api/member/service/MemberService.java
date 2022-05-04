@@ -23,4 +23,7 @@ public interface MemberService {
 
     void updateMemberPassword(CustomUserDetails details, ReqUpdatePasswordDto reqUpdatePasswordDto);
 
+    void authEmail(String userEmail);
+
+    boolean authEmailCheck(String userEmail, String Auth);
 }

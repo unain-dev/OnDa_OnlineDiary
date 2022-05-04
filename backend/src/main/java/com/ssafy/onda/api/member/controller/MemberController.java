@@ -1,6 +1,7 @@
 package com.ssafy.onda.api.member.controller;
 
 import com.ssafy.onda.api.member.dto.MemberDto;
+import com.ssafy.onda.api.member.dto.request.ReqEmailAuthDto;
 import com.ssafy.onda.api.member.dto.request.ReqLoginMemberDto;
 import com.ssafy.onda.api.member.dto.request.ReqMemberDto;
 import com.ssafy.onda.api.member.dto.request.ReqUpdatePasswordDto;
@@ -12,17 +13,16 @@ import com.ssafy.onda.global.common.util.LogUtil;
 import com.ssafy.onda.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.ssafy.onda.global.error.dto.ErrorStatus.*;
+import static com.ssafy.onda.global.error.dto.ErrorStatus.GLOBAL_ERROR;
+import static com.ssafy.onda.global.error.dto.ErrorStatus.UNAUTHORIZED_ACCESS;
 import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
@@ -96,6 +96,41 @@ public class MemberController {
         } else {
             status = NO_CONTENT.value();
             msg = "사용할 수 있는 이메일입니다.";
+        }
+
+        return BaseResponseDto.builder()
+                .status(status)
+                .msg(msg)
+                .build();
+    }
+
+    @PostMapping("/email/auth")
+    private BaseResponseDto sendEmail(@RequestBody ReqEmailAuthDto reqEmailAuthDto){
+        log.info("Called API: {}", LogUtil.getClassAndMethodName());
+
+        memberService.authEmail(reqEmailAuthDto.getEmail());
+
+        return BaseResponseDto.builder()
+                .status(OK.value())
+                .msg("인증번호를 전송하였습니다.")
+                .build();
+    }
+
+    @PostMapping("/email/auth/check")
+    private BaseResponseDto sendEmailCheck(@RequestBody ReqEmailAuthDto reqEmailAuthDto){
+        log.info("Called API: {}", LogUtil.getClassAndMethodName());
+
+        Integer status = null;
+        String msg = null;
+
+        boolean authCheck = memberService.authEmailCheck(reqEmailAuthDto.getEmail(), reqEmailAuthDto.getEmailAuth());
+
+        if (authCheck) {
+            status = OK.value();
+            msg = "이메일 인증에 성공하였습니다.";
+        } else {
+            status = NO_CONTENT.value();
+            msg = "이메일 인증에 실패하였습니다.";
         }
 
         return BaseResponseDto.builder()

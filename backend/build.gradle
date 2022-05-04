@@ -62,6 +62,12 @@ dependencies {
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
 	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 	implementation "com.querydsl:querydsl-core:${queryDslVersion}"
+
+	// smtp
+	implementation 'javax.mail:javax.mail-api:1.6.2'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+
 }
 
 tasks.named('test') {
