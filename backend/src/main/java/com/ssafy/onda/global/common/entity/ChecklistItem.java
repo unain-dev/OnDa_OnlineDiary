@@ -5,7 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 
 @Getter
-@ToString(of = {"checklistItemSeq", "isChecked", "checklistItemText"})
+@ToString(of = { "checklistItemSeq", "isChecked", "content" })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "tb_checklist_item")
 @Entity
@@ -19,17 +19,17 @@ public class ChecklistItem {
     private Boolean isChecked;
 
     @Column(nullable = false)
-    private String checklistItemText;
+    private String content;
 
     @JoinColumn(name = "checklist_seq", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Checklist checklist;
 
     @Builder
-    public ChecklistItem(Long checklistItemSeq, Boolean isChecked, String checklistItemText, Checklist checklist) {
+    public ChecklistItem(Long checklistItemSeq, Boolean isChecked, String content, Checklist checklist) {
         this.checklistItemSeq = checklistItemSeq;
         this.isChecked = isChecked;
-        this.checklistItemText = checklistItemText;
+        this.content = content;
         this.checklist = checklist;
     }
 }
