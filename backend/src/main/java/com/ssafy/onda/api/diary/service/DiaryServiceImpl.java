@@ -90,22 +90,20 @@ public class DiaryServiceImpl implements DiaryService {
                         .y(memoListDto.getY())
                         .width(memoListDto.getWidth())
                         .height(memoListDto.getHeight())
-                        .textHeader(textDto.getTextHeader())
-                        .textContent(textDto.getTextContent())
+                        .header(textDto.getHeader())
+                        .content(textDto.getContent())
                         .build());
             } else if (memoListDto.getMemoTypeSeq() == 2) {
-                AccountBookDto accountBookDto = mapper.convertValue(memoListDto.getInfo(), new TypeReference<>() {});
+
+                List<AccountBookItemDto> accountBookItemDtos = mapper.convertValue(memoListDto.getInfo(), new TypeReference<>() {});
                 AccountBook accountBook = AccountBook.builder()
                         .x(memoListDto.getX())
                         .y(memoListDto.getY())
                         .width(memoListDto.getWidth())
                         .height(memoListDto.getHeight())
-                        .totalAmount(accountBookDto.getTotalAmount())
-                        .totalDeposit(accountBookDto.getTotalDeposit())
-                        .totalWithdraw(accountBookDto.getTotalWithdraw())
                         .build();
                 accountBooks.add(accountBook);
-                accountBookMap.put(accountBook, accountBookDto.getAccountBookItems());
+                accountBookMap.put(accountBook, accountBookItemDtos);
             } else if (memoListDto.getMemoTypeSeq() == 3) {
                 ChecklistDto checklistDto = mapper.convertValue(memoListDto.getInfo(), new TypeReference<>() {});
                 Checklist checklist = Checklist.builder()
@@ -132,9 +130,9 @@ public class DiaryServiceImpl implements DiaryService {
             List<AccountBookItem> accountBookItems = new ArrayList<>();
             for (AccountBookItemDto accountBookItemDto : accountBookItemDtos) {
                 accountBookItems.add(AccountBookItem.builder()
-                        .description(accountBookItemDto.getDescription())
-                        .deposit(accountBookItemDto.getDeposit())
-                        .withdraw(accountBookItemDto.getWithdraw())
+                        .content(accountBookItemDto.getContent())
+                        .income(accountBookItemDto.getIncome())
+                        .outcome(accountBookItemDto.getOutcome())
                         .accountBook(savedAccountBook)
                         .build());
             }
@@ -148,7 +146,7 @@ public class DiaryServiceImpl implements DiaryService {
             for (ChecklistItemDto checklistItemDto : checklistItemDtos) {
                 checklistItems.add(ChecklistItem.builder()
                         .isChecked(checklistItemDto.getIsChecked())
-                        .checklistItemText(checklistItemDto.getChecklistItemText())
+                        .content(checklistItemDto.getContent())
                         .checklist(savedChecklist)
                         .build());
             }
@@ -310,8 +308,8 @@ public class DiaryServiceImpl implements DiaryService {
                     .y(text.getY())
                     .memoTypeSeq(1)
                     .info(new HashMap<>(){{
-                        put("textHeader", text.getTextHeader());
-                        put("textContent", text.getTextContent());
+                        put("header", text.getHeader());
+                        put("content", text.getContent());
                     }})
                     .build());
         }
@@ -324,21 +322,16 @@ public class DiaryServiceImpl implements DiaryService {
                     .x(accountBook.getX())
                     .y(accountBook.getY())
                     .memoTypeSeq(2)
-                    .info(new HashMap<>(){{
-                        put("totalAmount", accountBook.getTotalAmount());
-                        put("totalDeposit", accountBook.getTotalDeposit());
-                        put("totalWithdraw", accountBook.getTotalWithdraw());
-                        put("accountBookItems", new LinkedList<AccountBookItemDto>(){{
-                            for (AccountBookItem accountBookItem : findMemosDto.getAccountBookItems()) {
-                                if (accountBookItem.getAccountBook().equals(accountBook)) {
-                                    add(AccountBookItemDto.builder()
-                                            .description(accountBookItem.getDescription())
-                                            .deposit(accountBookItem.getDeposit())
-                                            .withdraw(accountBookItem.getWithdraw())
-                                            .build());
-                                }
+                    .info(new LinkedList<AccountBookItemDto>(){{
+                        for (AccountBookItem accountBookItem : findMemosDto.getAccountBookItems()) {
+                            if (accountBookItem.getAccountBook().equals(accountBook)) {
+                                add(AccountBookItemDto.builder()
+                                        .content(accountBookItem.getContent())
+                                        .income(accountBookItem.getIncome())
+                                        .outcome(accountBookItem.getOutcome())
+                                        .build());
                             }
-                        }});
+                        }
                     }})
                     .build());
         }
@@ -358,7 +351,7 @@ public class DiaryServiceImpl implements DiaryService {
                                 if (checklistItem.getChecklist().equals(checklist)) {
                                     add(ChecklistItemDto.builder()
                                             .isChecked(checklistItem.getIsChecked())
-                                            .checklistItemText(checklistItem.getChecklistItemText())
+                                            .content(checklistItem.getContent())
                                             .build());
                                 }
                             }

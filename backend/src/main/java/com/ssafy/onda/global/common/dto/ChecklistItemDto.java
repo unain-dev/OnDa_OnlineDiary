@@ -2,18 +2,18 @@ package com.ssafy.onda.global.common.dto;
 
 import lombok.*;
 
-@ToString(of = { "isChecked", "checklistItemText" })
+@ToString(of = { "isChecked", "content" })
 @NoArgsConstructor
 @Getter
 public class ChecklistItemDto {
 
     private Boolean isChecked;
 
-    private String checklistItemText;
+    private String content;
 
     @Builder
-    public ChecklistItemDto(Boolean isChecked, String checklistItemText) {
+    public ChecklistItemDto(Boolean isChecked, String content) {
         this.isChecked = isChecked;
-        this.checklistItemText = checklistItemText;
+        this.content = content;
     }
 }

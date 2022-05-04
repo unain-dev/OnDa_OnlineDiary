@@ -6,7 +6,7 @@ import lombok.*;
 import javax.persistence.*;
 
 @Getter
-@ToString(of = {"accountBookSeq", "totalAmount", "totalDeposit", "totalWithdraw"})
+@ToString(of = { "accountBookSeq" })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "tb_account_book")
 @Entity
@@ -16,21 +16,9 @@ public class AccountBook extends BaseMemoEntity {
     @Id
     private Long accountBookSeq;
 
-    @Column(nullable = false)
-    private Long totalAmount;
-
-    @Column(nullable = false)
-    private Long totalDeposit;
-
-    @Column(nullable = false)
-    private Long totalWithdraw;
-
     @Builder
-    public AccountBook(Long x, Long y, Long width, Long height, Long accountBookSeq, Long totalAmount, Long totalDeposit, Long totalWithdraw) {
+    public AccountBook(Long x, Long y, Long width, Long height, Long accountBookSeq) {
         super(x, y, width, height);
         this.accountBookSeq = accountBookSeq;
-        this.totalAmount = totalAmount;
-        this.totalDeposit = totalDeposit;
-        this.totalWithdraw = totalWithdraw;
     }
 }

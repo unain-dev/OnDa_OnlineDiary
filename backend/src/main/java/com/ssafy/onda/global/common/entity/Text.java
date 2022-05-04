@@ -6,7 +6,7 @@ import lombok.*;
 import javax.persistence.*;
 
 @Getter
-@ToString(of = {"textSeq", "textHeader", "textContent"})
+@ToString(of = {"textSeq", "header", "content"})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "tb_text")
 @Entity
@@ -17,16 +17,16 @@ public class Text extends BaseMemoEntity {
     private Long textSeq;
 
     @Column(nullable = false)
-    private String textHeader;
+    private String header;
 
     @Column(nullable = false, columnDefinition = "LONGTEXT")
-    private String textContent;
+    private String content;
 
     @Builder
-    public Text(Long x, Long y, Long width, Long height, Long textSeq, String textHeader, String textContent) {
+    public Text(Long x, Long y, Long width, Long height, Long textSeq, String header, String content) {
         super(x, y, width, height);
         this.textSeq = textSeq;
-        this.textHeader = textHeader;
-        this.textContent = textContent;
+        this.header = header;
+        this.content = content;
     }
 }
