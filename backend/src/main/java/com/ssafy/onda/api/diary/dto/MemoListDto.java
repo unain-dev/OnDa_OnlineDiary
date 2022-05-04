@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@ToString(of = { "id", "width", "height", "x", "y", "memoTypeSeq" })
+@ToString(of = { "id", "width", "height", "x", "y", "memoTypeSeq", "isEditing" })
 @NoArgsConstructor
 @Getter
 public class MemoListDto {
@@ -22,6 +22,8 @@ public class MemoListDto {
 
     private Integer memoTypeSeq;
 
+    private Boolean isEditing;
+
     private Object info;
 
     @Builder
@@ -32,6 +34,7 @@ public class MemoListDto {
         this.x = x;
         this.y = y;
         this.memoTypeSeq = memoTypeSeq;
+        this.isEditing = false;
         this.info = info;
     }
 }
