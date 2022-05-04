@@ -2,8 +2,10 @@ package com.ssafy.onda.api.diary.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.onda.api.diary.dto.FindMemosDto;
 import com.ssafy.onda.api.diary.dto.MemoListDto;
 import com.ssafy.onda.api.diary.dto.request.ReqDiaryDto;
+import com.ssafy.onda.api.diary.dto.response.ResDiaryDto;
 import com.ssafy.onda.api.diary.entity.Background;
 import com.ssafy.onda.api.diary.repository.BackgroundRepository;
 import com.ssafy.onda.api.member.entity.Member;
@@ -75,6 +77,11 @@ public class DiaryServiceImpl implements DiaryService {
 
         // 입력을 떡메 단위로 분류
         List<MemoListDto> memoListDtos = reqDiaryDto.getMemoList();
+
+        if (memoListDtos.size() == 0) {
+            throw new CustomException(LogUtil.getElement(), NO_MEMO_AVAILABLE);
+        }
+
         for (MemoListDto memoListDto : memoListDtos) {
             if (memoListDto.getMemoTypeSeq() == 1) {
                 TextDto textDto = mapper.convertValue(memoListDto.getInfo(), new TypeReference<>() {});
@@ -151,12 +158,11 @@ public class DiaryServiceImpl implements DiaryService {
         // 회원떡메(memberMemo), 회원떡메가 가지고 있는 떡메모지 삭제
         Optional<Background> optionalBackground = backgroundRepository.findByMemberAndDiaryDate(member, LocalDate.parse(diaryDate));
         optionalBackground.ifPresent(this::delete);
-
-        // background 생성
-        Background savedBackground = backgroundRepository.save(Background.builder()
+        Background savedBackground = optionalBackground.orElseGet(() -> backgroundRepository.save(Background.builder()
                 .diaryDate(LocalDate.parse(diaryDate))
                 .member(member)
-                .build());
+                .build())
+        );
 
         MemoType memoTypeSeq = memoTypeRepository.findByMemoTypeSeq(1L);
         if (memoTypeSeq == null) {
@@ -209,6 +215,11 @@ public class DiaryServiceImpl implements DiaryService {
                 .orElseThrow(() -> new CustomException(LogUtil.getElement(), BACKGROUND_NOT_FOUND));
 
         delete(background);
+
+        // 배경판 삭제
+        backgroundRepository.deleteAllInBatch(new ArrayList<>(){{
+            add(background);
+        }});
     }
 
     @Transactional
@@ -217,51 +228,23 @@ public class DiaryServiceImpl implements DiaryService {
 
         // 배경판으로 회원떡메에서 떡메타입과 떡메식별자 찾기
         List<MemberMemo> memberMemos = memberMemoRepository.findAllByBackground(background);
-        List<Long> textSeqs = new ArrayList<>();
-        List<Long> accountBookSeqs = new ArrayList<>();
-        List<Long> checklistSeqs = new ArrayList<>();
-
-        for (MemberMemo memberMemo : memberMemos) {
-            Long memoTypeSeq = memberMemo.getMemoType().getMemoTypeSeq();
-            if (memoTypeSeq == 1L) {
-                textSeqs.add(memberMemo.getMemoSeq());
-            } else if (memoTypeSeq == 2L) {
-                accountBookSeqs.add(memberMemo.getMemoSeq());
-            } else if (memoTypeSeq == 3L) {
-                checklistSeqs.add(memberMemo.getMemoSeq());
-            } else {
-                throw new CustomException(LogUtil.getElement(), INVALID_MEMO_TYPE);
-            }
-        }
-
-        // 떡메 찾기
-        List<Text> texts = textRepository.findAllByTextSeqIn(textSeqs);
-        List<AccountBook> accountBooks = accountBookRepository.findAllByAccountBookSeqIn(accountBookSeqs);
-        List<Checklist> checklists = checklistRepository.findAllByChecklistSeqIn(checklistSeqs);
-
-        // 떡메 아이템 찾기
-        List<AccountBookItem> accountBookItems = accountBookItemRepository.findAllByAccountBookIn(accountBooks);
-        List<ChecklistItem> checklistItems = checklistItemRepository.findAllByChecklistIn(checklists);
+        FindMemosDto findMemosDto = find(memberMemos);
 
         // 떡메 아이템 삭제
-        accountBookItemRepository.deleteAllInBatch(accountBookItems);
-        checklistItemRepository.deleteAllInBatch(checklistItems);
+        accountBookItemRepository.deleteAllInBatch(findMemosDto.getAccountBookItems());
+        checklistItemRepository.deleteAllInBatch(findMemosDto.getChecklistItems());
 
         // 떡메 삭제
-        textRepository.deleteAllInBatch(texts);
-        accountBookRepository.deleteAllInBatch(accountBooks);
-        checklistRepository.deleteAllInBatch(checklists);
+        textRepository.deleteAllInBatch(findMemosDto.getTexts());
+        accountBookRepository.deleteAllInBatch(findMemosDto.getAccountBooks());
+        checklistRepository.deleteAllInBatch(findMemosDto.getChecklists());
 
         // 회원떡메 삭제
         memberMemoRepository.deleteAllInBatch(memberMemos);
-
-        // 배경판 삭제
-        backgroundRepository.deleteAllInBatch(new ArrayList<>(){{
-            add(background);
-        }});
     }
 
-    private void checkDateValidation(String date) {
+    @Override
+    public void checkDateValidation(String date) {
 
         SimpleDateFormat dateFormat = new  SimpleDateFormat("yyyy-MM-dd");
         dateFormat.setLenient(false);
@@ -296,5 +279,136 @@ public class DiaryServiceImpl implements DiaryService {
                 .build());
 
         memoTypeRepository.saveAll(memoTypes);
+    }
+
+    @Override
+    public ResDiaryDto load(CustomUserDetails details, String diaryDate) {
+
+        // 회원 확인
+        Member member = memberRepository.findByMemberId(details.getUsername())
+                .orElseThrow(() -> new CustomException(LogUtil.getElement(), MEMBER_NOT_FOUND));
+
+        // 날짜 확인
+        checkDateValidation(diaryDate);
+
+        // background 존재 여부 확인
+        Background background = backgroundRepository.findByMemberAndDiaryDate(member, LocalDate.parse(diaryDate))
+                .orElseThrow(() -> new CustomException(LogUtil.getElement(), BACKGROUND_NOT_FOUND));
+
+        List<MemberMemo> memberMemos = memberMemoRepository.findAllByBackground(background);
+        FindMemosDto findMemosDto = find(memberMemos);
+
+        List<MemoListDto> memoListDtos = new ArrayList<>();
+
+        long id = 0L;
+        for (Text text : findMemosDto.getTexts()) {
+            memoListDtos.add(MemoListDto.builder()
+                    .id(id++)
+                    .width(text.getWidth())
+                    .height(text.getHeight())
+                    .x(text.getX())
+                    .y(text.getY())
+                    .memoTypeSeq(1)
+                    .info(new HashMap<>(){{
+                        put("textHeader", text.getTextHeader());
+                        put("textContent", text.getTextContent());
+                    }})
+                    .build());
+        }
+
+        for (AccountBook accountBook : findMemosDto.getAccountBooks()) {
+            memoListDtos.add(MemoListDto.builder()
+                    .id(id++)
+                    .width(accountBook.getWidth())
+                    .height(accountBook.getHeight())
+                    .x(accountBook.getX())
+                    .y(accountBook.getY())
+                    .memoTypeSeq(2)
+                    .info(new HashMap<>(){{
+                        put("totalAmount", accountBook.getTotalAmount());
+                        put("totalDeposit", accountBook.getTotalDeposit());
+                        put("totalWithdraw", accountBook.getTotalWithdraw());
+                        put("accountBookItems", new LinkedList<AccountBookItemDto>(){{
+                            for (AccountBookItem accountBookItem : findMemosDto.getAccountBookItems()) {
+                                if (accountBookItem.getAccountBook().equals(accountBook)) {
+                                    add(AccountBookItemDto.builder()
+                                            .description(accountBookItem.getDescription())
+                                            .deposit(accountBookItem.getDeposit())
+                                            .withdraw(accountBookItem.getWithdraw())
+                                            .build());
+                                }
+                            }
+                        }});
+                    }})
+                    .build());
+        }
+
+        for (Checklist checklist : findMemosDto.getChecklists()) {
+            memoListDtos.add(MemoListDto.builder()
+                    .id(id++)
+                    .width(checklist.getWidth())
+                    .height(checklist.getHeight())
+                    .x(checklist.getX())
+                    .y(checklist.getY())
+                    .memoTypeSeq(3)
+                    .info(new HashMap<>(){{
+                        put("checklistHeader", checklist.getChecklistHeader());
+                        put("checklistItems", new LinkedList<ChecklistItemDto>(){{
+                            for (ChecklistItem checklistItem : findMemosDto.getChecklistItems()) {
+                                if (checklistItem.getChecklist().equals(checklist)) {
+                                    add(ChecklistItemDto.builder()
+                                            .isChecked(checklistItem.getIsChecked())
+                                            .checklistItemText(checklistItem.getChecklistItemText())
+                                            .build());
+                                }
+                            }
+                        }});
+                    }})
+                    .build());
+        }
+
+        return ResDiaryDto.builder()
+                .diaryDate(diaryDate)
+                .totalCnt(memberMemos.size())
+                .memoList(memoListDtos)
+                .build();
+    }
+
+    @Override
+    public FindMemosDto find(List<MemberMemo> memberMemos) {
+        // 배경판으로 회원떡메에서 떡메타입과 떡메식별자 찾기
+        List<Long> textSeqs = new ArrayList<>();
+        List<Long> accountBookSeqs = new ArrayList<>();
+        List<Long> checklistSeqs = new ArrayList<>();
+
+        for (MemberMemo memberMemo : memberMemos) {
+            Long memoTypeSeq = memberMemo.getMemoType().getMemoTypeSeq();
+            if (memoTypeSeq == 1L) {
+                textSeqs.add(memberMemo.getMemoSeq());
+            } else if (memoTypeSeq == 2L) {
+                accountBookSeqs.add(memberMemo.getMemoSeq());
+            } else if (memoTypeSeq == 3L) {
+                checklistSeqs.add(memberMemo.getMemoSeq());
+            } else {
+                throw new CustomException(LogUtil.getElement(), INVALID_MEMO_TYPE);
+            }
+        }
+
+        // 떡메 찾기
+        List<Text> texts = textRepository.findAllByTextSeqIn(textSeqs);
+        List<AccountBook> accountBooks = accountBookRepository.findAllByAccountBookSeqIn(accountBookSeqs);
+        List<Checklist> checklists = checklistRepository.findAllByChecklistSeqIn(checklistSeqs);
+
+        // 떡메 아이템 찾기
+        List<AccountBookItem> accountBookItems = accountBookItemRepository.findAllByAccountBookIn(accountBooks);
+        List<ChecklistItem> checklistItems = checklistItemRepository.findAllByChecklistIn(checklists);
+
+        return FindMemosDto.builder()
+                .texts(texts)
+                .accountBooks(accountBooks)
+                .checklists(checklists)
+                .accountBookItems(accountBookItems)
+                .checklistItems(checklistItems)
+                .build();
     }
 }
