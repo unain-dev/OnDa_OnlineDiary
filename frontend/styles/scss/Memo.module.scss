@@ -2,9 +2,11 @@
 
 .deleteButton{
     position: absolute;
-    top: 0%;
-    right: -70px;
+    top: -5px;
+    right: -5px;
     margin: 10px;
+    width: 60px;
+    text-align: right;
     opacity: 0.1;
     &:hover{
         cursor: pointer;
@@ -13,9 +15,11 @@
 }
 .approveUpdateButton{
     position: absolute;
-    top: 0px;
-    right: -40px;
+    top: -5px;
+    right: 20px;
     margin: 10px;
+    width: 60px;
+    text-align: right;
     opacity: 0.1;
     &:hover{
         cursor: pointer;
@@ -24,9 +28,11 @@
 }
 .updateButton{
     position: absolute;
-    top: 0px;
-    right: -40px;
+    top: -5px;
+    right: 20px;
     margin: 10px;
+    width: 60px;
+    text-align: right;
     opacity: 0.1;
     &:hover{
         cursor: pointer;
@@ -42,10 +48,9 @@
 }
 .content{
     position: absolute;
-    margin: 20px;
+    // margin: 20px;
     top: 20px;
     left: 0%;
-
 }
 .textAreaStyle{
     resize: none;
@@ -56,18 +61,43 @@
 }
 // 가계부
 .financialLedger{
+    margin-top: 20px;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto auto auto 1fr;
 }
 .financeHeader{
     grid-column: 1 / span 3;
+   
 }
 .financeContentHeader{
     text-align: center;
-    margin-top: 30px;
+    margin-top: 10px;
+    font-weight: 600;
 }
 .financeAddButton{
-    grid-column: 1 / span 3;
+    position: absolute;
+    right: -50px;
+    width: 40px;
+    height: 20px;
+    padding: 0;
+    font-weight: 600;
+    text-align: center;
+    line-height: 5px;
+    color: #FFF;
+    border-radius: 5px;
+    transition: all 0.2s ;
+    // background: #A74982;
+    background: #00AE68;
+    // box-shadow: 0px 5px 0px 0px #6D184B;
+    box-shadow: 0px 5px 0px 0px #007144;
+    &:hover{
+        cursor: pointer;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        // box-shadow: 0px 0px 0px 0px #6D184B;
+        box-shadow: 0px 0px 0px 0px #007144;
+    }
 }
 .financeFooter{
     position: absolute;
@@ -80,6 +110,9 @@
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     text-align: center;
+    margin-top: 5px;
+}
+.financeContentTag{
 
 }
 .financeIncome{
@@ -90,9 +123,23 @@
 .financeOutcome{
     color: red;
 }
+.financeContentInput{
+    margin-left: 5;
+    background: transparent;
+    border: 0px solid;
+    text-align: center;
+    margin-top: 5px;
+}
 //체크리스트
 .checklist{
-    margin: 10px
+    margin: 10px;
+    margin-top: 20px;
+    overflow: scroll;
+    
+}
+.checklist::-webkit-scrollbar {
+    display: none;
+    width: 0;
 }
 .checklistButton{
     margin-top: 10px;
@@ -100,12 +147,43 @@
     bottom: 0%;
     left: 0px;
 }
+.checklistInput{
+    margin: 10px;
+    background: transparent;
+    border: 0px solid;
+    text-align: center;
+    margin-top: 5px;
+}
+.checklistAddButton{
+    position: absolute;
+    right: -60px;
+    width: 40px;
+    height: 20px;
+    padding: 0;
+    font-weight: 600;
+    text-align: center;
+    line-height: 5px;
+    color: #FFF;
+    border-radius: 5px;
+    transition: all 0.2s ;
+    // background: #A74982;
+    background: #00AE68;
+    // box-shadow: 0px 5px 0px 0px #6D184B;
+    box-shadow: 0px 5px 0px 0px #007144;
+    &:hover{
+        cursor: pointer;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        // box-shadow: 0px 0px 0px 0px #6D184B;
+        box-shadow: 0px 0px 0px 0px #007144;
+    }
+}
 //이미지
 .fileUploader{
     margin-top: 10px;
     position: absolute;
-    bottom: 0%;
-    left: 0px;
+    bottom: -60px;
+    left: 0%;
 }
 .image{
     -webkit-user-drag: none;
@@ -113,8 +191,8 @@
 //스티커
 .emojiInput{
     position: absolute;
-    bottom: 0%;
-    left: 0px;
-    width: 90%;
+    bottom: -60px;
+    left: -10px;
+    width: 250px;
     z-index: 0;
 }

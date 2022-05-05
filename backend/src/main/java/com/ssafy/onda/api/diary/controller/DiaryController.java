@@ -1,6 +1,7 @@
 package com.ssafy.onda.api.diary.controller;
 
 import com.ssafy.onda.api.diary.dto.request.ReqDiaryDto;
+import com.ssafy.onda.api.diary.dto.response.ResDiaryDto;
 import com.ssafy.onda.api.diary.service.DiaryService;
 import com.ssafy.onda.global.common.auth.CustomUserDetails;
 import com.ssafy.onda.global.common.dto.base.BaseResponseDto;
@@ -76,6 +77,28 @@ public class DiaryController {
         return BaseResponseDto.builder()
                 .status(OK.value())
                 .msg("다이어리 삭제 성공")
+                .build();
+    }
+
+    @GetMapping("/{diaryDate}")
+    public BaseResponseDto load(Authentication authentication, @PathVariable String diaryDate) {
+        log.info("Called API: {}", LogUtil.getClassAndMethodName());
+
+        if (authentication == null) {
+            throw new CustomException(LogUtil.getElement(), UNAUTHORIZED_ACCESS);
+        }
+
+        CustomUserDetails details = (CustomUserDetails) authentication.getDetails();
+        ResDiaryDto resDiaryDto = diaryService.load(details, diaryDate);
+
+        return BaseResponseDto.builder()
+                .status(OK.value())
+                .msg("다이어리 불러오기 성공")
+                .data(new HashMap<>() {{
+                    put("date", resDiaryDto.getDiaryDate());
+                    put("totalCnt", resDiaryDto.getTotalCnt());
+                    put("memoList", resDiaryDto.getMemoList());
+                }})
                 .build();
     }
 }
