@@ -1,0 +1,45 @@
+.dateContainer {
+  margin: 20px;
+  max-width: 50%;
+  span {
+    vertical-align: middle;
+    margin: 20px;
+  }
+  .calendarIcon {
+    margin-left: 20px;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  h2 {
+    display: inline-block;
+  }
+  button {
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    border: none;
+    &:hover {
+      background-color: #137cbf;
+      color: white;
+    }
+  }
+}
+
+@mixin styledButton {
+  padding: 10px;
+  background-color: #a5ceff;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 3px 3px 5px grey;
+}
+
+.saveBtnWrapper {
+  position: absolute;
+  .saveBtn {
+    @include styledButton();
+    margin: 30px;
+    position: fixed;
+    bottom: 0;
+  }
+}
