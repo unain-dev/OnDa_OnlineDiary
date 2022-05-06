@@ -55,16 +55,23 @@ export const getMemoAction = createAsyncThunk<
         x: 610,
         y: 40,
         memoTypeSeq: 3,
-        info: [
-          {
-            content: '테스트 컨텐츠',
-            isChecked: false,
-          },
-          {
-            content: '테스트 컨텐츠2',
-            isChecked: true,
-          },
-        ],
+        info: {
+          checklistHeader: "this is checklist header",
+          checklistItems: [
+              {
+                  isChecked: true,
+                  content: "this is checklist item text 1"
+              },
+              {
+                  isChecked: false,
+                  content: "this is checklist item text 2"
+              },
+              {
+                  isChecked: true,
+                  content: "this is checklist item text 3"
+              }
+          ]
+      },
         isEditing: false,
       },
       {

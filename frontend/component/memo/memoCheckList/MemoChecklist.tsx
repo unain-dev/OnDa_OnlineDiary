@@ -15,7 +15,8 @@ interface Props {
 const MemoChecklist = ({memoInfo, drag, onDeleteMemo}) => {
     const { width, height, info } = memoInfo
     const dispatch = useDispatch();
-    const [checkboxInfo, setCheckboxInfo] = useState([...info])
+    const [checkboxFullInfo, setCheckboxFullInfo] = useState({...info})
+    const [checkboxInfo, setCheckboxInfo] = useState([...checkboxFullInfo.checklistItems])
     const [content, setContent] = useState('');
     const [isEditable, setIsEditable] = useState(false);
     const onCheckboxClick = (index) =>{
@@ -50,7 +51,10 @@ const MemoChecklist = ({memoInfo, drag, onDeleteMemo}) => {
     dispatch(
       changeText({
         ...memoInfo,
-        info: [...checkboxInfo],
+        info: {
+          checklistHeader: header,
+          checklistItems: [...checkboxInfo],
+        },
       }),
     )
     dispatch(
@@ -69,8 +73,9 @@ const MemoChecklist = ({memoInfo, drag, onDeleteMemo}) => {
   const mouseLeaveEvent = () =>{
     setMouseState(false);
   }
+  const [header, setHeader] = useState(info.checklistHeader);
   return (
-    <div style={{width: width, height: height-30}} className={styles.checklist} onMouseOver={mouseOverEvent} onMouseLeave={mouseLeaveEvent} >
+    <div className={styles.checklist} style={{width: width-10, height: height}}  onMouseOver={mouseOverEvent} onMouseLeave={mouseLeaveEvent} >
       {mouseState && <div
         className={styles.deleteButton}
         onClick={() => {
@@ -84,10 +89,20 @@ const MemoChecklist = ({memoInfo, drag, onDeleteMemo}) => {
           ✏️
         </div>
       )}
+      {!isEditable && <div className={styles.checklistHeader}>{header}</div>}
+      {isEditable &&         <input
+          defaultValue={header}
+          onChange={(e) => {
+            setHeader(e.target.value)
+          }}
+          className={styles.checklistHeader}
+          style={{ width: width - 45, background: 'transparent', border: '0px solid'}}
+          placeholder="제목을 입력해주세요"
+        />}
       {checkboxInfo.length > 0 &&
         checkboxInfo.map((checkbox, index) => {
           return (
-            <div>
+            <div className={styles.checklistBody}>
               <input
                 type="checkbox"
                 checked={checkbox.isChecked}

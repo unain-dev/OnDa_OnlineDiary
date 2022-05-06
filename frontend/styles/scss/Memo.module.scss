@@ -132,10 +132,13 @@
 }
 //체크리스트
 .checklist{
-    margin: 10px;
-    margin-top: 20px;
     overflow: scroll;
-    
+}
+.checklistHeader{
+    margin: 10px;
+}   
+.checklistBody{
+    margin-left: 10px;
 }
 .checklist::-webkit-scrollbar {
     display: none;
