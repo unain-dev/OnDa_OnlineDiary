@@ -5,15 +5,16 @@
 }
 
 .pannel {
-  width: 30%;
+  width: 20%;
   height: 100%;
   // float: right;
   position: fixed;
   top: 0;
   bottom: 0;
   right: 0;
-  border-left: solid 1px grey;
-  // background-color: #2699e2;
+  // border-left: solid 1px grey;
+  overflow: auto;
+  background-color: #cfe1ec;
   .closeBtnImg {
     right: 0;
     // background-color: red;
