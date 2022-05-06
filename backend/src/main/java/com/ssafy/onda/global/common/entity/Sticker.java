@@ -1,6 +1,6 @@
 package com.ssafy.onda.global.common.entity;
 
-import com.ssafy.onda.global.common.entity.base.BaseMemoEntity;
+import com.ssafy.onda.global.common.entity.base.Memo;
 import lombok.*;
 
 import javax.persistence.*;
@@ -10,7 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "tb_sticker")
 @Entity
-public class Sticker extends BaseMemoEntity {
+public class Sticker {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -19,10 +19,19 @@ public class Sticker extends BaseMemoEntity {
     @Column(nullable = false)
     private String emoji;
 
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "x", column = @Column(name = "x", nullable = false)),
+            @AttributeOverride(name = "y", column = @Column(name = "y", nullable = false)),
+            @AttributeOverride(name = "width", column = @Column(name = "width", nullable = false)),
+            @AttributeOverride(name = "height", column = @Column(name = "height", nullable = false))
+    })
+    private Memo memo;
+
     @Builder
-    public Sticker(Long x, Long y, Long width, Long height, Long stickerSeq, String emoji) {
-        super(x, y, width, height);
+    public Sticker(Long stickerSeq, String emoji, Memo memo) {
         this.stickerSeq = stickerSeq;
         this.emoji = emoji;
+        this.memo = memo;
     }
 }

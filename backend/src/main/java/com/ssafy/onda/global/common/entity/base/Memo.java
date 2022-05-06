@@ -1,18 +1,15 @@
 package com.ssafy.onda.global.common.entity.base;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import lombok.*;
 
 import javax.persistence.Column;
-import javax.persistence.EntityListeners;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.Embeddable;
 
 @Getter
-@NoArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
-@MappedSuperclass
-public abstract class BaseMemoEntity {
+@ToString(of = { "x", "y", "width", "height" })
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Embeddable
+public class Memo {
 
     @Column(nullable = false)
     private Long x;
@@ -26,10 +23,13 @@ public abstract class BaseMemoEntity {
     @Column(nullable = false)
     private Long height;
 
-    public BaseMemoEntity(Long x, Long y, Long width, Long height) {
+    @Builder
+    public Memo(Long x, Long y, Long width, Long height) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
     }
 }
+
+
