@@ -62,40 +62,40 @@ function getMemo(seq) {
   }
 }
 
-const Pannel = ({ onClick }) => {
+// <div className={styles.closeBtnImgContainer}>
+//   <Image
+//     src={closeBtnImg}
+//     className={styles.closeBtnImg}
+//     width="40"
+//     height="40"
+//   />
+// </div>
+
+const Pannel = ({ onClick, open }) => {
   const memoSeqList = [1, 2, 3, 4, 5]
 
   return (
-    <div className={styles.pannel}>
-      <div className={styles.closeBtnImgContainer}>
-        <Image
-          src={closeBtnImg}
-          className={styles.closeBtnImg}
-          width="40"
-          height="40"
-        />
-      </div>
-      {memoSeqList.map((seq, index) => (
-        <div className={styles.container} key={index}>
-          <Image
-            src={textMemoImg}
-            className={styles.image}
-            width=""
-            height=""
-          />
-          <div className={styles.middle}>
-            <button
-              className={styles.button}
-              onClick={(e) => {
-                onClick(getMemo(seq), e)
-              }}
-            >
-              {seq}번
-            </button>
-          </div>
+    <>
+      {open && (
+        <div className={styles.pannel}>
+          {memoSeqList.map((seq, index) => (
+            <div className={styles.container} key={index}>
+              <Image src={textMemoImg} className="image" width="" height="" />
+              <div className={styles.middle}>
+                <button
+                  className={styles.button}
+                  onClick={(e) => {
+                    onClick(getMemo(seq), e)
+                  }}
+                >
+                  {seq}번
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
-      ))}
-    </div>
+      )}
+    </>
   )
 }
 

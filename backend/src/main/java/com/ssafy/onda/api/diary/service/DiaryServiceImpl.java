@@ -15,6 +15,7 @@ import com.ssafy.onda.api.member.repository.MemberRepository;
 import com.ssafy.onda.global.common.auth.CustomUserDetails;
 import com.ssafy.onda.global.common.dto.*;
 import com.ssafy.onda.global.common.entity.*;
+import com.ssafy.onda.global.common.entity.base.Memo;
 import com.ssafy.onda.global.common.repository.*;
 import com.ssafy.onda.global.common.util.LogUtil;
 import com.ssafy.onda.global.error.exception.CustomException;
@@ -53,6 +54,8 @@ public class DiaryServiceImpl implements DiaryService {
 
     private final ChecklistItemRepository checklistItemRepository;
 
+    private final StickerRepository stickerRepository;
+
     private final MemoTypeRepository memoTypeRepository;
 
     @Transactional
@@ -71,6 +74,7 @@ public class DiaryServiceImpl implements DiaryService {
         List<Text> texts = new ArrayList<>();
         List<AccountBook> accountBooks = new ArrayList<>();
         List<Checklist> checklists = new ArrayList<>();
+        List<Sticker> stickers = new ArrayList<>();
 
         Map<AccountBook, List<AccountBookItemDto>> accountBookMap = new HashMap<>();
         Map<Checklist, List<ChecklistItemDto>> checklistMap = new HashMap<>();
@@ -83,38 +87,55 @@ public class DiaryServiceImpl implements DiaryService {
         }
 
         for (MemoListDto memoListDto : memoListDtos) {
-            if (memoListDto.getMemoTypeSeq() == 1) {
+            Integer memoTypeSeq = memoListDto.getMemoTypeSeq();
+            if (memoTypeSeq == 1) {
                 TextDto textDto = mapper.convertValue(memoListDto.getInfo(), new TypeReference<>() {});
                 texts.add(Text.builder()
-                        .x(memoListDto.getX())
-                        .y(memoListDto.getY())
-                        .width(memoListDto.getWidth())
-                        .height(memoListDto.getHeight())
+                        .memo(Memo.builder()
+                                .x(memoListDto.getX())
+                                .y(memoListDto.getY())
+                                .width(memoListDto.getWidth())
+                                .height(memoListDto.getHeight())
+                                .build())
                         .header(textDto.getHeader())
                         .content(textDto.getContent())
                         .build());
-            } else if (memoListDto.getMemoTypeSeq() == 2) {
-
+            } else if (memoTypeSeq == 2) {
                 List<AccountBookItemDto> accountBookItemDtos = mapper.convertValue(memoListDto.getInfo(), new TypeReference<>() {});
                 AccountBook accountBook = AccountBook.builder()
-                        .x(memoListDto.getX())
-                        .y(memoListDto.getY())
-                        .width(memoListDto.getWidth())
-                        .height(memoListDto.getHeight())
+                        .memo(Memo.builder()
+                                .x(memoListDto.getX())
+                                .y(memoListDto.getY())
+                                .width(memoListDto.getWidth())
+                                .height(memoListDto.getHeight())
+                                .build())
                         .build();
                 accountBooks.add(accountBook);
                 accountBookMap.put(accountBook, accountBookItemDtos);
-            } else if (memoListDto.getMemoTypeSeq() == 3) {
+            } else if (memoTypeSeq == 3) {
                 ChecklistDto checklistDto = mapper.convertValue(memoListDto.getInfo(), new TypeReference<>() {});
                 Checklist checklist = Checklist.builder()
-                        .x(memoListDto.getX())
-                        .y(memoListDto.getY())
-                        .width(memoListDto.getWidth())
-                        .height(memoListDto.getHeight())
+                        .memo(Memo.builder()
+                                .x(memoListDto.getX())
+                                .y(memoListDto.getY())
+                                .width(memoListDto.getWidth())
+                                .height(memoListDto.getHeight())
+                                .build())
                         .checklistHeader(checklistDto.getChecklistHeader())
                         .build();
                 checklists.add(checklist);
                 checklistMap.put(checklist, checklistDto.getChecklistItems());
+            } else if (memoTypeSeq == 6) {
+                String emoji = (String) memoListDto.getInfo();
+                stickers.add(Sticker.builder()
+                        .memo(Memo.builder()
+                                .x(memoListDto.getX())
+                                .y(memoListDto.getY())
+                                .width(memoListDto.getWidth())
+                                .height(memoListDto.getHeight())
+                                .build())
+                        .emoji(emoji)
+                        .build());
             } else {
                 throw new CustomException(LogUtil.getElement(), INVALID_MEMO_TYPE);
             }
@@ -153,6 +174,8 @@ public class DiaryServiceImpl implements DiaryService {
             checklistItemRepository.saveAll(checklistItems);
         }
 
+        List<Sticker> savedStickers = stickerRepository.saveAll(stickers);
+
         // 회원떡메(memberMemo), 회원떡메가 가지고 있는 떡메모지 삭제
         Optional<Background> optionalBackground = backgroundRepository.findByMemberAndDiaryDate(member, LocalDate.parse(diaryDate));
         optionalBackground.ifPresent(this::delete);
@@ -189,6 +212,14 @@ public class DiaryServiceImpl implements DiaryService {
             memberMemos.add(MemberMemo.builder()
                     .memoSeq(savedChecklist.getChecklistSeq())
                     .memoType(memoTypeRepository.findByMemoTypeSeq(3L))
+                    .background(savedBackground)
+                    .build());
+        }
+
+        for (Sticker savedSticker : savedStickers) {
+            memberMemos.add(MemberMemo.builder()
+                    .memoSeq(savedSticker.getStickerSeq())
+                    .memoType(memoTypeRepository.findByMemoTypeSeq(6L))
                     .background(savedBackground)
                     .build());
         }
@@ -236,6 +267,7 @@ public class DiaryServiceImpl implements DiaryService {
         textRepository.deleteAllInBatch(findMemosDto.getTexts());
         accountBookRepository.deleteAllInBatch(findMemosDto.getAccountBooks());
         checklistRepository.deleteAllInBatch(findMemosDto.getChecklists());
+        stickerRepository.deleteAllInBatch(findMemosDto.getStickers());
 
         // 회원떡메 삭제
         memberMemoRepository.deleteAllInBatch(memberMemos);
@@ -302,10 +334,10 @@ public class DiaryServiceImpl implements DiaryService {
         for (Text text : findMemosDto.getTexts()) {
             memoListDtos.add(MemoListDto.builder()
                     .id(id++)
-                    .width(text.getWidth())
-                    .height(text.getHeight())
-                    .x(text.getX())
-                    .y(text.getY())
+                    .width(text.getMemo().getWidth())
+                    .height(text.getMemo().getHeight())
+                    .x(text.getMemo().getX())
+                    .y(text.getMemo().getY())
                     .memoTypeSeq(1)
                     .info(new HashMap<>(){{
                         put("header", text.getHeader());
@@ -317,10 +349,10 @@ public class DiaryServiceImpl implements DiaryService {
         for (AccountBook accountBook : findMemosDto.getAccountBooks()) {
             memoListDtos.add(MemoListDto.builder()
                     .id(id++)
-                    .width(accountBook.getWidth())
-                    .height(accountBook.getHeight())
-                    .x(accountBook.getX())
-                    .y(accountBook.getY())
+                    .width(accountBook.getMemo().getWidth())
+                    .height(accountBook.getMemo().getHeight())
+                    .x(accountBook.getMemo().getX())
+                    .y(accountBook.getMemo().getY())
                     .memoTypeSeq(2)
                     .info(new LinkedList<AccountBookItemDto>(){{
                         for (AccountBookItem accountBookItem : findMemosDto.getAccountBookItems()) {
@@ -339,10 +371,10 @@ public class DiaryServiceImpl implements DiaryService {
         for (Checklist checklist : findMemosDto.getChecklists()) {
             memoListDtos.add(MemoListDto.builder()
                     .id(id++)
-                    .width(checklist.getWidth())
-                    .height(checklist.getHeight())
-                    .x(checklist.getX())
-                    .y(checklist.getY())
+                    .width(checklist.getMemo().getWidth())
+                    .height(checklist.getMemo().getHeight())
+                    .x(checklist.getMemo().getX())
+                    .y(checklist.getMemo().getY())
                     .memoTypeSeq(3)
                     .info(new HashMap<>(){{
                         put("checklistHeader", checklist.getChecklistHeader());
@@ -360,6 +392,18 @@ public class DiaryServiceImpl implements DiaryService {
                     .build());
         }
 
+        for (Sticker sticker : findMemosDto.getStickers()) {
+            memoListDtos.add(MemoListDto.builder()
+                    .id(id++)
+                    .width(sticker.getMemo().getWidth())
+                    .height(sticker.getMemo().getHeight())
+                    .x(sticker.getMemo().getX())
+                    .y(sticker.getMemo().getY())
+                    .memoTypeSeq(6)
+                    .info(sticker.getEmoji())
+                    .build());
+        }
+
         return ResDiaryDto.builder()
                 .diaryDate(diaryDate)
                 .totalCnt(memberMemos.size())
@@ -373,15 +417,19 @@ public class DiaryServiceImpl implements DiaryService {
         List<Long> textSeqs = new ArrayList<>();
         List<Long> accountBookSeqs = new ArrayList<>();
         List<Long> checklistSeqs = new ArrayList<>();
+        List<Long> stickerSeqs = new ArrayList<>();
 
         for (MemberMemo memberMemo : memberMemos) {
             Long memoTypeSeq = memberMemo.getMemoType().getMemoTypeSeq();
+            Long memoSeq = memberMemo.getMemoSeq();
             if (memoTypeSeq == 1L) {
-                textSeqs.add(memberMemo.getMemoSeq());
+                textSeqs.add(memoSeq);
             } else if (memoTypeSeq == 2L) {
-                accountBookSeqs.add(memberMemo.getMemoSeq());
+                accountBookSeqs.add(memoSeq);
             } else if (memoTypeSeq == 3L) {
-                checklistSeqs.add(memberMemo.getMemoSeq());
+                checklistSeqs.add(memoSeq);
+            } else if (memoTypeSeq == 6L) {
+                stickerSeqs.add(memoSeq);
             } else {
                 throw new CustomException(LogUtil.getElement(), INVALID_MEMO_TYPE);
             }
@@ -391,6 +439,7 @@ public class DiaryServiceImpl implements DiaryService {
         List<Text> texts = textRepository.findAllByTextSeqIn(textSeqs);
         List<AccountBook> accountBooks = accountBookRepository.findAllByAccountBookSeqIn(accountBookSeqs);
         List<Checklist> checklists = checklistRepository.findAllByChecklistSeqIn(checklistSeqs);
+        List<Sticker> stickers = stickerRepository.findAllByStickerSeqIn(stickerSeqs);
 
         // 떡메 아이템 찾기
         List<AccountBookItem> accountBookItems = accountBookItemRepository.findAllByAccountBookIn(accountBooks);
@@ -400,6 +449,7 @@ public class DiaryServiceImpl implements DiaryService {
                 .texts(texts)
                 .accountBooks(accountBooks)
                 .checklists(checklists)
+                .stickers(stickers)
                 .accountBookItems(accountBookItems)
                 .checklistItems(checklistItems)
                 .build();
