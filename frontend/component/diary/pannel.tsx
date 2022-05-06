@@ -71,13 +71,22 @@ function getMemo(seq) {
 //   />
 // </div>
 
-const Pannel = ({ onClick, open }) => {
+const Pannel = ({ onClick, open, onCloseBtn }) => {
   const memoSeqList = [1, 2, 3, 4, 5]
 
   return (
     <>
       {open && (
         <div className={styles.pannel}>
+          <div className={styles.closeBtnImgContainer}>
+            <Image
+              src={closeBtnImg}
+              className={styles.closeBtnImg}
+              width="36"
+              height="36"
+              onClick={onCloseBtn}
+            />
+          </div>
           {memoSeqList.map((seq, index) => (
             <div className={styles.container} key={index}>
               <Image src={textMemoImg} className="image" width="" height="" />

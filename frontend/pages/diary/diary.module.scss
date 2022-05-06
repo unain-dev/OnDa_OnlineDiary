@@ -1,15 +1,19 @@
+@mixin cursor {
+  &:hover {
+    cursor: pointer;
+  }
+}
+
 .dateContainer {
   margin: 20px;
-  max-width: 50%;
+  // max-width: 50%;
   span {
     vertical-align: middle;
     margin: 20px;
   }
   .calendarIcon {
     margin-left: 20px;
-    &:hover {
-      cursor: pointer;
-    }
+    @include cursor;
   }
   h2 {
     display: inline-block;
@@ -42,4 +46,10 @@
     position: fixed;
     bottom: 0;
   }
+}
+
+.closeBtnImgContainer {
+  float: right;
+  padding-right: 20px;
+  @include cursor;
 }
