@@ -34,14 +34,6 @@ const diary = () => {
     // alert('추가되었습니다.')
   }
 
-  console.log('reload')
-
-  const memberSeq = 3
-
-  useEffect(() => {
-    appDispatch(getMemoAction(memberSeq))
-  }, [])
-
   useEffect(() => {
     setDraggableState(Array(len).fill(true))
   }, [len])
@@ -54,31 +46,43 @@ const diary = () => {
     appDispatch(deleteMemo(id))
   }
 
+  const [viewSize, setViewSize] = useState({
+    width: 0,
+    height: 0,
+  })
+  const [pannelIsOpen, setPannelIsOpen] = useState(true)
+  const memberSeq = 3
+  useEffect(() => {
+    appDispatch(getMemoAction(memberSeq))
+    setViewSize({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    })
+  }, [])
+
   return (
     <>
       <button onClick={onClickSave}>저장하기</button>
       {value.memoList.map((c, index) => (
         <RND
           style={{
-            // background: '#898989',
-            // background: '#ffc',
-            // background: 'transparent',
             background: `${c.memoTypeSeq === 5 ? 'transparent' : '#ffc'}`,
             borderRadius: '10px',
             boxShadow: '0 5px 5px `rgba(0,0,0,0.4)`',
             borderStyle: `${c.isEditing ? 'dashed' : 'none'}`,
-            // overflow: 'hidden',
           }}
           content={c}
           key={index}
           onDragStop={(e, d) => {
-            dispatch(
-              changeMemoState({
-                ...c,
-                x: d.x,
-                y: d.y,
-              }),
-            )
+            if (d.x > 0 && d.y > 0 && d.x < viewSize.width) {
+              dispatch(
+                changeMemoState({
+                  ...c,
+                  x: d.x,
+                  y: d.y,
+                }),
+              )
+            }
           }}
           onResizeStop={(e, direction, ref, delta, position) => {
             dispatch(
@@ -95,7 +99,6 @@ const diary = () => {
           }}
           disableDragging={!draggableState[index]}
         >
-          {/* 여기에 이런식으로 넣고자하는 컴포넌트 넣기*/}
           <MemoSeparator
             memoInfo={c} // memoInfo = memoList의 한 요소 전체 정보(width, height, x, y, info(content, header))
             memoTypeSeq={c.memoTypeSeq}
@@ -107,7 +110,24 @@ const diary = () => {
           />
         </RND>
       ))}
-      <Pannel onClick={onClickPannel} />
+      {pannelIsOpen ? (
+        <button
+          onClick={(e) => {
+            setPannelIsOpen(false)
+          }}
+        >
+          X
+        </button>
+      ) : (
+        <button
+          onClick={(e) => {
+            setPannelIsOpen(true)
+          }}
+        >
+          open
+        </button>
+      )}
+      <Pannel open={pannelIsOpen} onClick={onClickPannel} />
     </>
   )
 }

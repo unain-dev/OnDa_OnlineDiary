@@ -61,27 +61,31 @@ function getMemo(seq) {
   }
 }
 
-const Pannel = ({ onClick }) => {
+const Pannel = ({ onClick, open }) => {
   const memoSeqList = [1, 2, 3, 4, 5]
 
   return (
-    <div className={styles.pannel}>
-      {memoSeqList.map((seq, index) => (
-        <div className={styles.container} key={index}>
-          <Image src={textMemoImg} className="image" width="" height="" />
-          <div className={styles.middle}>
-            <button
-              className={styles.button}
-              onClick={(e) => {
-                onClick(getMemo(seq), e)
-              }}
-            >
-              {seq}번
-            </button>
-          </div>
+    <>
+      {open && (
+        <div className={styles.pannel}>
+          {memoSeqList.map((seq, index) => (
+            <div className={styles.container} key={index}>
+              <Image src={textMemoImg} className="image" width="" height="" />
+              <div className={styles.middle}>
+                <button
+                  className={styles.button}
+                  onClick={(e) => {
+                    onClick(getMemo(seq), e)
+                  }}
+                >
+                  {seq}번
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
-      ))}
-    </div>
+      )}
+    </>
   )
 }
 
