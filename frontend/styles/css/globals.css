@@ -1,0 +1,17 @@
+@font-face {
+  font-family: 'InkLipquid';
+  font-weight: 200;
+  src: url('/frontend/public/asset/font/DonounMedium.ttf');
+}
+
+* {
+  /* font-family: 'InkLipquid'; */
+  /* font-family: 'Nanum Gothic Coding', serif; */
+  font-family: 'Gothic A1', sans-serif;
+  padding: 0;
+  margin: 0;
+}
+
+button:hover {
+  cursor: pointer;
+}

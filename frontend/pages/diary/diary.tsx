@@ -6,12 +6,18 @@ import { useSelector, useDispatch } from 'react-redux'
 import { changeMemoState, addMemo, deleteMemo } from 'core/store/modules/diary'
 import { getMemoAction, setMemoAction } from 'core/store/actions/memo'
 import { AppDispatch } from 'core/store'
+import calendarIcon from 'public/asset/image/diaryImage/calendarIcon.png'
+import Image from 'next/image'
+import styles from './diary.module.scss'
+import closeBtnImg from 'public/asset/image/diaryImage/closeBtnImg.png'
+import hamburgerIcon from 'public/asset/image/diaryImage/hamburgerIcon.png'
+import { truncate } from 'fs'
 
 const diary = () => {
-  const value = useSelector(({ diary }) => diary)
-  console.log(value)
-  const len = value.memoList.length
-  const lastId = value.lastId
+  const todaysInfo = useSelector(({ diary }) => diary)
+  console.log(todaysInfo)
+  const len = todaysInfo.memoList.length
+  const lastId = todaysInfo.lastId
 
   const dispatch = useDispatch()
   const appDispatch: AppDispatch = useDispatch()
@@ -39,7 +45,7 @@ const diary = () => {
   }, [len])
 
   const onClickSave = () => {
-    appDispatch(setMemoAction(value))
+    appDispatch(setMemoAction(todaysInfo))
   }
 
   const onDeleteMemo = (id) => {
@@ -50,7 +56,7 @@ const diary = () => {
     width: 0,
     height: 0,
   })
-  const [pannelIsOpen, setPannelIsOpen] = useState(true)
+  const [pannelIsOpen, setPannelIsOpen] = useState(false)
   const memberSeq = 3
   useEffect(() => {
     appDispatch(getMemoAction(memberSeq))
@@ -62,8 +68,39 @@ const diary = () => {
 
   return (
     <>
-      <button onClick={onClickSave}>저장하기</button>
-      {value.memoList.map((c, index) => (
+      <div className={styles.dateContainer}>
+        <Image
+          src={calendarIcon}
+          className={styles.calendarIcon}
+          width="40"
+          height="40"
+        />
+        <span>
+          <button> &lt;</button>
+          <span>
+            <h2>{todaysInfo.date}</h2>
+          </span>
+          <button>&gt;</button>
+        </span>
+        <span className={styles.closeBtnImgContainer}>
+          {!pannelIsOpen && (
+            <Image
+              src={hamburgerIcon}
+              width="36"
+              height="36"
+              onClick={(e) => {
+                setPannelIsOpen(true)
+              }}
+            />
+          )}
+        </span>
+      </div>
+      <div className={styles.saveBtnWrapper}>
+        <button className={styles.saveBtn} onClick={onClickSave}>
+          저장하기
+        </button>
+      </div>
+      {todaysInfo.memoList.map((c, index) => (
         <RND
           style={{
             background: `${c.memoTypeSeq === 5 ? 'transparent' : '#ffc'}`,
@@ -110,24 +147,14 @@ const diary = () => {
           />
         </RND>
       ))}
-      {pannelIsOpen ? (
-        <button
-          onClick={(e) => {
-            setPannelIsOpen(false)
-          }}
-        >
-          X
-        </button>
-      ) : (
-        <button
-          onClick={(e) => {
-            setPannelIsOpen(true)
-          }}
-        >
-          open
-        </button>
-      )}
-      <Pannel open={pannelIsOpen} onClick={onClickPannel} />
+
+      <Pannel
+        open={pannelIsOpen}
+        onClick={onClickPannel}
+        onCloseBtn={() => {
+          setPannelIsOpen(false)
+        }}
+      />
     </>
   )
 }

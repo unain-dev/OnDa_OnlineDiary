@@ -1,33 +1,53 @@
+@mixin cursor {
+  &:hover {
+    cursor: pointer;
+  }
+}
+
 .pannel {
-  opacity: 1;
-  width: 30%;
-  height: 100vh;
-  float: right;
-  // background: black;
-  border: solid 1px;
+  width: 20%;
+  height: 100%;
+  // float: right;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  // border-left: solid 1px grey;
+  overflow: auto;
+  background-color: #cfe1ec;
+  .closeBtnImg {
+    right: 0;
+    // background-color: red;
+    @include cursor();
+  }
 }
 
 .container {
   position: relative;
   width: 150px;
   margin: 30px;
+  display: inline-block;
   &:hover {
     filter: brightness(80%);
+    .middle {
+      opacity: 1;
+    }
+    .image {
+      opacity: 0.3;
+      filter: brightness(80%);
+    }
   }
 }
 
 .image {
   opacity: 1;
-  display: block;
   width: 100%;
   display: block;
   margin: 0 auto;
   height: auto;
   transition: 0.5s ease;
   backface-visibility: hidden;
-  &:hover {
-    cursor: pointer;
-  }
+  @include cursor();
 }
 
 .middle {
@@ -41,22 +61,16 @@
   text-align: center;
 }
 
-.container:hover .image {
-  opacity: 0.3;
-  filter: brightness(80%);
-}
-
-.container:hover .middle {
-  opacity: 1;
-}
-
 .button {
-  background-color: #7d5fff;
+  background-color: #2699e2;
   color: white;
   font-size: 0.8rem;
   padding: 5px 10px;
   border-radius: 5px;
-  &:hover {
-    cursor: pointer;
-  }
+}
+
+.closeBtnImgContainer {
+  text-align: right;
+  padding: 20px;
+  padding-bottom: 0;
 }
