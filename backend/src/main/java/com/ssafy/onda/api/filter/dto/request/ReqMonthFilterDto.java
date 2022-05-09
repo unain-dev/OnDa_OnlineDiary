@@ -11,7 +11,7 @@ import java.util.Date;
 @Getter
 public class ReqMonthFilterDto {
 
-    private Date date;
+    private String date;
 
     private Long type;
 
