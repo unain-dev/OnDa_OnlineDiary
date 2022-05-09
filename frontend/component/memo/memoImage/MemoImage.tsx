@@ -38,6 +38,7 @@ export default function MemoImage({ memoInfo, drag, onDeleteMemo }) {
     dispatch(
       changeMemoState({
         ...memoInfo,
+        info: previewImage,
         isEditing: false,
       }),
     )

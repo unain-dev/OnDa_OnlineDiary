@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
-import { changeText, changeMemoState } from 'core/store/modules/diary'
+import { changeMemoState } from 'core/store/modules/diary'
 import styles from '../../../styles/scss/Memo.module.scss'
 interface Props {
   width: number
@@ -80,16 +80,11 @@ const MemoFinancialLedger = ({memoInfo, drag, onDeleteMemo}) => {
     setIsEditable(false)
     drag.enableDragging()
     dispatch(
-      changeText({
+      changeMemoState({
         ...memoInfo,
         info: {
           ...financeLedger
         },
-      }),
-    )
-    dispatch(
-      changeMemoState({
-        ...memoInfo,
         isEditing: false,
       }),
     )
