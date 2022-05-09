@@ -16,7 +16,6 @@ export const getMemoAction = createAsyncThunk<
   any,
   { rejectValue: MyKnownError }
 >('memo/getMemo', async (params, thunkAPI) => {
-  console.log(params)
   try {
     const res = await axios.get(BASE_URL + `/diary/${params.diaryDate}`, {
       headers: {
@@ -141,12 +140,10 @@ export const setMemoAction = createAsyncThunk<
         'Content-Type': 'multipart/form-data',
       },
     })
-    console.log(res)
     if (res.data.status == 201) {
       return res
     }
   } catch (error) {
     console.log(error)
   }
-  console.log(params)
 })
