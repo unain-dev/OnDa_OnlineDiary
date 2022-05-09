@@ -148,13 +148,14 @@ const diary = () => {
         </RND>
       ))}
 
-      <Pannel
-        open={pannelIsOpen}
-        onClick={onClickPannel}
-        onCloseBtn={() => {
-          setPannelIsOpen(false)
-        }}
-      />
+      {pannelIsOpen && (
+        <Pannel
+          onClick={onClickPannel}
+          onCloseBtn={() => {
+            setPannelIsOpen(false)
+          }}
+        />
+      )}
     </>
   )
 }
