@@ -75,7 +75,7 @@ const MemoChecklist = ({memoInfo, drag, onDeleteMemo}) => {
   }
   const [header, setHeader] = useState(info.checklistHeader);
   return (
-    <div className={styles.checklist} style={{width: width-10, height: height}}  onMouseOver={mouseOverEvent} onMouseLeave={mouseLeaveEvent} >
+    <div className={styles.checklist} style={{width: width-10, height: height-30}}  onMouseOver={mouseOverEvent} onMouseLeave={mouseLeaveEvent} >
       {mouseState && <div
         className={styles.deleteButton}
         onClick={() => {

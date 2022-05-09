@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
-import { changeMemoState } from 'core/store/modules/diary'
+import { changeText, changeMemoState } from 'core/store/modules/diary'
 import styles from '../../../styles/scss/Memo.module.scss'
 interface Props {
   width: number
@@ -36,7 +36,7 @@ const MemoFinancialLedger = ({memoInfo, drag, onDeleteMemo}) => {
             if(financeLedger[i].outcome!=='') tempOutcome+=parseInt(financeLedger[i].outcome);
         }
         setTotal({...total, total: (tempIncome-tempOutcome).toString(), income: tempIncome.toString(), outcome: tempOutcome.toString()})
-        console.log(tempIncome, tempOutcome)
+        console.log(financeLedger)
     },[financeLedger])
 
     const onInputContent = (type, event) => {
@@ -79,6 +79,14 @@ const MemoFinancialLedger = ({memoInfo, drag, onDeleteMemo}) => {
   const onApproveUpdateClick = () => {
     setIsEditable(false)
     drag.enableDragging()
+    dispatch(
+      changeText({
+        ...memoInfo,
+        info: {
+          ...financeLedger
+        },
+      }),
+    )
     dispatch(
       changeMemoState({
         ...memoInfo,
