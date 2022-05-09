@@ -1,6 +1,5 @@
 package com.ssafy.onda.api.filter.controller;
 
-import com.ssafy.onda.api.filter.dto.request.ReqMonthFilterDto;
 import com.ssafy.onda.api.filter.service.FilterService;
 import com.ssafy.onda.global.common.util.LogUtil;
 import lombok.RequiredArgsConstructor;
