@@ -12,18 +12,20 @@ interface Props {
   drag: any
   onDeleteMemo: any
 }
-const MemoChecklist = ({memoInfo, drag, onDeleteMemo}) => {
-    const { width, height, info } = memoInfo
-    const dispatch = useDispatch();
-    const [checkboxFullInfo, setCheckboxFullInfo] = useState({...info})
-    const [checkboxInfo, setCheckboxInfo] = useState([...checkboxFullInfo.checklistItems])
-    const [content, setContent] = useState('');
-    const [isEditable, setIsEditable] = useState(false);
-    const onCheckboxClick = (index) =>{
-        const temp = JSON.parse(JSON.stringify(checkboxInfo));
-        temp[index].isChecked = !temp[index].isChecked
-        setCheckboxInfo([...temp])
-    }
+const MemoChecklist = ({ memoInfo, drag, onDeleteMemo }) => {
+  const { width, height, info } = memoInfo
+  const dispatch = useDispatch()
+  const [checkboxFullInfo, setCheckboxFullInfo] = useState({ ...info })
+  const [checkboxInfo, setCheckboxInfo] = useState(
+    checkboxFullInfo.length > 0 ? [...checkboxFullInfo.checklistItems] : [],
+  )
+  const [content, setContent] = useState('')
+  const [isEditable, setIsEditable] = useState(false)
+  const onCheckboxClick = (index) => {
+    const temp = JSON.parse(JSON.stringify(checkboxInfo))
+    temp[index].isChecked = !temp[index].isChecked
+    setCheckboxInfo([...temp])
+  }
   const inputChecklistContent = (e) => {
     setContent(e.target.value)
   }
@@ -47,7 +49,7 @@ const MemoChecklist = ({memoInfo, drag, onDeleteMemo}) => {
   }
   const onApproveUpdateClick = () => {
     setIsEditable(false)
-    drag.enableDragging()      
+    drag.enableDragging()
     dispatch(
       changeMemoState({
         ...memoInfo,
@@ -60,40 +62,53 @@ const MemoChecklist = ({memoInfo, drag, onDeleteMemo}) => {
     )
   }
   const onDeleteButtonClick = () => {}
-  const [mouseState, setMouseState] = useState(false);
-  
-  const mouseOverEvent = () =>{
-    setMouseState(true);
+  const [mouseState, setMouseState] = useState(false)
+
+  const mouseOverEvent = () => {
+    setMouseState(true)
   }
-  const mouseLeaveEvent = () =>{
-    setMouseState(false);
+  const mouseLeaveEvent = () => {
+    setMouseState(false)
   }
-  const [header, setHeader] = useState(info.checklistHeader);
+  const [header, setHeader] = useState(info.checklistHeader)
   return (
-    <div className={styles.checklist} style={{width: width-10, height: height-30}}  onMouseOver={mouseOverEvent} onMouseLeave={mouseLeaveEvent} >
-      {mouseState && <div
-        className={styles.deleteButton}
-        onClick={() => {
-          onDeleteMemo(memoInfo.id)
-        }}
-      >
-        ❌
-      </div>}
+    <div
+      className={styles.checklist}
+      style={{ width: width - 10, height: height - 30 }}
+      onMouseOver={mouseOverEvent}
+      onMouseLeave={mouseLeaveEvent}
+    >
+      {mouseState && (
+        <div
+          className={styles.deleteButton}
+          onClick={() => {
+            onDeleteMemo(memoInfo.id)
+          }}
+        >
+          ❌
+        </div>
+      )}
       {mouseState && !isEditable && (
         <div className={styles.updateButton} onClick={onUpdateButtonClick}>
           ✏️
         </div>
       )}
       {!isEditable && <div className={styles.checklistHeader}>{header}</div>}
-      {isEditable &&         <input
+      {isEditable && (
+        <input
           defaultValue={header}
           onChange={(e) => {
             setHeader(e.target.value)
           }}
           className={styles.checklistHeader}
-          style={{ width: width - 45, background: 'transparent', border: '0px solid'}}
+          style={{
+            width: width - 45,
+            background: 'transparent',
+            border: '0px solid',
+          }}
           placeholder="제목을 입력해주세요"
-        />}
+        />
+      )}
       {checkboxInfo.length > 0 &&
         checkboxInfo.map((checkbox, index) => {
           return (
@@ -109,8 +124,20 @@ const MemoChecklist = ({memoInfo, drag, onDeleteMemo}) => {
         })}
       {isEditable && (
         <div className={styles.checklistButton}>
-          <input style={{ width: width-30 }} className={styles.checklistInput} value={content} onChange={inputChecklistContent} type="text" placeholder='내용을 입력해주세요!' />
-          <button className={styles.checklistAddButton} onClick={addCheckboxList}>✓</button>
+          <input
+            style={{ width: width - 30 }}
+            className={styles.checklistInput}
+            value={content}
+            onChange={inputChecklistContent}
+            type="text"
+            placeholder="내용을 입력해주세요!"
+          />
+          <button
+            className={styles.checklistAddButton}
+            onClick={addCheckboxList}
+          >
+            ✓
+          </button>
         </div>
       )}
       {mouseState && isEditable && (
