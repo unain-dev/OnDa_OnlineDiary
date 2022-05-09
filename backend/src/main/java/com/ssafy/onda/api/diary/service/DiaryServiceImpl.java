@@ -262,7 +262,7 @@ public class DiaryServiceImpl implements DiaryService {
         for (Sticker savedSticker : savedStickers) {
             memberMemos.add(MemberMemo.builder()
                     .memoSeq(savedSticker.getStickerSeq())
-                    .memoType(memoTypeRepository.findByMemoTypeSeq(6L))
+                    .memoType(memoTypeRepository.findByMemoTypeSeq(5L))
                     .background(savedBackground)
                     .build());
         }
