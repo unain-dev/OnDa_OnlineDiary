@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @ToString(of = {"emailAuthSeq", "email", "emailAuth", "date"})
 @Table(name = "tb_email_auth")
 @Entity
-public class EmailAuth {
+public class DeleteEmailAuth {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -26,7 +26,7 @@ public class EmailAuth {
     private LocalDateTime date;
 
     @Builder
-    public EmailAuth(String email, String emailAuth, LocalDateTime date) {
+    public DeleteEmailAuth(String email, String emailAuth, LocalDateTime date) {
         this.emailAuthSeq = emailAuthSeq;
         this.email = email;
         this.emailAuth = emailAuth;

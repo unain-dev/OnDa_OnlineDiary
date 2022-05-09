@@ -75,4 +75,5 @@ public class CustomUserDetails implements UserDetails {
         this.roles = roles;
     }
 
+    public String getEmail() { return this.memberDto.getEmail(); }
 }

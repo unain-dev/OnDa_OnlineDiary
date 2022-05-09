@@ -5,7 +5,7 @@ import lombok.ToString;
 
 import javax.validation.constraints.Email;
 
-@ToString(of = { "email", "Auth" })
+@ToString(of = { "email", "emailAuth" })
 @Getter
 public class ReqEmailAuthDto {
 
