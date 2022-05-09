@@ -5,7 +5,7 @@ import MemoFrame from './MemoText.view'
 import dynamic from 'next/dynamic'
 import styles from '../../../styles/scss/Memo.module.scss'
 import 'react-quill/dist/quill.bubble.css'
-import { changeText, changeMemoState } from '../../../core/store/modules/diary'
+import { changeMemoState } from '../../../core/store/modules/diary'
 
 
 
@@ -115,17 +115,12 @@ const MemoText: NextPage<Props> = ({ memoInfo, drag, onDeleteMemo }) => {
     console.log(drag)
     drag.enableDragging()
     dispatch(
-      changeText({
+      changeMemoState({
         ...memoInfo,
         info: {
           header: headerText,
           content: text,
         },
-      }),
-    )
-    dispatch(
-      changeMemoState({
-        ...memoInfo,
         isEditing: false,
       }),
     )

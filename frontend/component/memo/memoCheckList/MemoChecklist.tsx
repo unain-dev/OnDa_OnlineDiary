@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import styles from '../../../styles/scss/Memo.module.scss'
 import { useDispatch } from 'react-redux'
-import { changeText, changeMemoState } from '../../../core/store/modules/diary'
+import { changeMemoState } from '../../../core/store/modules/diary'
 
 interface Props {
   memoInfo: any
@@ -47,19 +47,14 @@ const MemoChecklist = ({memoInfo, drag, onDeleteMemo}) => {
   }
   const onApproveUpdateClick = () => {
     setIsEditable(false)
-    drag.enableDragging()
+    drag.enableDragging()      
     dispatch(
-      changeText({
+      changeMemoState({
         ...memoInfo,
         info: {
           checklistHeader: header,
           checklistItems: [...checkboxInfo],
         },
-      }),
-    )
-    dispatch(
-      changeMemoState({
-        ...memoInfo,
         isEditing: false,
       }),
     )

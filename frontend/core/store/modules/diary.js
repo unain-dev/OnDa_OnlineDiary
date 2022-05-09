@@ -37,20 +37,7 @@ const diarySlice = createSlice({
             }
           : memo,
       )
-
-      state.memoList = arr
-    },
-    // memoText 수정시 dispatch 되는 리듀서
-    changeText: (state, action) => {
-      let arr = state.memoList.map((memo) =>
-        memo.id === action.payload.id
-          ? {
-              ...memo,
-              info: action.payload.info,
-            }
-          : memo,
-      )
-
+      console.log(arr)
       state.memoList = arr
     },
     deleteMemo: (state, action) => {
@@ -72,6 +59,5 @@ const diarySlice = createSlice({
       }),
 })
 
-export const { addMemo, changeMemoState, changeText, deleteMemo } =
-  diarySlice.actions
+export const { addMemo, changeMemoState, deleteMemo } = diarySlice.actions
 export default diarySlice.reducer

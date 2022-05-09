@@ -36,9 +36,11 @@ const MemoSticker = ({ memoInfo, drag, onDeleteMemo }) => {
     setIsEditable(false)
     if (text !== '') handleOnEnter(text)
     drag.enableDragging()
+    console.log(finalEmoji)
     dispatch(
       changeMemoState({
         ...memoInfo,
+        info: finalEmoji,
         isEditing: false,
       }),
     )
