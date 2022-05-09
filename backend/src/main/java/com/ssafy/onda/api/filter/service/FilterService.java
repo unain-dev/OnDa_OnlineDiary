@@ -4,5 +4,5 @@ import com.ssafy.onda.api.filter.dto.request.ReqMonthFilterDto;
 
 public interface FilterService {
 
-    void MonthSearch(ReqMonthFilterDto reqMonthFilterDto);
+    void monthSearch(ReqMonthFilterDto reqMonthFilterDto);
 }
