@@ -9,12 +9,12 @@ public class AccountBookItemDto {
 
     private String content;
 
-    private Long income;
+    private String income;
 
-    private Long outcome;
+    private String outcome;
 
     @Builder
-    public AccountBookItemDto(String content, Long income, Long outcome) {
+    public AccountBookItemDto(String content, String income, String outcome) {
         this.content = content;
         this.income = income;
         this.outcome = outcome;

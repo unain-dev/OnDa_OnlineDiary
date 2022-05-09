@@ -19,17 +19,17 @@ public class AccountBookItem {
     private String content;
 
     @Column(nullable = false)
-    private Long income;
+    private String income;
 
     @Column(nullable = false)
-    private Long outcome;
+    private String outcome;
 
     @JoinColumn(name = "account_book_seq", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private AccountBook accountBook;
 
     @Builder
-    public AccountBookItem(Long accountBookItemSeq, String content, Long income, Long outcome, AccountBook accountBook) {
+    public AccountBookItem(Long accountBookItemSeq, String content, String income, String outcome, AccountBook accountBook) {
         this.accountBookItemSeq = accountBookItemSeq;
         this.content = content;
         this.income = income;
