@@ -95,7 +95,7 @@ public class DiaryController {
                 .status(OK.value())
                 .msg("다이어리 불러오기 성공")
                 .data(new HashMap<>() {{
-                    put("date", resDiaryDto.getDiaryDate());
+                    put("diaryDate", resDiaryDto.getDiaryDate());
                     put("totalCnt", resDiaryDto.getTotalCnt());
                     put("memoList", resDiaryDto.getMemoList());
                 }})
