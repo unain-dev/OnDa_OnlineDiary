@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.List;
 
-@ToString(of = { "diaryDate" })
+@ToString(of = { "diaryDate", "memoList" })
 @NoArgsConstructor
 @Getter
 public class ReqDiaryDto {

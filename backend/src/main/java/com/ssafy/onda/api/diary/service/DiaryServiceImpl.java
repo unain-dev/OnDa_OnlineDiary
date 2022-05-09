@@ -15,8 +15,9 @@ import com.ssafy.onda.api.member.repository.MemberRepository;
 import com.ssafy.onda.global.common.auth.CustomUserDetails;
 import com.ssafy.onda.global.common.dto.*;
 import com.ssafy.onda.global.common.entity.*;
-import com.ssafy.onda.global.common.entity.base.Memo;
+import com.ssafy.onda.global.common.entity.embedded.Memo;
 import com.ssafy.onda.global.common.repository.*;
+import com.ssafy.onda.global.common.service.FileInfoService;
 import com.ssafy.onda.global.common.util.LogUtil;
 import com.ssafy.onda.global.error.exception.CustomException;
 
@@ -24,7 +25,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -54,13 +57,17 @@ public class DiaryServiceImpl implements DiaryService {
 
     private final ChecklistItemRepository checklistItemRepository;
 
+    private final ImageRepository imageRepository;
+
     private final StickerRepository stickerRepository;
 
     private final MemoTypeRepository memoTypeRepository;
 
+    private final FileInfoService fileInfoService;
+
     @Transactional
     @Override
-    public void save(CustomUserDetails details, ReqDiaryDto reqDiaryDto) {
+    public void save(CustomUserDetails details, ReqDiaryDto reqDiaryDto, List<MultipartFile> multipartFiles) {
 
         // 회원 확인
         Member member = memberRepository.findByMemberId(details.getUsername())
@@ -74,6 +81,7 @@ public class DiaryServiceImpl implements DiaryService {
         List<Text> texts = new ArrayList<>();
         List<AccountBook> accountBooks = new ArrayList<>();
         List<Checklist> checklists = new ArrayList<>();
+        List<Image> savedImages = new ArrayList<>();
         List<Sticker> stickers = new ArrayList<>();
 
         Map<AccountBook, List<AccountBookItemDto>> accountBookMap = new HashMap<>();
@@ -85,6 +93,8 @@ public class DiaryServiceImpl implements DiaryService {
         if (memoListDtos.size() == 0) {
             throw new CustomException(LogUtil.getElement(), NO_MEMO_AVAILABLE);
         }
+
+        int fileCnt = 0;
 
         for (MemoListDto memoListDto : memoListDtos) {
             Integer memoTypeSeq = memoListDto.getMemoTypeSeq();
@@ -125,7 +135,28 @@ public class DiaryServiceImpl implements DiaryService {
                         .build();
                 checklists.add(checklist);
                 checklistMap.put(checklist, checklistDto.getChecklistItems());
-            } else if (memoTypeSeq == 6) {
+            } else if (memoTypeSeq == 4) {
+                int fileIdx = (Integer) memoListDto.getInfo();
+                if (multipartFiles.size() <= fileIdx) {
+                    throw new CustomException(LogUtil.getElement(), FILE_INDEX_OUT_OF_BOUNDS);
+                }
+
+                Image image = Image.builder()
+                        .memo(Memo.builder()
+                                .x(memoListDto.getX())
+                                .y(memoListDto.getY())
+                                .width(memoListDto.getWidth())
+                                .height(memoListDto.getHeight())
+                                .build())
+                        .build();
+                // 일단 파일을 저장해놓고 save에 실패할 경우 delete 추가
+                try {
+                    savedImages.add(fileInfoService.save(image, multipartFiles.get(fileIdx)));
+                    fileCnt++;
+                } catch (IOException e) {
+                    throw new CustomException(LogUtil.getElement(), FAIL_TO_SAVE_IMAGE);
+                }
+            } else if (memoTypeSeq == 5) {
                 String emoji = (String) memoListDto.getInfo();
                 stickers.add(Sticker.builder()
                         .memo(Memo.builder()
@@ -139,6 +170,10 @@ public class DiaryServiceImpl implements DiaryService {
             } else {
                 throw new CustomException(LogUtil.getElement(), INVALID_MEMO_TYPE);
             }
+        }
+
+        if (savedImages.size() != fileCnt) {
+            throw new CustomException(LogUtil.getElement(), MISMATCH_IN_NUMBER_OF_FILES_AND_IMAGES);
         }
 
         // 떡메 저장
@@ -216,6 +251,14 @@ public class DiaryServiceImpl implements DiaryService {
                     .build());
         }
 
+        for (Image savedImage : savedImages) {
+            memberMemos.add(MemberMemo.builder()
+                    .memoSeq(savedImage.getImageSeq())
+                    .memoType(memoTypeRepository.findByMemoTypeSeq(4L))
+                    .background(savedBackground)
+                    .build());
+        }
+
         for (Sticker savedSticker : savedStickers) {
             memberMemos.add(MemberMemo.builder()
                     .memoSeq(savedSticker.getStickerSeq())
@@ -267,6 +310,9 @@ public class DiaryServiceImpl implements DiaryService {
         textRepository.deleteAllInBatch(findMemosDto.getTexts());
         accountBookRepository.deleteAllInBatch(findMemosDto.getAccountBooks());
         checklistRepository.deleteAllInBatch(findMemosDto.getChecklists());
+        for (Image image : findMemosDto.getImages()) {
+            fileInfoService.delete(image);
+        }
         stickerRepository.deleteAllInBatch(findMemosDto.getStickers());
 
         // 회원떡메 삭제
@@ -300,9 +346,6 @@ public class DiaryServiceImpl implements DiaryService {
                 .build());
         memoTypes.add(MemoType.builder()
                 .memoType("image")
-                .build());
-        memoTypes.add(MemoType.builder()
-                .memoType("video")
                 .build());
         memoTypes.add(MemoType.builder()
                 .memoType("sticker")
@@ -392,6 +435,18 @@ public class DiaryServiceImpl implements DiaryService {
                     .build());
         }
 
+        for (Image image : findMemosDto.getImages()) {
+            memoListDtos.add(MemoListDto.builder()
+                    .id(id++)
+                    .width(image.getMemo().getWidth())
+                    .height(image.getMemo().getHeight())
+                    .x(image.getMemo().getX())
+                    .y(image.getMemo().getY())
+                    .memoTypeSeq(4)
+                    .info(fileInfoService.loadPath(image))
+                    .build());
+        }
+
         for (Sticker sticker : findMemosDto.getStickers()) {
             memoListDtos.add(MemoListDto.builder()
                     .id(id++)
@@ -399,7 +454,7 @@ public class DiaryServiceImpl implements DiaryService {
                     .height(sticker.getMemo().getHeight())
                     .x(sticker.getMemo().getX())
                     .y(sticker.getMemo().getY())
-                    .memoTypeSeq(6)
+                    .memoTypeSeq(5)
                     .info(sticker.getEmoji())
                     .build());
         }
@@ -417,6 +472,7 @@ public class DiaryServiceImpl implements DiaryService {
         List<Long> textSeqs = new ArrayList<>();
         List<Long> accountBookSeqs = new ArrayList<>();
         List<Long> checklistSeqs = new ArrayList<>();
+        List<Long> imageSeqs = new ArrayList<>();
         List<Long> stickerSeqs = new ArrayList<>();
 
         for (MemberMemo memberMemo : memberMemos) {
@@ -428,7 +484,9 @@ public class DiaryServiceImpl implements DiaryService {
                 accountBookSeqs.add(memoSeq);
             } else if (memoTypeSeq == 3L) {
                 checklistSeqs.add(memoSeq);
-            } else if (memoTypeSeq == 6L) {
+            } else if (memoTypeSeq == 4L) {
+                imageSeqs.add(memoSeq);
+            } else if (memoTypeSeq == 5L) {
                 stickerSeqs.add(memoSeq);
             } else {
                 throw new CustomException(LogUtil.getElement(), INVALID_MEMO_TYPE);
@@ -439,6 +497,7 @@ public class DiaryServiceImpl implements DiaryService {
         List<Text> texts = textRepository.findAllByTextSeqIn(textSeqs);
         List<AccountBook> accountBooks = accountBookRepository.findAllByAccountBookSeqIn(accountBookSeqs);
         List<Checklist> checklists = checklistRepository.findAllByChecklistSeqIn(checklistSeqs);
+        List<Image> images = imageRepository.findAllByImageSeqIn(imageSeqs);
         List<Sticker> stickers = stickerRepository.findAllByStickerSeqIn(stickerSeqs);
 
         // 떡메 아이템 찾기
@@ -449,6 +508,7 @@ public class DiaryServiceImpl implements DiaryService {
                 .texts(texts)
                 .accountBooks(accountBooks)
                 .checklists(checklists)
+                .images(images)
                 .stickers(stickers)
                 .accountBookItems(accountBookItems)
                 .checklistItems(checklistItems)

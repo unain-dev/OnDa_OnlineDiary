@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.*;
@@ -29,7 +30,10 @@ public class DiaryController {
     private final DiaryService diaryService;
 
     @PostMapping
-    public BaseResponseDto save(Authentication authentication, @Valid @RequestBody ReqDiaryDto reqDiaryDto, Errors errors) {
+    public BaseResponseDto save(Authentication authentication,
+                                @Valid @RequestPart(value = "reqDiaryDto") ReqDiaryDto reqDiaryDto,
+                                Errors errors,
+                                @RequestPart(value = "files", required = false) List<MultipartFile> multipartFiles) {
         log.info("Called API: {}", LogUtil.getClassAndMethodName());
 
         if (authentication == null) {
@@ -50,7 +54,7 @@ public class DiaryController {
             }
         } else {
             CustomUserDetails details = (CustomUserDetails) authentication.getDetails();
-            diaryService.save(details, reqDiaryDto);
+            diaryService.save(details, reqDiaryDto, multipartFiles);
 
             status = CREATED.value();
             msg = "다이어리 저장 성공";
