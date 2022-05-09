@@ -1,4 +1,4 @@
-package com.ssafy.onda.global.common.entity.base;
+package com.ssafy.onda.global.common.entity.embedded;
 
 import lombok.*;
 

@@ -1,4 +1,4 @@
-package com.ssafy.onda.global.common.entity.base;
+package com.ssafy.onda.global.common.entity.embedded;
 
 import lombok.*;
 
@@ -6,24 +6,24 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Getter
-@ToString(of = { "originName", "encodingName", "savedPath" })
+@ToString(of = { "originName", "encodedName", "savedPath" })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Embeddable
-public class Media {
+public class FileInfo {
 
     @Column(nullable = false)
     private String originName;
 
     @Column(nullable = false)
-    private String encodingName;
+    private String encodedName;
 
     @Column(nullable = false)
     private String savedPath;
 
     @Builder
-    public Media(String originName, String encodingName, String savedPath) {
+    public FileInfo(String originName, String encodedName, String savedPath) {
         this.originName = originName;
-        this.encodingName = encodingName;
+        this.encodedName = encodedName;
         this.savedPath = savedPath;
     }
 }

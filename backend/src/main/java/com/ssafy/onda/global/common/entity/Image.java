@@ -1,7 +1,7 @@
 package com.ssafy.onda.global.common.entity;
 
-import com.ssafy.onda.global.common.entity.base.Media;
-import com.ssafy.onda.global.common.entity.base.Memo;
+import com.ssafy.onda.global.common.entity.embedded.FileInfo;
+import com.ssafy.onda.global.common.entity.embedded.Memo;
 import lombok.*;
 
 import javax.persistence.*;
@@ -20,10 +20,10 @@ public class Image {
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "originName", column = @Column(name = "origin_name", nullable = false)),
-            @AttributeOverride(name = "encodingName", column = @Column(name = "encoding_name", nullable = false)),
+            @AttributeOverride(name = "encodedName", column = @Column(name = "encoded_name", nullable = false)),
             @AttributeOverride(name = "savedPath", column = @Column(name = "saved_path", nullable = false))
     })
-    private Media media;
+    private FileInfo fileInfo;
 
     @Embedded
     @AttributeOverrides({
@@ -35,9 +35,9 @@ public class Image {
     private Memo memo;
 
     @Builder
-    public Image(Long imageSeq, Media media, Memo memo) {
+    public Image(Long imageSeq, FileInfo fileInfo, Memo memo) {
         this.imageSeq = imageSeq;
-        this.media = media;
+        this.fileInfo = fileInfo;
         this.memo = memo;
     }
 }

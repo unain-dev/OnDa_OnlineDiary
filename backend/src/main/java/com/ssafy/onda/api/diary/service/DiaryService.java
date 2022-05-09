@@ -6,12 +6,13 @@ import com.ssafy.onda.api.diary.dto.response.ResDiaryDto;
 import com.ssafy.onda.api.diary.entity.Background;
 import com.ssafy.onda.api.member.entity.MemberMemo;
 import com.ssafy.onda.global.common.auth.CustomUserDetails;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface DiaryService {
 
-    void save(CustomUserDetails details, ReqDiaryDto reqDiaryDto);
+    void save(CustomUserDetails details, ReqDiaryDto reqDiaryDto, List<MultipartFile> multipartFiles);
 
     void deleteByMemberAndDiaryDate(CustomUserDetails details, String diaryDate);
 
@@ -24,4 +25,5 @@ public interface DiaryService {
     ResDiaryDto load(CustomUserDetails details, String diaryDate);
 
     FindMemosDto find(List<MemberMemo> memberMemos);
+
 }

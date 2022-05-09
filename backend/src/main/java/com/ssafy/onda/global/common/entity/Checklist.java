@@ -1,6 +1,6 @@
 package com.ssafy.onda.global.common.entity;
 
-import com.ssafy.onda.global.common.entity.base.Memo;
+import com.ssafy.onda.global.common.entity.embedded.Memo;
 import lombok.*;
 
 import javax.persistence.*;

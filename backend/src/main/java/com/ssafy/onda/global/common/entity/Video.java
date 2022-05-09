@@ -1,7 +1,7 @@
 package com.ssafy.onda.global.common.entity;
 
-import com.ssafy.onda.global.common.entity.base.Media;
-import com.ssafy.onda.global.common.entity.base.Memo;
+import com.ssafy.onda.global.common.entity.embedded.FileInfo;
+import com.ssafy.onda.global.common.entity.embedded.Memo;
 import lombok.*;
 
 import javax.persistence.*;
@@ -20,10 +20,10 @@ public class Video {
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "originName", column = @Column(name = "origin_name", nullable = false)),
-            @AttributeOverride(name = "encodingName", column = @Column(name = "encoding_name", nullable = false)),
+            @AttributeOverride(name = "encodedName", column = @Column(name = "encoded_name", nullable = false)),
             @AttributeOverride(name = "savedPath", column = @Column(name = "saved_path", nullable = false))
     })
-    private Media media;
+    private FileInfo fileInfo;
 
     @Embedded
     @AttributeOverrides({
@@ -35,9 +35,9 @@ public class Video {
     private Memo memo;
 
     @Builder
-    public Video(Long videoSeq, Media media, Memo memo) {
+    public Video(Long videoSeq, FileInfo fileInfo, Memo memo) {
         this.videoSeq = videoSeq;
-        this.media = media;
+        this.fileInfo = fileInfo;
         this.memo = memo;
     }
 }
