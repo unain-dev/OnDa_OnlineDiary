@@ -18,17 +18,6 @@ public class FilterController {
 
     private final FilterService filterService;
 
-    @GetMapping("{}")
-    public ReqMonthFilterDto search(@RequestBody ReqMonthFilterDto reqMonthFilterDto){
-        log.info("Called API: {}", LogUtil.getClassAndMethodName());
-
-        if (reqMonthFilterDto.getDate() == null) {
-
-        } else {
-            filterService.MonthSearch(reqMonthFilterDto);
-        }
-
-        return reqMonthFilterDto;
-    };
+    
 
 }

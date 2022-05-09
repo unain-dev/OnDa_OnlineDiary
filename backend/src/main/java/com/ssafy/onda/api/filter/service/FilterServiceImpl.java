@@ -12,18 +12,5 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class FilterServiceImpl implements FilterService{
 
-    @Override
-    public void monthSearch(ReqMonthFilterDto reqMonthFilterDto) {
-
-        if(reqMonthFilterDto.getType() == null && reqMonthFilterDto.getKeyword() == null){
-
-        } else if(reqMonthFilterDto.getType() != null && reqMonthFilterDto.getKeyword() == null) {
-
-        } else if(reqMonthFilterDto.getType() == null && reqMonthFilterDto.getKeyword() != null) {
-
-        } else {
-
-        }
-
-    }
+    
 }
