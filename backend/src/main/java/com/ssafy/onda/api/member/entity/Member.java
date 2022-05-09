@@ -39,4 +39,6 @@ public class Member {
     public void changePassword(String newPassword) {
         this.password = newPassword;
     }
+
+    public void changeNickname(String newNickname) { this.nickname = newNickname; }
 }

@@ -5,8 +5,10 @@ import com.ssafy.onda.api.member.dto.request.ReqLoginMemberDto;
 import com.ssafy.onda.api.member.dto.request.ReqMemberDto;
 import com.ssafy.onda.api.member.dto.request.ReqUpdatePasswordDto;
 import com.ssafy.onda.api.member.dto.response.ResMemberDto;
+import com.ssafy.onda.api.member.entity.DeleteEmailAuth;
 import com.ssafy.onda.api.member.entity.EmailAuth;
 import com.ssafy.onda.api.member.entity.Member;
+import com.ssafy.onda.api.member.repository.DeleteEmailAuthRepository;
 import com.ssafy.onda.api.member.repository.EmailAuthRepository;
 import com.ssafy.onda.api.member.repository.MemberRepository;
 import com.ssafy.onda.global.common.auth.CustomUserDetails;
@@ -37,6 +39,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailAuthRepository emailAuthRepository;
+    private final DeleteEmailAuthRepository deleteEmailAuthRepository;
 
     @Autowired
     private final JavaMailSender javaMailSender;
@@ -174,19 +177,22 @@ public class MemberServiceImpl implements MemberService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(userEmail);
         message.setFrom("hush8541@gmail.com");
-        message.setSubject("다꾸다꾸 가입 인증");
+        message.setSubject("온다 가입 인증");
         message.setText(
-                "다이어리 꾸미기 다꾸다꾸에 가입 신청해주셔서 감사합니다 "
+                "다이어리 꾸미기 온다(onda)에 가입 신청해주셔서 감사합니다 "
                 + "\n 인증번호 : "
                 + AuthenticationKey
         );
 
-        EmailAuth emailAuth = new EmailAuth(userEmail,AuthenticationKey,LocalDateTime.now());
+        DeleteEmailAuth deleteEmailAuth = deleteEmailAuthRepository.findByEmail(userEmail);
 
-        emailAuthRepository.deleteAllInBatch(new ArrayList<>(){{
-            add(emailAuthRepository.findByEmail(userEmail));
+        deleteEmailAuthRepository.deleteAllInBatch(new ArrayList<>(){{
+            add(deleteEmailAuth);
         }});
+
         log.info("------------------------------------");
+
+        EmailAuth emailAuth = new EmailAuth(userEmail,AuthenticationKey,LocalDateTime.now());
         emailAuthRepository.save(emailAuth);
         log.info("------------------------------------");
 
@@ -198,14 +204,25 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public boolean authEmailCheck(String userEmail, String Auth) {
 
-        String AuthTemp = emailAuthRepository.findByEmail(userEmail).getEmailAuth();
+        EmailAuth emailAuth = emailAuthRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new CustomException(LogUtil.getElement(), MEMBER_NOT_FOUND));
 
-        if(AuthTemp.equals(Auth)) {
-            emailAuthRepository.deleteById(emailAuthRepository.findByEmail(userEmail).getEmailAuthSeq());
+        if(emailAuth.getEmailAuth().equals(Auth)) {
+            emailAuthRepository.deleteByEmail(emailAuth.getEmail());
             return true;
         } else{
             return false;
         }
+    }
+
+    @Transactional
+    @Override
+    public void changeInfo(String email, String nickname) {
+
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(LogUtil.getElement(), MEMBER_NOT_FOUND));
+
+        member.changeNickname(nickname);
     }
 
 }

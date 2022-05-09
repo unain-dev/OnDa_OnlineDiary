@@ -26,4 +26,6 @@ public interface MemberService {
     void authEmail(String userEmail);
 
     boolean authEmailCheck(String userEmail, String Auth);
+
+    void changeInfo(String email, String nickname);
 }
