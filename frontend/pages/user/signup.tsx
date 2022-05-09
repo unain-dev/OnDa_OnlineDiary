@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import SignupForm from 'component/user/signupForm'
-import { checkId, checkEmail, onSignup } from 'pages/api/memberApi'
+import { checkId, onSignup, emailAuth, emailAuthCheck } from 'pages/api/memberApi'
 
 const signup = () => {
   const [member, setMember] = useState({
@@ -9,6 +9,7 @@ const signup = () => {
     confirmPassword: "",
     nickname: "",
     email: "",
+    authCode: "",
   })
 
   const handleChangeState = (e) => {
@@ -24,9 +25,9 @@ const signup = () => {
     } else if (e.currentTarget.name == "email") {
       setErrorState({
         ...errorState,
-        emailUnique: false,
+        emailConfirm: false,
       })
-    }
+    } 
   }
 
   // error State
@@ -37,22 +38,9 @@ const signup = () => {
     passwordConfirm: false,
     nicknameRegex: false,
     emailRegex: false,
-    emailUnique: false,
+    emailSend: false,
     emailConfirm: false, // 인증
   });
-
-  const toggleIsEmailConfirm = () => {
-    if(errorState.emailUnique) {
-      setErrorState({
-      ...errorState,
-      emailConfirm: !errorState.emailConfirm,
-    })
-    } else if(errorState.emailRegex) {
-      alert("이메일 중복확인을 해주세요.")
-    } else {
-      alert("이메일을 입력해주세요.")
-    }
-  }
 
   // error Message
   const errorMsg = {
@@ -62,17 +50,17 @@ const signup = () => {
     passwordConfirm: '동일한 비밀번호를 입력해주세요.',
     nicknameRegex: '3자 이상의 한글/영문/숫자 조합',
     emailRegex: '잘못된 이메일 형식입니다.',
-    emailUnique: '중복되는 이메일이 있습니다. ',
+    emailConfirm: '이메일 인증을 진행해주세요.'
   };
 
-  const signUpBtnMsg = {
+  const infoMsg = {
     idInput: "아이디를 입력해주세요.",
     idUnique: "아이디 중복확인을 해주세요.",
     pwInput: "비밀번호를 입력해주세요.",
     nickInput: "닉네임을 입력해주세요.",
     emailInput: "이메일 형식을 확인해주세요.",
-    emailUnique: "이메일 중복 확인을 해주세요.",
     emailConfirm: "이메일 인증을 해주세요.",
+    emailSend: "이메일에서 인증번호를 확인해주세요.",
     signUp: "가입이 완료되었습니다.",
   }
   
@@ -95,7 +83,7 @@ const signup = () => {
   // 아이디 중복 확인
   const checkIdUnique = async (id) => {
     if (id.length == 0) {
-      alert("아이디를 입력해주세요.");
+      alert(infoMsg.idInput);
       return;
     }
     const result = await checkId(id);
@@ -187,49 +175,67 @@ const signup = () => {
     }
   }
 
-  // 이메일 중복 확인
-  const checkEmailUnique = async (email) => {
-    if (email.length == 0) {
-      alert("이메일을 입력해주세요.");
-      return;
-    }
-    const result = await checkEmail(email);
-    if (result.status == 204) {
-      setErrorState({
-        ...errorState,
-        emailUnique: true,
-      })
-      alert(result.msg);
-    } else if (result.status == 200 || result.status == 400) {
-      setErrorState({
-        ...errorState,
-        emailUnique: false,
-      })
-      alert(result.msg);
+  // 이메일 인증
+  const emailSend = async () => {
+    if (errorState.emailRegex) {
+      const result = await emailAuth(member.email);
+      if (result.status == 204) { // 인증번호 전송
+        alert(infoMsg.emailSend);
+        setErrorState({
+          ...errorState,
+          emailSend: true,
+        })
+      } else {
+        alert(result.msg);
+        setErrorState({
+          ...errorState,
+          emailSend: false,
+        })
+      }  
+    } else {
+      alert(infoMsg.emailInput)
     }
   }
-  
+
+  const emailSendCheck = async () => {
+    if (errorState.emailSend) {
+      const result = await emailAuthCheck(member.email, member.authCode);
+      if (result.status == 200) { // 이메일 인증 성공
+        alert(result.msg);
+        setErrorState({
+          ...errorState,
+          emailConfirm: true,
+        })
+      } else {
+        alert(result.msg);
+        setErrorState({
+          ...errorState,
+          emailConfirm: false,
+        })
+      }
+    } else {
+      alert("인증번호 받기를 진행해주세요.")
+    }
+  }
 
   // 가입하기 버튼 클릭
   const signupFormSubmit = () => {
     // e.preventDefault();
     var result = "";
     if (!errorState.memberIdRegex) {
-      result = signUpBtnMsg.idInput;
+      result = infoMsg.idInput;
     } else if (!errorState.memberIdUnique) {
-      result = signUpBtnMsg.idUnique;
+      result = infoMsg.idUnique;
     } else if (!errorState.passwordConfirm) {
-      result = signUpBtnMsg.pwInput;
+      result = infoMsg.pwInput;
     } else if (!errorState.nicknameRegex) {
-      result = signUpBtnMsg.nickInput;
+      result = infoMsg.nickInput;
     } else if (!errorState.emailRegex) {
-      result = signUpBtnMsg.emailInput;
-    } else if (!errorState.emailUnique) {
-      result = signUpBtnMsg.emailUnique;
-    // } else if (!errorState.emailConfirm) { // 이메일 인증
-    //   result = signUpBtnMsg.emailConfirm;
+      result = infoMsg.emailInput;
+    } else if (!errorState.emailConfirm) { // 이메일 인증
+      result = infoMsg.emailConfirm;
     } else {
-      result = signUpBtnMsg.signUp;
+      result = infoMsg.signUp;
       handleSignup();
     }
     alert(result);
@@ -239,6 +245,7 @@ const signup = () => {
     const result = await onSignup(member);
     if (result.status == 201) { // 회원가입 완료
       alert(result.msg);
+      window.location.href = '/user/login';
     } else {
       alert(result.msg);
     }
@@ -255,9 +262,11 @@ const signup = () => {
     checkPasswordConfirm,
     checkNicknameValid,
     checkEmailValid,
-    checkEmailUnique, 
+    emailSend,
+    emailSendCheck,
     signupFormSubmit
   }
+
   return (
     <div className='signup-page'>
       <SignupForm {...props} />
