@@ -45,7 +45,12 @@ const diary = () => {
   }, [len])
 
   const onClickSave = () => {
-    appDispatch(setMemoAction(todaysInfo))
+    const params = {
+      param: todaysInfo,
+      token:
+        'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MDEiLCJpc3MiOiJvbmRhLnNzYWZ5LmNvbSIsImV4cCI6MTY1MzM1Nzk4NywiaWF0IjoxNjUyMDYxOTg3fQ._yDfuQ4lL5tbYci6CFY-x08muvg71L5wo1uTH6FMMls_2IVep7jGlh5BMVWtqPXYoLp5Zm6UbzRY1aJYagiLrg',
+    }
+    appDispatch(setMemoAction(params))
   }
 
   const onDeleteMemo = (id) => {
@@ -58,8 +63,14 @@ const diary = () => {
   })
   const [pannelIsOpen, setPannelIsOpen] = useState(false)
   const memberSeq = 3
+  const diaryDate = '2022-04-28'
   useEffect(() => {
-    appDispatch(getMemoAction(memberSeq))
+    const params = {
+      diaryDate: diaryDate,
+      token:
+        'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MDEiLCJpc3MiOiJvbmRhLnNzYWZ5LmNvbSIsImV4cCI6MTY1MzM1Nzk4NywiaWF0IjoxNjUyMDYxOTg3fQ._yDfuQ4lL5tbYci6CFY-x08muvg71L5wo1uTH6FMMls_2IVep7jGlh5BMVWtqPXYoLp5Zm6UbzRY1aJYagiLrg',
+    }
+    appDispatch(getMemoAction(params))
     setViewSize({
       width: window.innerWidth,
       height: window.innerHeight,
@@ -78,7 +89,7 @@ const diary = () => {
         <span>
           <button> &lt;</button>
           <span>
-            <h2>{todaysInfo.date}</h2>
+            <h2>{todaysInfo.diaryDate}</h2>
           </span>
           <button>&gt;</button>
         </span>

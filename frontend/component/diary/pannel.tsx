@@ -34,13 +34,7 @@ function getMemo(seq) {
       return {
         ...obj,
         memoTypeSeq: 2,
-        info: [
-          {
-            content: '항목을 입력해주세요',
-            income: '',
-            outcome: '',
-          },
-        ],
+        info: [],
       }
     case 3:
       return {
