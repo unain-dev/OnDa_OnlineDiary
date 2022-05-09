@@ -1,7 +1,21 @@
 import React from 'react';
 import styles from 'styles/scss/Signup.module.scss'
 
-const signupForm = ({member, handleChangeState, errorState, errorMsg, checkIdValid, checkIdUnique, checkPasswordValid, checkPasswordConfirm, checkNicknameValid, checkEmailValid, checkEmailUnique, signupFormSubmit}) => {
+const signupForm = ({
+  member,
+  handleChangeState,
+  errorState,
+  errorMsg,
+  checkIdValid,
+  checkIdUnique,
+  checkPasswordValid,
+  checkPasswordConfirm,
+  checkNicknameValid,
+  checkEmailValid,
+  emailSend,
+  emailSendCheck,
+  signupFormSubmit
+}) => {
   return (
     <div className={styles.signupForm}>
       <div className={styles.title}>
@@ -33,7 +47,7 @@ const signupForm = ({member, handleChangeState, errorState, errorMsg, checkIdVal
               <th>비밀번호확인</th>
               <td>
                 <input type="password" name='confirmPassword' value={member.confirmPassword} onChange={handleChangeState} onKeyUp={checkPasswordConfirm} maxLength={16} placeholder="비밀번호를 한번 더 입력해주세요." required />
-                <p className={ member.confirmPassword.length==0 ? styles.txt_guide_none : errorState.passwordConfirm ? styles.txt_guide_none : styles.txt_guide_block}>
+                <p className={ member.confirmPassword.length==0 ? styles.txt_guide_none : member.password == member.confirmPassword ? styles.txt_guide_none : styles.txt_guide_block}>
                   <span>{errorMsg.passwordConfirm}</span>
                 </p>
               </td>
@@ -51,7 +65,7 @@ const signupForm = ({member, handleChangeState, errorState, errorMsg, checkIdVal
               <th>이메일</th>
               <td>
                 <input type="text" name='email' value={member.email} onChange={handleChangeState} onKeyUp={checkEmailValid} placeholder="예:ondiary@onda.com" required />
-                <button type='button' onClick={() => checkEmailUnique(member.email)} >중복확인</button>
+                <button type='button' onClick={() => emailSend(member.email)} >인증번호 받기</button>
                 <p className={ member.email.length==0 ? styles.txt_guide_none : errorState.emailRegex ? styles.txt_guide_none : styles.txt_guide_block}>
                   <span>{errorMsg.emailRegex}</span>
                 </p>
@@ -60,8 +74,8 @@ const signupForm = ({member, handleChangeState, errorState, errorMsg, checkIdVal
             <tr>
               <th></th>
               <td>
-                {errorState.emailConfirm ? <input type="text" placeholder='인증번호 입력' /> : <input type="text" placeholder='인증번호 입력' disabled />}
-                <button type='button' >인증번호 받기</button>
+                <input type="text" name='authCode' value={member.authCode} onChange={handleChangeState} placeholder='인증번호 입력' />
+                <button type='button' onClick={emailSendCheck} >인증번호 확인</button>
               </td>
             </tr>
           </tbody>
