@@ -10,4 +10,6 @@ public interface ChecklistItemRepository extends JpaRepository<ChecklistItem, Lo
 
     List<ChecklistItem> findAllByChecklistIn(List<Checklist> checklists);
 
+    List<ChecklistItem> findByChecklist(Checklist checklist);
+
 }

@@ -1,5 +1,6 @@
 package com.ssafy.onda.api.diary.entity;
 
+import com.querydsl.core.annotations.QueryProjection;
 import com.ssafy.onda.api.member.entity.Member;
 import lombok.*;
 
@@ -32,6 +33,7 @@ public class Background {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
+    @QueryProjection
     @Builder
     public Background(Long backgroundSeq, LocalDate diaryDate, Member member) {
         this.backgroundSeq = backgroundSeq;

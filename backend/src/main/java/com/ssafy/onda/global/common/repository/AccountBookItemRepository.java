@@ -10,4 +10,6 @@ public interface AccountBookItemRepository extends JpaRepository<AccountBookItem
 
     List<AccountBookItem> findAllByAccountBookIn(List<AccountBook> accountBooks);
 
+    List<AccountBookItem> findByAccountBook(AccountBook accountBook);
+
 }
