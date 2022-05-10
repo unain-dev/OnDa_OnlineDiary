@@ -9,7 +9,7 @@ import static org.springframework.http.HttpStatus.*;
 public enum ErrorStatus {
 
     // Common
-    INVALID_INPUT_VALUE(BAD_REQUEST.value(), " Invalid Input Value"),
+    INVALID_INPUT_VALUE(BAD_REQUEST.value(), "올바르지 않은 요청입니다."),
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED.value(), " Invalid Input Value"),
     ENTITY_NOT_FOUND(BAD_REQUEST.value(), "해당 정보가 존재하지 않습니다."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Server Error"),
@@ -46,7 +46,10 @@ public enum ErrorStatus {
     NO_DATA_TO_SAVE(BAD_REQUEST.value(), "빈 메모는 저장이 불가능합니다."),
     FAIL_TO_SAVE_IMAGE(HttpStatus.INTERNAL_SERVER_ERROR.value(), "파일 저장 실패"),
     MISMATCH_IN_NUMBER_OF_FILES_AND_IMAGES(BAD_REQUEST.value(), "전송된 파일과 이미지 메모지의 개수가 일치하지 않습니다."),
-    FILE_INDEX_OUT_OF_BOUNDS(BAD_REQUEST.value(), "파일 인덱스 초과")
+    FILE_INDEX_OUT_OF_BOUNDS(BAD_REQUEST.value(), "파일 인덱스 초과"),
+
+    // FILTER
+    ACCESS_DENIED(BAD_REQUEST.value(), "데이터 접근 불가")
     ;
 
     private Integer status;

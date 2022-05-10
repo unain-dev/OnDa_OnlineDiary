@@ -336,19 +336,19 @@ public class DiaryServiceImpl implements DiaryService {
     public void saveMemoType() {
         List<MemoType> memoTypes = new ArrayList<>();
         memoTypes.add(MemoType.builder()
-                .memoType("text")
+                .memoTypeName("text")
                 .build());
         memoTypes.add(MemoType.builder()
-                .memoType("account book")
+                .memoTypeName("account book")
                 .build());
         memoTypes.add(MemoType.builder()
-                .memoType("checklist")
+                .memoTypeName("checklist")
                 .build());
         memoTypes.add(MemoType.builder()
-                .memoType("image")
+                .memoTypeName("image")
                 .build());
         memoTypes.add(MemoType.builder()
-                .memoType("sticker")
+                .memoTypeName("sticker")
                 .build());
 
         memoTypeRepository.saveAll(memoTypes);
