@@ -15,3 +15,9 @@
 button:hover {
   cursor: pointer;
 }
+/* .fc .fc-toolbar-title{
+  height: 400px;
+} */
+.fc .fc-daygrid-day-frame {
+  height: 10px;
+}

@@ -38,7 +38,7 @@ export default function MemoImage({ memoInfo, drag, onDeleteMemo }) {
     dispatch(
       changeMemoState({
         ...memoInfo,
-        info: previewImage,
+        info: file[0],
         isEditing: false,
       }),
     )
@@ -47,6 +47,7 @@ export default function MemoImage({ memoInfo, drag, onDeleteMemo }) {
     onDeleteMemo(memoInfo.id)
   }
   useEffect(() => {
+    console.log(file)
     if (file !== null) {
       setPreviewImage(URL.createObjectURL(file[0]))
     }

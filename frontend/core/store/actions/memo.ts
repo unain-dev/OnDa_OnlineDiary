@@ -38,11 +38,41 @@ export const getMemoAction = createAsyncThunk<
 })
 
 function transForm(param) {
+  console.log(param)
+
   const formData = new FormData()
-  const p = JSON.stringify(param)
+  let files = [];
+  let numbering = 0;
+
+  param.memoList.forEach((memo)=>{
+      if(memo.memoTypeSeq===4){
+        files.push(memo.info);
+      }
+    })
+  
+  let arr = param.memoList.map((memo) =>
+  memo.memoTypeSeq === 4
+    ? {
+        width: memo.width,
+        height: memo.height,
+        x: memo.x,
+        y: memo.y,
+        isEditing: memo.isEditing,
+        id: memo.id,
+        memoTypeSeq: memo.memoTypeSeq,
+        info: numbering++,
+      }
+    : memo,
+  )
+  const newParam = {diaryDate: param.diaryDate, lastId: param.lastId, memoList: arr}
+  console.log(typeof numbering)
+  console.log(newParam)
+  console.log(param)
+  files.forEach((file)=> console.log(file))
+  const p = JSON.stringify(newParam)
   const blob = new Blob([p], { type: 'application/json' })
   formData.append('reqDiaryDto', blob)
-  formData.append('files', '')
+  files.forEach((file)=> formData.append('files', file))
   return formData
 }
 
