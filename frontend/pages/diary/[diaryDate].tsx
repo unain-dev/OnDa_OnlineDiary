@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect } from 'react'
+import React, { Component, useState, useEffect, forwardRef } from 'react'
 import MemoSeparator from 'component/memo/memoSeparator/MemoSeparator'
 import RND from 'component/diary/RND'
 import Pannel from 'component/diary/pannel'
@@ -6,14 +6,14 @@ import { useSelector, useDispatch } from 'react-redux'
 import { changeMemoState, addMemo, deleteMemo } from 'core/store/modules/diary'
 import { getMemoAction, setMemoAction } from 'core/store/actions/memo'
 import { AppDispatch } from 'core/store'
-import calendarIcon from 'public/asset/image/diaryImage/calendarIcon.png'
 import Image from 'next/image'
 import styles from './diary.module.scss'
-import closeBtnImg from 'public/asset/image/diaryImage/closeBtnImg.png'
 import hamburgerIcon from 'public/asset/image/diaryImage/hamburgerIcon.png'
-import { truncate } from 'fs'
 import { useRouter } from 'next/router'
 import { calNextDate, calPrevDate } from 'core/common/date'
+import DatePickerModule from 'component/diary/DatePickerModule/DatePickerModule'
+import moment from 'moment'
+import { getDiaryDays } from 'core/api/diary'
 
 const diary = ({ diaryDate }) => {
   const todaysInfo = useSelector(({ diary }) => diary)
@@ -86,20 +86,12 @@ const diary = ({ diaryDate }) => {
   }
 
   useEffect(() => {
-    console.log('useEffect is running')
-    console.log(goDate)
     setTodaysInfo(goDate)
   }, [goDate])
 
   return (
     <>
       <div className={styles.dateContainer}>
-        <Image
-          src={calendarIcon}
-          className={styles.calendarIcon}
-          width="40"
-          height="40"
-        />
         <span>
           <button
             onClick={async () => {
@@ -111,7 +103,14 @@ const diary = ({ diaryDate }) => {
             &lt;
           </button>
           <span>
-            <h2>{diaryDate}</h2>
+            <DatePickerModule
+              startDate={Date.parse(goDate)}
+              setStartDate={(date) => {
+                const d = moment(date).format('YYYY-MM-DD')
+                setGoDate(d)
+                router.push(`/diary/${d}`)
+              }}
+            />
           </span>
           <button
             onClick={async () => {
