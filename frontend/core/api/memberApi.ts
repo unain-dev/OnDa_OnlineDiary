@@ -25,3 +25,9 @@ export const onSignup = async (memberData) => {
   const response = await instance.post(COMMON, memberData);
   return response.data;
 };
+
+// 로그인
+export const onLogin = async ({memberId, password}) => {
+  const response = await instance.post(COMMON + '/login', { memberId, password });
+  return response.data;
+}
