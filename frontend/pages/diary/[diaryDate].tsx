@@ -15,7 +15,7 @@ import { truncate } from 'fs'
 import { useRouter } from 'next/router'
 import { calNextDate, calPrevDate } from 'core/common/date'
 
-const diary = () => {
+const diary = ({ diaryDate }) => {
   const todaysInfo = useSelector(({ diary }) => diary)
   const len = todaysInfo.memoList.length
   const lastId = todaysInfo.lastId
@@ -67,13 +67,14 @@ const diary = () => {
   const [pannelIsOpen, setPannelIsOpen] = useState(false)
 
   const router = useRouter()
-  const { diaryDate } = router.query || {}
 
-  console.log('load')
-  useEffect(() => {
-    if (diaryDate != null && diaryDate != '' && diaryDate != undefined) {
+  const [goDate, setGoDate] = useState(diaryDate)
+
+  const setTodaysInfo = (date) => {
+    console.log('setTodayInfo function is running')
+    if (date != null && date != undefined) {
       const params = {
-        diaryDate: diaryDate,
+        diaryDate: date,
         token: token,
       }
       appDispatch(getMemoAction(params))
@@ -82,7 +83,13 @@ const diary = () => {
         height: window.innerHeight,
       })
     }
-  }, [diaryDate])
+  }
+
+  useEffect(() => {
+    console.log('useEffect is running')
+    console.log(goDate)
+    setTodaysInfo(goDate)
+  }, [goDate])
 
   return (
     <>
@@ -95,18 +102,22 @@ const diary = () => {
         />
         <span>
           <button
-            onClick={() => {
-              router.push(`/diary/${calPrevDate(diaryDate)}`)
+            onClick={async () => {
+              const date = calPrevDate(diaryDate)
+              await setGoDate(date)
+              router.push(`/diary/${date}`)
             }}
           >
             &lt;
           </button>
           <span>
-            <h2>{todaysInfo.diaryDate}</h2>
+            <h2>{diaryDate}</h2>
           </span>
           <button
-            onClick={() => {
-              router.push(`/diary/${calNextDate(diaryDate)}`)
+            onClick={async () => {
+              const date = calNextDate(diaryDate)
+              await setGoDate(calNextDate(diaryDate))
+              router.push(`/diary/${date}`)
             }}
           >
             &gt;
@@ -188,6 +199,12 @@ const diary = () => {
       )}
     </>
   )
+}
+
+export async function getServerSideProps(context) {
+  return {
+    props: { diaryDate: context.params.diaryDate },
+  }
 }
 
 export default diary
