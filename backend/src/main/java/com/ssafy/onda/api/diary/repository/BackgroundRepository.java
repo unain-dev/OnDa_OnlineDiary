@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDate;
 import java.util.Optional;
 
-public interface BackgroundRepository extends JpaRepository<Background, Long> {
+public interface BackgroundRepository extends JpaRepository<Background, Long>, BackgroundRepositoryCustom {
 
     Optional<Background> findByMemberAndDiaryDate(Member member, LocalDate diaryDate);
 

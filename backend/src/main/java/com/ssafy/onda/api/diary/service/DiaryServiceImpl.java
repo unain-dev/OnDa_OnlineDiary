@@ -514,4 +514,23 @@ public class DiaryServiceImpl implements DiaryService {
                 .checklistItems(checklistItems)
                 .build();
     }
+
+    @Override
+    public List<Integer> getDays(CustomUserDetails details, String diaryDate) {
+
+        // 회원 확인
+        Member member = memberRepository.findByMemberId(details.getUsername())
+                .orElseThrow(() -> new CustomException(LogUtil.getElement(), MEMBER_NOT_FOUND));
+
+        // 날짜 확인
+        checkDateValidation(diaryDate);
+        List<LocalDate> diaryDays = backgroundRepository.findByMemberAndDiaryDateLike(member, LocalDate.parse(diaryDate));
+
+        List<Integer> days = new ArrayList<>();
+        for (LocalDate diaryDay : diaryDays) {
+            days.add(Integer.valueOf(diaryDay.toString().substring(8)));
+        }
+
+        return days;
+    }
 }
