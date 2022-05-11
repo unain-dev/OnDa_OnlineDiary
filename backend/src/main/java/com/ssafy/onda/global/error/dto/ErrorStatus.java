@@ -49,7 +49,7 @@ public enum ErrorStatus {
     FILE_INDEX_OUT_OF_BOUNDS(BAD_REQUEST.value(), "파일 인덱스 초과"),
 
     // FILTER
-    ACCESS_DENIED(BAD_REQUEST.value(), "데이터 접근 불가")
+    ACCESS_DENIED(UNAUTHORIZED.value(), "데이터 접근 불가")
     ;
 
     private Integer status;

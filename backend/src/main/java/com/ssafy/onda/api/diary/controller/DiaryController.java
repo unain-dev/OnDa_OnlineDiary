@@ -105,4 +105,21 @@ public class DiaryController {
                 }})
                 .build();
     }
+
+    @GetMapping("/calendar/{diaryDate}")
+    public BaseResponseDto calendar(Authentication authentication, @PathVariable String diaryDate) {
+        log.info("Called API: {}", LogUtil.getClassAndMethodName());
+
+        if (authentication == null) {
+            throw new CustomException(LogUtil.getElement(), UNAUTHORIZED_ACCESS);
+        }
+
+        return BaseResponseDto.builder()
+                .status(OK.value())
+                .msg("달력 조회 성공")
+                .data(new HashMap<>() {{
+                    put("days", diaryService.getDays((CustomUserDetails) authentication.getDetails(), diaryDate));
+                }})
+                .build();
+    }
 }

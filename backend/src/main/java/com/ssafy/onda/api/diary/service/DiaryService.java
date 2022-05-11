@@ -26,4 +26,6 @@ public interface DiaryService {
 
     FindMemosDto find(List<MemberMemo> memberMemos);
 
+    List<Integer> getDays(CustomUserDetails details, String diaryDate);
+
 }
