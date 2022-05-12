@@ -43,6 +43,7 @@ const diarySlice = createSlice({
     deleteMemo: (state, action) => {
       const id = action.payload
       let arr = state.memoList.filter((memo) => memo.id !== id)
+      console.log(arr)
       state.memoList = arr
     },
   },
@@ -60,7 +61,7 @@ const diarySlice = createSlice({
         alert(action.payload.data.msg)
       })
       .addCase(deleteDayDiary.fulfilled, (state, action) => {
-        alert(action.payload.data.msg)
+        console.log(action.payload.data.msg)
         state.memoList = []
       }),
 })
