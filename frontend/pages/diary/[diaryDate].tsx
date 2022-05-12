@@ -14,6 +14,7 @@ import { calNextDate, calPrevDate } from 'core/common/date'
 import DatePickerModule from 'component/diary/DatePickerModule/DatePickerModule'
 import moment from 'moment'
 import { getDiaryDays } from 'core/api/diary'
+import { getCookie } from 'core/common/cookie'
 
 const diary = ({ diaryDate }) => {
   const todaysInfo = useSelector(({ diary }) => diary)
@@ -45,13 +46,12 @@ const diary = ({ diaryDate }) => {
     setDraggableState(Array(len).fill(true))
   }, [len])
 
-  const token =
-    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MDEiLCJpc3MiOiJvbmRhLnNzYWZ5LmNvbSIsImV4cCI6MTY1MzM1Nzk4NywiaWF0IjoxNjUyMDYxOTg3fQ._yDfuQ4lL5tbYci6CFY-x08muvg71L5wo1uTH6FMMls_2IVep7jGlh5BMVWtqPXYoLp5Zm6UbzRY1aJYagiLrg'
+  const token = getCookie('member')
 
   const onClickSave = () => {
     const params = {
       param: todaysInfo,
-      token: token,
+      token: token.jwtToken,
     }
     appDispatch(setMemoAction(params))
   }
@@ -75,7 +75,7 @@ const diary = ({ diaryDate }) => {
     if (date != null && date != undefined) {
       const params = {
         diaryDate: date,
-        token: token,
+        token: token.jwtToken,
       }
       appDispatch(getMemoAction(params))
       setViewSize({
