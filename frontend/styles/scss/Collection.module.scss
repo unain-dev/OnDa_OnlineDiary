@@ -1,4 +1,8 @@
-
+@mixin cursor {
+    &:hover {
+      cursor: pointer;
+    }
+  }
 .month{
     text-align: center;
     display: flex;
@@ -7,6 +11,15 @@
 }
 .searchInput{
     width: 50%;
+    height: 30px;
+    border: 2px solid blueviolet;
+
+}
+.searchBtn{
+    width: 40px;
+    background-color: blueviolet;
+    border: 0;
+    color: white;
 }
 .dropdownBar{
     margin: 0 auto;
@@ -15,4 +28,110 @@
 }
 .calender{
     margin: 0 auto;
+    padding: 10px;
+    border: 20px solid blueviolet;
+    border-radius: 10px;
+}
+// 판넬
+.pannel {
+    width: 40%;
+    height: 100%;
+    // float: right;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    // border-left: solid 1px grey;
+    overflow: auto;
+    background-color: #cfe1ec;
+    .closeBtnImg {
+    right: 0;
+      // background-color: red;
+    @include cursor();
+    }
+    z-index: 1000;
+}
+.closeBtnImgContainer {
+    text-align: right;
+    padding: 20px;
+    padding-bottom: 0;
+}
+.selectBox {
+    width: 120px;
+    height: 30px;
+    border: 3px solid blueviolet;
+    border-radius: 5px;
+}
+.textView{
+    position: relative;
+    background-color: #ffc;
+    width: 400px;
+    height: 200px;
+    margin-bottom: 40px;
+    overflow: hidden;
+}
+.header{
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    margin: 10px;
+}
+.content{
+    position: absolute;
+    margin: 20px;
+    top: 20px;
+    left: 0%;
+}
+.financeView{
+    position: relative;
+    background-color: #ffc;
+    width: 400px;
+    height: 200px;
+    margin-bottom: 40px;
+    overflow: hidden;
+}
+.financeNavHeader{
+    margin-top: 5px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    text-align: center;
+}
+.checklistHeader{
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    margin: 5px;
+}
+.financeBody{
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    text-align: center;
+    margin: 0px;
+    top: 30px;
+    left: 0%;
+}
+.financeFooter{
+    position: absolute;
+    width: 100%;
+    display: grid;
+    text-align: center;
+    grid-template-columns: 1fr 1fr 1fr;
+    bottom: 5px;
+}
+.checklistView{
+    position: relative;
+    background-color: #ffc;
+    width: 400px;
+    height: 200px;
+    margin-bottom: 40px;
+    overflow: hidden;
+}
+.checklistBody{
+    padding-left: 20px;
+    position: relative;
+    margin: 0px;
+    top: 30px;
+    left: 0%;
+    text-align: left;
 }
