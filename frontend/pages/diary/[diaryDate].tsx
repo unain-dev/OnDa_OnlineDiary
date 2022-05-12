@@ -17,7 +17,6 @@ import { useRouter } from 'next/router'
 import { calNextDate, calPrevDate } from 'core/common/date'
 import DatePickerModule from 'component/diary/DatePickerModule/DatePickerModule'
 import moment from 'moment'
-import { getDiaryDays } from 'core/api/diary'
 import { getCookie } from 'core/common/cookie'
 
 const diary = ({ diaryDate }) => {
@@ -52,12 +51,22 @@ const diary = ({ diaryDate }) => {
 
   const token = getCookie('member')
 
+  const onClickDelete = (date) => {
+    const params = {
+      diaryDate: date,
+      token: token,
+    }
+    appDispatch(deleteDayDiary(params))
+  }
+
   const onClickSave = () => {
     const params = {
       param: todaysInfo,
       token: token.jwtToken,
     }
-    appDispatch(setMemoAction(params))
+    todaysInfo.memoList.length <= 0
+      ? appDispatch(deleteDayDiary(params))
+      : appDispatch(setMemoAction(params))
   }
 
   const onDeleteMemo = (id) => {
@@ -91,17 +100,6 @@ const diary = ({ diaryDate }) => {
   useEffect(() => {
     setTodaysInfo(goDate)
   }, [goDate])
-
-  const onClickDelete = (date) => {
-    // await setGoDate(date)
-    const params = {
-      diaryDate: date,
-      token: token,
-    }
-    appDispatch(deleteDayDiary(params))
-    // router.reload()
-    // alert('삭제완료')
-  }
 
   return (
     <>
@@ -138,7 +136,6 @@ const diary = ({ diaryDate }) => {
           <button
             className={styles.deleteBtn}
             onClick={async () => {
-              // await setGoDate(date)
               onClickDelete(goDate)
             }}
           >
