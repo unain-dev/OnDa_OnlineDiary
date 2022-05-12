@@ -1,5 +1,8 @@
 package com.ssafy.onda.api.member.service;
 
+import com.ssafy.onda.api.diary.entity.Background;
+import com.ssafy.onda.api.diary.repository.BackgroundRepository;
+import com.ssafy.onda.api.diary.service.DiaryService;
 import com.ssafy.onda.api.member.dto.MemberDto;
 import com.ssafy.onda.api.member.dto.request.ReqLoginMemberDto;
 import com.ssafy.onda.api.member.dto.request.ReqMemberDto;
@@ -25,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.regex.Pattern;
 
@@ -37,9 +41,16 @@ import static com.ssafy.onda.global.error.dto.ErrorStatus.*;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
+
     private final PasswordEncoder passwordEncoder;
+
     private final EmailAuthRepository emailAuthRepository;
+
     private final DeleteEmailAuthRepository deleteEmailAuthRepository;
+
+    private final BackgroundRepository backgroundRepository;
+
+    private final DiaryService diaryService;
 
     @Autowired
     private final JavaMailSender javaMailSender;
@@ -225,4 +236,25 @@ public class MemberServiceImpl implements MemberService {
         member.changeNickname(nickname);
     }
 
+    @Transactional
+    @Override
+    public void delete(CustomUserDetails details, ReqLoginMemberDto reqLoginMemberDto) {
+
+        Member member = memberRepository.findByMemberId(details.getUsername())
+                .orElseThrow(() -> new CustomException(LogUtil.getElement(), MEMBER_NOT_FOUND));
+
+        if (!member.getMemberId().equals(reqLoginMemberDto.getMemberId())) {
+            throw new CustomException(LogUtil.getElement(), ACCESS_DENIED);
+        } else if (!passwordEncoder.matches(reqLoginMemberDto.getPassword(), member.getPassword())) {
+            throw new CustomException(LogUtil.getElement(), PASSWORD_NOT_MATCH);
+        }
+
+        List<Background> backgrounds = backgroundRepository.findAllByMember(member);
+        for (Background background : backgrounds) {
+            diaryService.delete(background);
+        }
+        backgroundRepository.deleteAllInBatch(backgrounds);
+
+        memberRepository.delete(member);
+    }
 }
