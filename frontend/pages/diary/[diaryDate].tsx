@@ -45,6 +45,8 @@ const diary = ({ diaryDate }) => {
     // alert('추가되었습니다.')
   }
 
+  const [goDate, setGoDate] = useState(diaryDate)
+
   useEffect(() => {
     setDraggableState(Array(len).fill(true))
   }, [len])
@@ -54,19 +56,25 @@ const diary = ({ diaryDate }) => {
   const onClickDelete = (date) => {
     const params = {
       diaryDate: date,
-      token: token,
+      token: token.jwtToken,
     }
     appDispatch(deleteDayDiary(params))
   }
 
   const onClickSave = () => {
-    const params = {
-      param: todaysInfo,
-      token: token.jwtToken,
-    }
     todaysInfo.memoList.length <= 0
-      ? appDispatch(deleteDayDiary(params))
-      : appDispatch(setMemoAction(params))
+      ? appDispatch(
+          deleteDayDiary({
+            param: goDate,
+            token: token.jwtToken,
+          }),
+        )
+      : appDispatch(
+          setMemoAction({
+            param: todaysInfo,
+            token: token.jwtToken,
+          }),
+        )
   }
 
   const onDeleteMemo = (id) => {
@@ -80,8 +88,6 @@ const diary = ({ diaryDate }) => {
   const [pannelIsOpen, setPannelIsOpen] = useState(false)
 
   const router = useRouter()
-
-  const [goDate, setGoDate] = useState(diaryDate)
 
   const setTodaysInfo = (date) => {
     if (date != null && date != undefined) {

@@ -105,17 +105,13 @@ export const deleteDayDiary = createAsyncThunk<
   any,
   { rejectValue: MyKnownError }
 >('memo/deleteDayDiary', async (params, thunkAPI) => {
-  alert(params)
   try {
-    const res = await axios.delete(
-      BASE_URL + `/diary/${params.param.diaryDate}`,
-      {
-        headers: {
-          Authorization: `Bearer ` + params.token,
-          'Content-Type': 'multipart/form-data',
-        },
+    const res = await axios.delete(BASE_URL + `/diary/${params.diaryDate}`, {
+      headers: {
+        Authorization: `Bearer ` + params.token,
+        'Content-Type': 'multipart/form-data',
       },
-    )
+    })
     return res
   } catch (error) {
     console.log(error)
