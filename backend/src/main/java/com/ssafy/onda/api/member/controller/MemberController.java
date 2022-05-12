@@ -246,4 +246,38 @@ public class MemberController {
                 .data(data)
                 .build();
     }
+
+    @DeleteMapping
+    public BaseResponseDto delete(Authentication authentication, @Valid @RequestBody ReqLoginMemberDto reqLoginMemberDto, Errors errors) {
+        log.info("Called API: {}", LogUtil.getClassAndMethodName());
+
+        if (authentication == null) {
+            throw new CustomException(LogUtil.getElement(), UNAUTHORIZED_ACCESS);
+        }
+
+        Integer status = null;
+        String msg = null;
+        Map<String, Object> data = new HashMap<>();
+
+        if (errors.hasErrors()) {
+            if (errors.hasFieldErrors()) {
+                status = BAD_REQUEST.value();
+                data.put("field", errors.getFieldError().getField());
+                msg = errors.getFieldError().getDefaultMessage();
+            } else {
+                throw new CustomException(LogUtil.getElement(), GLOBAL_ERROR);
+            }
+        } else {
+            CustomUserDetails details = (CustomUserDetails) authentication.getDetails();
+            memberService.delete(details, reqLoginMemberDto);
+
+            status = OK.value();
+            msg = "회원 탈퇴 성공";
+        }
+
+        return BaseResponseDto.builder()
+                .status(status)
+                .msg(msg)
+                .build();
+    }
 }
