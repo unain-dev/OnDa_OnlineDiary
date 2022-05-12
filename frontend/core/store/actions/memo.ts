@@ -50,19 +50,27 @@ function transForm(param) {
     }
   })
 
+  param.memoList.forEach((memo)=>{
+    console.log(typeof memo.info)
+      if(memo.memoTypeSeq===4 && typeof memo.info === 'object'){
+        files.push(memo.info);
+      }
+    })
+  
   let arr = param.memoList.map((memo) =>
-    memo.memoTypeSeq === 4
-      ? {
-          width: memo.width,
-          height: memo.height,
-          x: memo.x,
-          y: memo.y,
-          isEditing: memo.isEditing,
-          id: memo.id,
-          memoTypeSeq: memo.memoTypeSeq,
-          info: numbering++,
-        }
-      : memo,
+  // 4번인데 info 부분이 string src 이면 그대로
+  memo.memoTypeSeq === 4 && typeof memo.info === 'object'
+    ? {
+        width: memo.width,
+        height: memo.height,
+        x: memo.x,
+        y: memo.y,
+        isEditing: memo.isEditing,
+        id: memo.id,
+        memoTypeSeq: memo.memoTypeSeq,
+        info: numbering++,
+      }
+    : memo,
   )
   const newParam = {
     diaryDate: param.diaryDate,
