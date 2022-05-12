@@ -6,6 +6,7 @@ import {
 } from '@reduxjs/toolkit'
 import { HYDRATE, createWrapper } from 'next-redux-wrapper'
 import diary from './modules/diary'
+import collection from './modules/collection'
 import { useDispatch } from 'react-redux'
 
 // axios.defaults.baseURL = getConfig().publicRuntimeConfig.apiServerUrl
@@ -19,6 +20,7 @@ export const reducer = (state, action: AnyAction) => {
   }
   return combineReducers({
     diary,
+    collection,
   })(state, action)
 }
 
