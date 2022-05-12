@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.regex.Pattern;
@@ -251,7 +252,7 @@ public class MemberServiceImpl implements MemberService {
 
         List<Background> backgrounds = backgroundRepository.findAllByMember(member);
         for (Background background : backgrounds) {
-            diaryService.delete(background);
+            diaryService.delete(background, new HashSet<>());
         }
         backgroundRepository.deleteAllInBatch(backgrounds);
 

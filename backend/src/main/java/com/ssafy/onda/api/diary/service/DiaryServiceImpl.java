@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -82,6 +83,7 @@ public class DiaryServiceImpl implements DiaryService {
         List<AccountBook> accountBooks = new ArrayList<>();
         List<Checklist> checklists = new ArrayList<>();
         List<Image> savedImages = new ArrayList<>();
+        Set<Image> archivedImages = new HashSet<>();
         List<Sticker> stickers = new ArrayList<>();
 
         Map<AccountBook, List<AccountBookItemDto>> accountBookMap = new HashMap<>();
@@ -136,26 +138,49 @@ public class DiaryServiceImpl implements DiaryService {
                 checklists.add(checklist);
                 checklistMap.put(checklist, checklistDto.getChecklistItems());
             } else if (memoTypeSeq == 4) {
-                int fileIdx = Integer.valueOf(memoListDto.getInfo().toString());
-                if (multipartFiles.size() <= fileIdx) {
-                    throw new CustomException(LogUtil.getElement(), FILE_INDEX_OUT_OF_BOUNDS);
+                String imageInfo = memoListDto.getInfo().toString();
+
+                // 기존에 있던 파일을 그대로 가져온 경우
+                if (imageInfo.startsWith("http://")) {
+
+                    // 기존 이미지 메모지를 db에서 찾아와야 함
+                    int indexOf = imageInfo.lastIndexOf(File.separator) + 1;
+                    String encodedName = imageInfo.substring(indexOf);
+                    System.out.println("encodedName = " + encodedName);
+
+                    Image archivedImage = imageRepository.findByFileInfoEncodedName(encodedName)
+                            .orElseThrow(() -> new CustomException(LogUtil.getElement(), ENTITY_NOT_FOUND));
+
+                    // 좌표만 업데이트
+                    archivedImage.changeMemoEntity(memoListDto.getX(), memoListDto.getY(), memoListDto.getWidth(), memoListDto.getHeight());
+                    savedImages.add(archivedImage);
+                    archivedImages.add(archivedImage);
+
+                } else {
+                    int fileIdx = Integer.parseInt(imageInfo);
+                    if (multipartFiles == null) {
+                        throw new CustomException(LogUtil.getElement(), NO_DATA_TO_SAVE);
+                    } else if (multipartFiles.size() <= fileIdx) {
+                        throw new CustomException(LogUtil.getElement(), FILE_INDEX_OUT_OF_BOUNDS);
+                    }
+
+                    Image image = Image.builder()
+                            .memo(Memo.builder()
+                                    .x(memoListDto.getX())
+                                    .y(memoListDto.getY())
+                                    .width(memoListDto.getWidth())
+                                    .height(memoListDto.getHeight())
+                                    .build())
+                            .build();
+                    // 일단 파일을 저장해놓고 save에 실패할 경우 delete 추가
+                    try {
+                        savedImages.add(fileInfoService.save(image, multipartFiles.get(fileIdx)));
+                        fileCnt++;
+                    } catch (IOException e) {
+                        throw new CustomException(LogUtil.getElement(), FAIL_TO_SAVE_IMAGE);
+                    }
                 }
 
-                Image image = Image.builder()
-                        .memo(Memo.builder()
-                                .x(memoListDto.getX())
-                                .y(memoListDto.getY())
-                                .width(memoListDto.getWidth())
-                                .height(memoListDto.getHeight())
-                                .build())
-                        .build();
-                // 일단 파일을 저장해놓고 save에 실패할 경우 delete 추가
-                try {
-                    savedImages.add(fileInfoService.save(image, multipartFiles.get(fileIdx)));
-                    fileCnt++;
-                } catch (IOException e) {
-                    throw new CustomException(LogUtil.getElement(), FAIL_TO_SAVE_IMAGE);
-                }
             } else if (memoTypeSeq == 5) {
                 String emoji = (String) memoListDto.getInfo();
                 stickers.add(Sticker.builder()
@@ -172,7 +197,7 @@ public class DiaryServiceImpl implements DiaryService {
             }
         }
 
-        if (savedImages.size() != fileCnt) {
+        if (multipartFiles != null && multipartFiles.size() != fileCnt) {
             throw new CustomException(LogUtil.getElement(), MISMATCH_IN_NUMBER_OF_FILES_AND_IMAGES);
         }
 
@@ -213,15 +238,15 @@ public class DiaryServiceImpl implements DiaryService {
 
         // 회원떡메(memberMemo), 회원떡메가 가지고 있는 떡메모지 삭제
         Optional<Background> optionalBackground = backgroundRepository.findByMemberAndDiaryDate(member, LocalDate.parse(diaryDate));
-        optionalBackground.ifPresent(this::delete);
+        optionalBackground.ifPresent(background -> delete(background, archivedImages));
         Background savedBackground = optionalBackground.orElseGet(() -> backgroundRepository.save(Background.builder()
                 .diaryDate(LocalDate.parse(diaryDate))
                 .member(member)
                 .build())
         );
 
-        MemoType memoTypeSeq = memoTypeRepository.findByMemoTypeSeq(1L);
-        if (memoTypeSeq == null) {
+        MemoType memoType = memoTypeRepository.findByMemoTypeSeq(1L);
+        if (memoType == null) {
             saveMemoType();
         }
 
@@ -286,7 +311,7 @@ public class DiaryServiceImpl implements DiaryService {
         Background background = backgroundRepository.findByMemberAndDiaryDate(member, LocalDate.parse(diaryDate))
                 .orElseThrow(() -> new CustomException(LogUtil.getElement(), BACKGROUND_NOT_FOUND));
 
-        delete(background);
+        delete(background, new HashSet<>());
 
         // 배경판 삭제
         backgroundRepository.deleteAllInBatch(new ArrayList<>(){{
@@ -296,7 +321,7 @@ public class DiaryServiceImpl implements DiaryService {
 
     @Transactional
     @Override
-    public void delete(Background background) {
+    public void delete(Background background, Set<Image> archivedImage) {
 
         // 배경판으로 회원떡메에서 떡메타입과 떡메식별자 찾기
         List<MemberMemo> memberMemos = memberMemoRepository.findAllByBackground(background);
@@ -311,7 +336,11 @@ public class DiaryServiceImpl implements DiaryService {
         accountBookRepository.deleteAllInBatch(findMemosDto.getAccountBooks());
         checklistRepository.deleteAllInBatch(findMemosDto.getChecklists());
         for (Image image : findMemosDto.getImages()) {
-            fileInfoService.delete(image);
+            if (!archivedImage.contains(image)) {
+                fileInfoService.delete(image);
+            } else {
+                archivedImage.remove(image);
+            }
         }
         stickerRepository.deleteAllInBatch(findMemosDto.getStickers());
 
