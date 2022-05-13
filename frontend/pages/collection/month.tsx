@@ -8,7 +8,7 @@ import CollectionPannel from 'component/collection/collectionPannel';
 const month = () => {
     const [collectionPannelIsOpen, setCollectionPannelIsOpen] = useState(false);
     const [searchInput, setSearchInput] = useState();
-    const [extendedProps, setExtendedProps] = useState();
+    const [extendedProps, setExtendedProps] = useState({});
     const events = [
         { title: "텍스트 +4", date: '2022-05-09', memoTypeSeq : 1, memoSeqList: ['3','4'] },
         { title: "가계부 +1", date: '2022-05-09', memoTypeSeq : 2, memoSeqList: ['2'] },
@@ -19,8 +19,8 @@ const month = () => {
     ];
     const onCalenderEventClick=(e)=>{
         console.log(e.event._def);
-        console.log(e.event._def.extendedProps.memoTypeSeq);
-        setExtendedProps(e.event._def.extendedProps);
+        console.log(typeof e.event._def.extendedProps);
+        setExtendedProps(()=>e.event._def.extendedProps);
         setCollectionPannelIsOpen(true);
     }
     const searchInputChange = (e) => {
