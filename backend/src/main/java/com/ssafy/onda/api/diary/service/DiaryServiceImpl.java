@@ -217,6 +217,9 @@ public class DiaryServiceImpl implements DiaryService {
                         .accountBook(savedAccountBook)
                         .build());
             }
+            if (accountBookItems.size() == 0) {
+                throw new CustomException(LogUtil.getElement(), NO_DATA_TO_SAVE);
+            }
             accountBookItemRepository.saveAll(accountBookItems);
         }
 
@@ -230,6 +233,9 @@ public class DiaryServiceImpl implements DiaryService {
                         .content(checklistItemDto.getContent())
                         .checklist(savedChecklist)
                         .build());
+            }
+            if (checklistItems.size() == 0) {
+                throw new CustomException(LogUtil.getElement(), NO_DATA_TO_SAVE);
             }
             checklistItemRepository.saveAll(checklistItems);
         }
