@@ -5,17 +5,19 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import styles from '../../styles/scss/Collection.module.scss'
 import CollectionPannel from 'component/collection/collectionPannel';
+import { useRouter } from 'next/router'
 const month = () => {
+    const router = useRouter();
     const [collectionPannelIsOpen, setCollectionPannelIsOpen] = useState(false);
     const [searchInput, setSearchInput] = useState();
     const [extendedProps, setExtendedProps] = useState({});
     const events = [
-        { title: "텍스트 +4", date: '2022-05-09', memoTypeSeq : 1, memoSeqList: ['3','4'] },
-        { title: "가계부 +1", date: '2022-05-09', memoTypeSeq : 2, memoSeqList: ['2'] },
-        { title: "체크리스트 +1", date: '2022-05-09', memoTypeSeq : 3, memoSeqList: ['2'] },
-        { title: "텍스트 +4", date: '2022-05-10', memoTypeSeq : 1, memoSeqList: ['3','4'] },
-        { title: "가계부 +1", date: '2022-05-11', memoTypeSeq : 2, memoSeqList: ['2'] },
-        { title: "체크리스트 +1", date: '2022-05-12', memoTypeSeq : 3, memoSeqList: ['2'] },
+        { title: "텍스트 +4", date: '2022-05-09', dateProp: '2022-05-09', memoTypeSeq : 1, memoSeqList: ['3','4'] },
+        { title: "가계부 +1", date: '2022-05-09', dateProp: '2022-05-09', memoTypeSeq : 2, memoSeqList: ['2'] },
+        { title: "체크리스트 +1", date: '2022-05-09', dateProp: '2022-05-09', memoTypeSeq : 3, memoSeqList: ['2'] },
+        { title: "텍스트 +4", date: '2022-05-10', dateProp: '2022-05-10', memoTypeSeq : 1, memoSeqList: ['3','4'] },
+        { title: "가계부 +1", date: '2022-05-11', dateProp: '2022-05-11', memoTypeSeq : 2, memoSeqList: ['2'] },
+        { title: "체크리스트 +1", date: '2022-05-12', dateProp: '2022-05-12', memoTypeSeq : 3, memoSeqList: ['2'] },
     ];
     const onCalenderEventClick=(e)=>{
         console.log(e.event._def);
@@ -32,6 +34,26 @@ const month = () => {
     }
     const searchByKeyword = () => {
         console.log(searchInput);
+    }
+    const [doubleClickState, setDoubleClickState] = useState({state: false, date:''});
+    let doubleClickThrottle;
+    const onDateClick = (date) =>{
+        if(doubleClickState.date !== date){
+            setDoubleClickState({state: true, date: date});
+            doubleClickThrottle = setTimeout(()=>{
+                setDoubleClickState({state: false, date: date});
+            }, 200)
+            return;
+        }
+        if(doubleClickState.state){
+            router.push(`/diary/${date}`)
+        }
+        else{
+            setDoubleClickState({state: true, date: date});
+            doubleClickThrottle = setTimeout(()=>{
+                setDoubleClickState({state: false, date: date});
+            }, 200)
+        }
     }
     return (
         <div>
@@ -60,6 +82,7 @@ const month = () => {
                 plugins={[dayGridPlugin, interactionPlugin]}
                 editable
                 selectable
+                dateClick={(e)=>onDateClick(e.dateStr)}
                 events={events}
                 eventClick={(e)=>{onCalenderEventClick(e)}}
                 />
