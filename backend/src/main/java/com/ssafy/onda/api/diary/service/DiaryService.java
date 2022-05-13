@@ -16,6 +16,8 @@ public interface DiaryService {
 
     void save(CustomUserDetails details, ReqDiaryDto reqDiaryDto, List<MultipartFile> multipartFiles);
 
+    void saveDiary(CustomUserDetails details, ReqDiaryDto reqDiaryDto, List<MultipartFile> multipartFiles);
+
     void deleteByMemberAndDiaryDate(CustomUserDetails details, String diaryDate);
 
     void delete(Background background, Set<Image> archivedImage);
