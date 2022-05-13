@@ -92,6 +92,36 @@ const MemoFinancialLedger = ({ memoInfo, drag, onDeleteMemo }) => {
       }),
     )
   }
+  const onChangeInput=(value, index, type)=>{
+    let newContent = [];
+    for(let i=0; i<financeLedger.length; i+=1){
+      let temp = {};
+      if(i===index){
+        if(type==='CONTENT') temp = { content: value, income: financeLedger[i].income, outcome: financeLedger[i].outcome};
+        else if(type==='INCOME') temp = { content: financeLedger[i].content, income: value, outcome: financeLedger[i].outcome};
+        else if(type==='OUTCOME') temp = { content: financeLedger[i].content, income: financeLedger[i].income, outcome: value};
+        newContent.push(temp);
+        continue;
+      };
+      newContent.push(financeLedger[i]);
+    }
+    console.log(financeLedger)
+    setFinanceLedger(() => [
+      ...newContent,
+    ])
+  }
+  const onDeleteContent = (index) =>{
+    console.log(index)
+    console.log(financeLedger)
+    let newContent = [];
+    for(let i=0; i<financeLedger.length; i+=1){
+      if(i===index) continue;
+      newContent.push(financeLedger[i]);
+    }
+    setFinanceLedger(() => [
+      ...newContent,
+    ])
+  }
   const onDeleteButtonClick = () => {
     onDeleteMemo(memoInfo.id)
   }
@@ -124,16 +154,48 @@ const MemoFinancialLedger = ({ memoInfo, drag, onDeleteMemo }) => {
       <div className={styles.financeContentHeader}>내용</div>
       <div className={styles.financeContentHeader}>들어온 돈</div>
       <div className={styles.financeContentHeader}>나간 돈</div>
-      {financeLedger.map((fin) => {
+      {financeLedger.map((fin, index) => {
         return (
           <div className={styles.financeContent}>
-            <div className={styles.financeContentTag}>{fin.content}</div>
-            <div className={styles.financeIncome}>
-              {fin.income.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-            </div>
-            <div className={styles.financeOutcome}>
-              {fin.outcome.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-            </div>
+            {!isEditable && 
+            <>
+              <div className={styles.financeContentTag}>{fin.content}</div>
+              <div className={styles.financeIncome}>
+                {fin.income.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              </div>
+              <div className={styles.financeOutcome}>
+                {fin.outcome.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              </div>
+            </>}
+            {isEditable && 
+            <>
+              <input
+              className={styles.financeContentInput}
+              style={{ width: (width - 30) / 3 }}
+              value={fin.content}
+              onChange={(e) => onChangeInput(e.target.value, index, 'CONTENT')}
+            />
+              <input
+              className={styles.financeContentInput}
+              style={{ width: (width - 30) / 3 }}
+              value={fin.income}
+              type="number"
+              onChange={(e) => onChangeInput(e.target.value, index, 'INCOME')}
+            />
+              <input
+              className={styles.financeContentInput}
+              style={{ width: (width - 30) / 3 }}
+              value={fin.outcome}
+              type="number"
+              onChange={(e) => onChangeInput(e.target.value, index, 'OUTCOME')}
+            />
+            </>}
+            {isEditable && <button
+                className={styles.financeDeleteButton}
+                onClick={()=>onDeleteContent(index)}
+              >
+                X
+              </button>}
           </div>
         )
       })}
