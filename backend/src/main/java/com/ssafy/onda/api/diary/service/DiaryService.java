@@ -7,6 +7,7 @@ import com.ssafy.onda.api.diary.entity.Background;
 import com.ssafy.onda.api.member.entity.MemberMemo;
 import com.ssafy.onda.global.common.auth.CustomUserDetails;
 import com.ssafy.onda.global.common.entity.Image;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -16,7 +17,7 @@ public interface DiaryService {
 
     void save(CustomUserDetails details, ReqDiaryDto reqDiaryDto, List<MultipartFile> multipartFiles);
 
-    void saveDiary(CustomUserDetails details, ReqDiaryDto reqDiaryDto, List<MultipartFile> multipartFiles);
+    void saveDiary(CustomUserDetails details, ReqDiaryDto reqDiaryDto, List<MultipartFile> multipartFiles) throws IllegalArgumentException, DataIntegrityViolationException;
 
     void deleteByMemberAndDiaryDate(CustomUserDetails details, String diaryDate);
 
