@@ -27,7 +27,7 @@ const login = () => {
         path: '/',
         secure: true,
         sameSite: 'none',
-        domain: 'http://k6a107.p.ssafy.io/',
+        // domain: 'http://k6a107.p.ssafy.io/',
       })
       router.push(`/collection/month`)
     } else {
@@ -42,7 +42,7 @@ const login = () => {
       path: '/',
       secure: true,
       sameSite: 'none',
-      domain: 'http://k6a107.p.ssafy.io/',
+      // domain: 'http://k6a107.p.ssafy.io/',
     })
   }
 
