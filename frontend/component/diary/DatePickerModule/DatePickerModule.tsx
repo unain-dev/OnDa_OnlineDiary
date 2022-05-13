@@ -6,10 +6,7 @@ import ko from 'date-fns/locale/ko'
 import { getDiaryDays } from 'core/api/diary'
 import moment from 'moment'
 
-const DatePickerModule = ({ startDate, setStartDate }) => {
-  const token =
-    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MDEiLCJpc3MiOiJvbmRhLnNzYWZ5LmNvbSIsImV4cCI6MTY1MzM1Nzk4NywiaWF0IjoxNjUyMDYxOTg3fQ._yDfuQ4lL5tbYci6CFY-x08muvg71L5wo1uTH6FMMls_2IVep7jGlh5BMVWtqPXYoLp5Zm6UbzRY1aJYagiLrg'
-
+const DatePickerModule = ({ startDate, setStartDate, token }) => {
   const [diaryDays, setDiaryDays] = useState([])
   const gotDiaryDays = (date) => {
     console.log(date)

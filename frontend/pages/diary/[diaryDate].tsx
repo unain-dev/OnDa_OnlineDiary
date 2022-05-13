@@ -129,6 +129,7 @@ const diary = ({ diaryDate }) => {
                 setGoDate(d)
                 router.push(`/diary/${d}`)
               }}
+              token={token}
             />
           </span>
           <button
