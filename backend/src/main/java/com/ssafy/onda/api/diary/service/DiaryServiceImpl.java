@@ -23,6 +23,7 @@ import com.ssafy.onda.global.error.exception.CustomException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -69,6 +70,21 @@ public class DiaryServiceImpl implements DiaryService {
     @Transactional
     @Override
     public void save(CustomUserDetails details, ReqDiaryDto reqDiaryDto, List<MultipartFile> multipartFiles) {
+
+        try {
+            saveDiary(details, reqDiaryDto, multipartFiles);
+        } catch (IllegalArgumentException e) {
+            // json input 형식 오류
+            throw new CustomException(LogUtil.getElement(), INVALID_INPUT);
+        } catch (DataIntegrityViolationException e) {
+            // entity의 항목으로 null이 들어가는 경우
+            throw new CustomException(LogUtil.getElement(), INVALID_DATA_FORMAT);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void saveDiary(CustomUserDetails details, ReqDiaryDto reqDiaryDto, List<MultipartFile> multipartFiles) throws IllegalArgumentException, DataIntegrityViolationException {
 
         // 회원 확인
         Member member = memberRepository.findByMemberId(details.getUsername())
@@ -146,7 +162,6 @@ public class DiaryServiceImpl implements DiaryService {
                     // 기존 이미지 메모지를 db에서 찾아와야 함
                     int indexOf = imageInfo.lastIndexOf(File.separator) + 1;
                     String encodedName = imageInfo.substring(indexOf);
-                    System.out.println("encodedName = " + encodedName);
 
                     Image archivedImage = imageRepository.findByFileInfoEncodedName(encodedName)
                             .orElseThrow(() -> new CustomException(LogUtil.getElement(), ENTITY_NOT_FOUND));
@@ -172,7 +187,6 @@ public class DiaryServiceImpl implements DiaryService {
                                     .height(memoListDto.getHeight())
                                     .build())
                             .build();
-                    // 일단 파일을 저장해놓고 save에 실패할 경우 delete 추가
                     try {
                         savedImages.add(fileInfoService.save(image, multipartFiles.get(fileIdx)));
                         fileCnt++;
@@ -217,6 +231,9 @@ public class DiaryServiceImpl implements DiaryService {
                         .accountBook(savedAccountBook)
                         .build());
             }
+            if (accountBookItems.size() == 0) {
+                throw new CustomException(LogUtil.getElement(), NO_DATA_TO_SAVE);
+            }
             accountBookItemRepository.saveAll(accountBookItems);
         }
 
@@ -230,6 +247,9 @@ public class DiaryServiceImpl implements DiaryService {
                         .content(checklistItemDto.getContent())
                         .checklist(savedChecklist)
                         .build());
+            }
+            if (checklistItems.size() == 0) {
+                throw new CustomException(LogUtil.getElement(), NO_DATA_TO_SAVE);
             }
             checklistItemRepository.saveAll(checklistItems);
         }
