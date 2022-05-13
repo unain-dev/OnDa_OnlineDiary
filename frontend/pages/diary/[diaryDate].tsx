@@ -1,7 +1,7 @@
 import React, { Component, useState, useEffect, forwardRef } from 'react'
 import MemoSeparator from 'component/memo/memoSeparator/MemoSeparator'
 import RND from 'component/diary/RND'
-import Pannel from 'component/diary/pannel'
+import Pannel from 'component/diary/Pannel/Pannel'
 import { useSelector, useDispatch } from 'react-redux'
 import { changeMemoState, addMemo, deleteMemo } from 'core/store/modules/diary'
 import {
