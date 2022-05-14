@@ -20,9 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import static com.ssafy.onda.global.error.dto.ErrorStatus.*;
 
@@ -41,6 +39,8 @@ public class FilterServiceImpl implements FilterService {
     private final ChecklistItemRepository checklistItemRepository;
     private final MemoTypeRepository memoTypeRepository;
     private final AccountBookRepository accountBookRepository;
+
+
 
     @Transactional
     @Override
