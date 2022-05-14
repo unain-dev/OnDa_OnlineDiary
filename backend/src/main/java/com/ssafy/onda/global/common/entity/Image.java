@@ -40,4 +40,13 @@ public class Image {
         this.fileInfo = fileInfo;
         this.memo = memo;
     }
+
+    public void changeMemoEntity(Long x, Long y, Long width, Long height) {
+        this.memo = Memo.builder()
+                .x(x)
+                .y(y)
+                .width(width)
+                .height(height)
+                .build();
+    }
 }

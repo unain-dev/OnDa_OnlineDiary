@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import SignupForm from 'component/user/signupForm'
-import { checkId, onSignup, emailAuth, emailAuthCheck } from 'pages/api/memberApi'
+import { checkId, onSignup, emailAuth, emailAuthCheck } from 'core/api/memberApi'
+import router from 'next/router';
 
 const signup = () => {
   const [member, setMember] = useState({
@@ -244,8 +245,8 @@ const signup = () => {
   const handleSignup = async () => {
     const result = await onSignup(member);
     if (result.status == 201) { // 회원가입 완료
-      alert(result.msg);
-      window.location.href = '/user/login';
+      // alert(result.msg);
+      router.push(`/user/login`)
     } else {
       alert(result.msg);
     }

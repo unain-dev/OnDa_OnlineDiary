@@ -1,21 +1,25 @@
-import React, { Component, useState, useEffect } from 'react'
+import React, { Component, useState, useEffect, forwardRef } from 'react'
 import MemoSeparator from 'component/memo/memoSeparator/MemoSeparator'
 import RND from 'component/diary/RND'
-import Pannel from 'component/diary/pannel'
+import Pannel from 'component/diary/Pannel/Pannel'
 import { useSelector, useDispatch } from 'react-redux'
 import { changeMemoState, addMemo, deleteMemo } from 'core/store/modules/diary'
-import { getMemoAction, setMemoAction } from 'core/store/actions/memo'
+import {
+  getMemoAction,
+  setMemoAction,
+  deleteDayDiary,
+} from 'core/store/actions/memo'
 import { AppDispatch } from 'core/store'
-import calendarIcon from 'public/asset/image/diaryImage/calendarIcon.png'
 import Image from 'next/image'
 import styles from './diary.module.scss'
-import closeBtnImg from 'public/asset/image/diaryImage/closeBtnImg.png'
 import hamburgerIcon from 'public/asset/image/diaryImage/hamburgerIcon.png'
-import { truncate } from 'fs'
 import { useRouter } from 'next/router'
 import { calNextDate, calPrevDate } from 'core/common/date'
+import DatePickerModule from 'component/diary/DatePickerModule/DatePickerModule'
+import moment from 'moment'
+import SsrCookie from 'ssr-cookie'
 
-const diary = () => {
+const diary = ({ diaryDate }) => {
   const todaysInfo = useSelector(({ diary }) => diary)
   const len = todaysInfo.memoList.length
   const lastId = todaysInfo.lastId
@@ -41,19 +45,37 @@ const diary = () => {
     // alert('추가되었습니다.')
   }
 
+  const [goDate, setGoDate] = useState(diaryDate)
+
   useEffect(() => {
     setDraggableState(Array(len).fill(true))
   }, [len])
 
-  const token =
-    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MDEiLCJpc3MiOiJvbmRhLnNzYWZ5LmNvbSIsImV4cCI6MTY1MzM1Nzk4NywiaWF0IjoxNjUyMDYxOTg3fQ._yDfuQ4lL5tbYci6CFY-x08muvg71L5wo1uTH6FMMls_2IVep7jGlh5BMVWtqPXYoLp5Zm6UbzRY1aJYagiLrg'
+  const cookie = new SsrCookie()
+  const token = cookie.get('member')
 
-  const onClickSave = () => {
+  const onClickDelete = (date) => {
     const params = {
-      param: todaysInfo,
+      diaryDate: date,
       token: token,
     }
-    appDispatch(setMemoAction(params))
+    appDispatch(deleteDayDiary(params))
+  }
+
+  const onClickSave = () => {
+    todaysInfo.memoList.length <= 0
+      ? appDispatch(
+          deleteDayDiary({
+            param: goDate,
+            token: token,
+          }),
+        )
+      : appDispatch(
+          setMemoAction({
+            param: todaysInfo,
+            token: token,
+          }),
+        )
   }
 
   const onDeleteMemo = (id) => {
@@ -67,13 +89,11 @@ const diary = () => {
   const [pannelIsOpen, setPannelIsOpen] = useState(false)
 
   const router = useRouter()
-  const { diaryDate } = router.query || {}
 
-  console.log('load')
-  useEffect(() => {
-    if (diaryDate != null && diaryDate != '' && diaryDate != undefined) {
+  const setTodaysInfo = (date) => {
+    if (date != null && date != undefined) {
       const params = {
-        diaryDate: diaryDate,
+        diaryDate: date,
         token: token,
       }
       appDispatch(getMemoAction(params))
@@ -82,34 +102,52 @@ const diary = () => {
         height: window.innerHeight,
       })
     }
-  }, [diaryDate])
+  }
+
+  useEffect(() => {
+    setTodaysInfo(goDate)
+  }, [goDate])
 
   return (
     <>
       <div className={styles.dateContainer}>
-        <Image
-          src={calendarIcon}
-          className={styles.calendarIcon}
-          width="40"
-          height="40"
-        />
         <span>
           <button
-            onClick={() => {
-              router.push(`/diary/${calPrevDate(diaryDate)}`)
+            onClick={async () => {
+              const date = calPrevDate(diaryDate)
+              await setGoDate(date)
+              router.push(`/diary/${date}`)
             }}
           >
             &lt;
           </button>
           <span>
-            <h2>{todaysInfo.diaryDate}</h2>
+            <DatePickerModule
+              startDate={Date.parse(goDate)}
+              setStartDate={(date) => {
+                const d = moment(date).format('YYYY-MM-DD')
+                setGoDate(d)
+                router.push(`/diary/${d}`)
+              }}
+              token={token}
+            />
           </span>
           <button
-            onClick={() => {
-              router.push(`/diary/${calNextDate(diaryDate)}`)
+            onClick={async () => {
+              const date = calNextDate(diaryDate)
+              await setGoDate(calNextDate(diaryDate))
+              router.push(`/diary/${date}`)
             }}
           >
             &gt;
+          </button>
+          <button
+            className={styles.deleteBtn}
+            onClick={async () => {
+              onClickDelete(goDate)
+            }}
+          >
+            삭제하기
           </button>
         </span>
         <span className={styles.closeBtnImgContainer}>
@@ -188,6 +226,12 @@ const diary = () => {
       )}
     </>
   )
+}
+
+export async function getServerSideProps(context) {
+  return {
+    props: { diaryDate: context.params.diaryDate },
+  }
 }
 
 export default diary

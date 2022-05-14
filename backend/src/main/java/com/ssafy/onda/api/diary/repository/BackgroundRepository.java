@@ -8,9 +8,12 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public interface BackgroundRepository extends JpaRepository<Background, Long> {
+public interface BackgroundRepository extends JpaRepository<Background, Long>, BackgroundRepositoryCustom {
 
     Optional<Background> findByMemberAndDiaryDate(Member member, LocalDate diaryDate);
 
     List<Background> findByMember(Member member);
+
+    List<Background> findAllByMember(Member member);
+
 }

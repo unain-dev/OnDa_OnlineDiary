@@ -33,20 +33,47 @@ export default function MemoImage({ memoInfo, drag, onDeleteMemo }) {
     )
   }
   const onApproveUpdateClick = () => {
-    setIsEditable(false)
-    drag.enableDragging()
-    dispatch(
-      changeMemoState({
+    console.log(file)
+    console.log(previewImage)
+    if(Object.keys(previewImage).length===0){
+      dispatch(      
+        changeMemoState({
+        ...memoInfo,
+        isEditing: false,
+      }),
+      )
+      setIsEditable(false)
+      drag.enableDragging()
+    }
+    else if(file===null){
+      dispatch(      
+        changeMemoState({
         ...memoInfo,
         info: previewImage,
         isEditing: false,
       }),
-    )
+      )
+      setIsEditable(false)
+      drag.enableDragging()
+    }
+    else{
+      dispatch(
+        changeMemoState({
+          ...memoInfo,
+          info: file[0],
+          isEditing: false,
+        }),
+      )
+      setIsEditable(false)
+      drag.enableDragging()
+    }
+
   }
   const onDeleteButtonClick = () => {
     onDeleteMemo(memoInfo.id)
   }
   useEffect(() => {
+    console.log(file)
     if (file !== null) {
       setPreviewImage(URL.createObjectURL(file[0]))
     }

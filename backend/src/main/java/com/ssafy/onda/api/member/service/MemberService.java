@@ -28,4 +28,7 @@ public interface MemberService {
     boolean authEmailCheck(String userEmail, String Auth);
 
     void changeInfo(String email, String nickname);
+
+    void delete(CustomUserDetails details, ReqLoginMemberDto reqLoginMemberDto);
+
 }

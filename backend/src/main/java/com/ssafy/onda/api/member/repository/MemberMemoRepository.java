@@ -7,11 +7,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface MemberMemoRepository extends JpaRepository<MemberMemo, Long> {
+public interface MemberMemoRepository extends JpaRepository<MemberMemo, Long>, MemberMemoRepositoryCustom {
 
     List<MemberMemo> findAllByBackground(Background background);
 
     List<MemberMemo> findAllByBackgroundInAndMemoSeqInAndMemoTypeInOrderByBackgroundAsc(List<Background> backgrounds, List<Long> memoSeqList, List<MemoType> type);
 
     List<MemberMemo> findAllByBackgroundInAndMemoTypeInOrderByBackgroundAsc(List<Background> backgrounds, List<MemoType> memoTypes);
+
+    List<MemberMemo> findAllByMemoTypeAndMemoSeqIn(MemoType memoType, List<Long> memoSeqs);
+
 }

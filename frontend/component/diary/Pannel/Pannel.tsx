@@ -40,12 +40,10 @@ function getMemo(seq) {
       return {
         ...obj,
         memoTypeSeq: 3,
-        info: [
-          {
-            content: '항목을 입력해주세요',
-            isChecked: false,
-          },
-        ],
+        info: {
+          checklistHeader: '',
+          checklistItems: [],
+        },
       }
     case 4:
       return {

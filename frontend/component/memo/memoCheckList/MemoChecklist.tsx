@@ -61,7 +61,31 @@ const MemoChecklist = ({ memoInfo, drag, onDeleteMemo }) => {
       }),
     )
   }
-  const onDeleteButtonClick = () => {}
+  const onDeleteContent = (index) =>{
+    console.log(index)
+    console.log(checkboxInfo)
+    let newContent = [];
+    for(let i=0; i<checkboxInfo.length; i+=1){
+      if(i===index) continue;
+      newContent.push(checkboxInfo[i]);
+    }
+    setCheckboxInfo(() => [
+      ...newContent,
+    ])
+  }
+  const onChangeInput=(value, index)=>{
+    let newContent = [];
+    for(let i=0; i<checkboxInfo.length; i+=1){
+      if(i===index){
+        checkboxInfo[i].content = value;
+      };
+      newContent.push(checkboxInfo[i]);
+    }
+    console.log(checkboxInfo)
+    setCheckboxInfo(() => [
+      ...newContent,
+    ])
+  }
   const [mouseState, setMouseState] = useState(false)
 
   const mouseOverEvent = () => {
@@ -118,7 +142,19 @@ const MemoChecklist = ({ memoInfo, drag, onDeleteMemo }) => {
                 checked={checkbox.isChecked}
                 onClick={() => onCheckboxClick(index)}
               />
-              {checkbox.content}
+              {!isEditable && checkbox.content}
+              {isEditable && <input
+                  className={styles.checklistChangeInput}
+                  value={checkbox.content}
+                  onChange={(e)=>onChangeInput(e.target.value, index)}
+                  type="text"
+                />}
+              {isEditable && <button
+                className={styles.checklistDeleteButton}
+                onClick={()=>onDeleteContent(index)}
+              >
+                X
+              </button>}
             </div>
           )
         })}

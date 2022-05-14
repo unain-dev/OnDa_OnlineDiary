@@ -11,7 +11,7 @@ const MemoSticker = ({ memoInfo, drag, onDeleteMemo }) => {
   const [text, setText] = useState(info)
   const [finalEmoji, setFinalEmoji] = useState(info)
   const [size, setSize] = useState((width * height) / 400)
-  
+
   useEffect(() => {
     setSize(Math.pow(Math.min(width, height), 2) / 400)
     console.log(width)
@@ -36,11 +36,11 @@ const MemoSticker = ({ memoInfo, drag, onDeleteMemo }) => {
     setIsEditable(false)
     if (text !== '') handleOnEnter(text)
     drag.enableDragging()
-    console.log(finalEmoji)
+    console.log(text)
     dispatch(
       changeMemoState({
         ...memoInfo,
-        info: finalEmoji,
+        info: text,
         isEditing: false,
       }),
     )
@@ -49,19 +49,25 @@ const MemoSticker = ({ memoInfo, drag, onDeleteMemo }) => {
     onDeleteMemo(memoInfo.id)
   }
 
-  const [mouseState, setMouseState] = useState(false);
-  
-  const mouseOverEvent = () =>{
-    setMouseState(true);
+  const [mouseState, setMouseState] = useState(false)
+
+  const mouseOverEvent = () => {
+    setMouseState(true)
   }
-  const mouseLeaveEvent = () =>{
-    setMouseState(false);
+  const mouseLeaveEvent = () => {
+    setMouseState(false)
   }
   return (
-    <div className={styles.checklist} onMouseOver={mouseOverEvent} onMouseLeave={mouseLeaveEvent}>
-      {mouseState && <div className={styles.deleteButton} onClick={onDeleteButtonClick}>
-        ❌
-      </div>}
+    <div
+      className={styles.checklist}
+      onMouseOver={mouseOverEvent}
+      onMouseLeave={mouseLeaveEvent}
+    >
+      {mouseState && (
+        <div className={styles.deleteButton} onClick={onDeleteButtonClick}>
+          ❌
+        </div>
+      )}
       {mouseState && !isEditable && (
         <div className={styles.updateButton} onClick={onUpdateButtonClick}>
           ✏️

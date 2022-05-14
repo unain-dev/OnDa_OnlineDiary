@@ -1,11 +1,12 @@
 package com.ssafy.onda.global.common.entity;
 
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;
 
 import javax.persistence.*;
 
 @Getter
-@ToString(of = {"memoTypeSeq", "memoType"})
+@ToString(of = {"memoTypeSeq", "memoTypeName"})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "tb_memo_type")
 @Entity
@@ -16,11 +17,12 @@ public class MemoType {
     private Long memoTypeSeq;
 
     @Column(nullable = false, unique = true)
-    private String memoType;
+    private String memoTypeName;
 
+    @QueryProjection
     @Builder
-    public MemoType(Long memoTypeSeq, String memoType) {
+    public MemoType(Long memoTypeSeq, String memoTypeName) {
         this.memoTypeSeq = memoTypeSeq;
-        this.memoType = memoType;
+        this.memoTypeName = memoTypeName;
     }
 }

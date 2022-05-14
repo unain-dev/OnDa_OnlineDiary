@@ -10,4 +10,7 @@ public interface FilterService {
     List<MonthFilterDto> search(Long type, CustomUserDetails details);
 
     List<MonthFilterDto> searchBox(Long type, String keyword, CustomUserDetails details);
+
+    Object preview(CustomUserDetails details, int memoTypeSeq, String memoSeqList);
+
 }
