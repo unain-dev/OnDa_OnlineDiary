@@ -8,5 +8,4 @@ import java.util.List;
 public interface AccountBookRepository  extends JpaRepository<AccountBook, Long> {
 
     List<AccountBook> findAllByAccountBookSeqIn(List<Long> accountBookSeqs);
-
 }

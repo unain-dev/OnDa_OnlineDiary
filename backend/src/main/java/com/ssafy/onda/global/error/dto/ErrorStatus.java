@@ -41,6 +41,7 @@ public enum ErrorStatus {
     INVALID_MEMO_TYPE(BAD_REQUEST.value(), "올바르지 않은 요청입니다."),
     BACKGROUND_NOT_FOUND(NO_CONTENT.value(), "해당 날짜에 작성한 다이어리가 존재하지 않습니다."),
     NO_MEMO_AVAILABLE(BAD_REQUEST.value(), "저장 가능한 메모가 없습니다."),
+    WRONG_MEMO_Type(BAD_REQUEST.value(), "잘못된 메모타입 입니다."),
 
     // file save
     NO_DATA_TO_SAVE(BAD_REQUEST.value(), "빈 메모는 저장이 불가능합니다."),

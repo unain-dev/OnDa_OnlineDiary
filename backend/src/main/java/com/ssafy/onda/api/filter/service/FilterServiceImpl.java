@@ -1,9 +1,28 @@
 package com.ssafy.onda.api.filter.service;
 
+import com.ssafy.onda.api.diary.entity.Background;
+import com.ssafy.onda.api.diary.repository.BackgroundRepository;
+import com.ssafy.onda.api.filter.dto.MonthMemoListDto;
+import com.ssafy.onda.api.filter.dto.response.MonthFilterDto;
+import com.ssafy.onda.api.member.entity.Member;
+import com.ssafy.onda.api.member.entity.MemberMemo;
+import com.ssafy.onda.api.member.repository.MemberMemoRepository;
+import com.ssafy.onda.api.member.repository.MemberRepository;
+import com.ssafy.onda.global.common.auth.CustomUserDetails;
+import com.ssafy.onda.global.common.entity.*;
+import com.ssafy.onda.global.common.repository.*;
+import com.ssafy.onda.global.common.util.LogUtil;
+import com.ssafy.onda.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.ssafy.onda.global.error.dto.ErrorStatus.MEMBER_NOT_FOUND;
+import static com.ssafy.onda.global.error.dto.ErrorStatus.WRONG_MEMO_Type;
 
 @Transactional(readOnly = true)
 @Slf4j
@@ -11,5 +30,281 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class FilterServiceImpl implements FilterService{
 
-    
+    private final MemberMemoRepository memberMemoRepository;
+    private final MemberRepository memberRepository;
+    private final BackgroundRepository backgroundRepository;
+    private final TextRepository textRepository;
+    private final AccountBookItemRepository accountBookItemRepository;
+    private final ChecklistRepository checklistRepository;
+    private final ChecklistItemRepository checklistItemRepository;
+    private final MemoTypeRepository memoTypeRepository;
+
+    @Transactional
+    @Override
+    public List<MonthFilterDto> search(Long type, CustomUserDetails details) {
+
+        List<Long> accountBookLists = new ArrayList<>();
+        List<Long> checklistLists = new ArrayList<>();
+        List<Long> textLists = new ArrayList<>();
+        List<MemberMemo> memberMemos = new ArrayList<>();
+        List<Background> backgrounds = new ArrayList<>();
+        List<MemoType> memoTypes = new ArrayList<>();
+
+        List<MonthMemoListDto> monthMemoListDtos = new ArrayList<>();
+        List<MonthFilterDto> monthFilterDtos = new ArrayList<>();
+        List<Long> dateList = new ArrayList<>();
+
+        Member member = memberRepository.findByMemberId(details.getUsername())
+                    .orElseThrow(() -> new CustomException(LogUtil.getElement(), MEMBER_NOT_FOUND));
+        backgrounds = backgroundRepository.findByMember(member);
+
+        if(type == 0) {
+            memoTypes = memoTypeRepository.findAll();
+        } else if(type == 1 || type == 2 || type == 3){
+            memoTypes = memoTypeRepository.findAllByMemoTypeSeq(type);
+        } else{
+            throw new CustomException(LogUtil.getElement(), WRONG_MEMO_Type);
+        }
+        memberMemos = memberMemoRepository.findAllByBackgroundInAndMemoTypeInOrderByBackgroundAsc(backgrounds, memoTypes);
+
+        for (Background back: backgrounds) {
+            dateList.add(back.getBackgroundSeq());
+        }
+
+        int dateFilter = 0;
+        for (MemberMemo memo : memberMemos) {
+
+            if (memo.getBackground().getBackgroundSeq() != dateList.get(dateFilter)) {
+                if(textLists.size() != 0) {
+                    monthMemoListDtos.add(MonthMemoListDto.builder()
+                            .memoTypeSeq(1L)
+                            .count(textLists.size())
+                            .memoSeqList(textLists)
+                            .build());
+                }
+                if(accountBookLists.size() != 0) {
+                    monthMemoListDtos.add(MonthMemoListDto.builder()
+                            .memoTypeSeq(2L)
+                            .count(accountBookLists.size())
+                            .memoSeqList(accountBookLists)
+                            .build());
+                }
+                if(checklistLists.size() != 0) {
+                    monthMemoListDtos.add(MonthMemoListDto.builder()
+                            .memoTypeSeq(3L)
+                            .count(checklistLists.size())
+                            .memoSeqList(checklistLists)
+                            .build());
+                }
+
+                monthFilterDtos.add(
+                    MonthFilterDto.builder()
+                    .diaryDate(String.valueOf(backgrounds.get(dateFilter).getDiaryDate()))
+                    .monthMemoListDto(monthMemoListDtos)
+                    .build()
+                );
+
+                monthMemoListDtos = new ArrayList<>();
+                accountBookLists = new ArrayList<>();
+                checklistLists = new ArrayList<>();
+                textLists = new ArrayList<>();
+
+                dateFilter++;
+
+            }
+
+            if (memo.getMemoType().getMemoTypeSeq() == 1) {
+                textLists.add(memo.getMemoSeq());
+            } else if (memo.getMemoType().getMemoTypeSeq() == 2) {
+                accountBookLists.add(memo.getMemoSeq());
+            } else if (memo.getMemoType().getMemoTypeSeq() == 3){
+                checklistLists.add(memo.getMemoSeq());
+            }
+
+        }
+
+        if(textLists.size() != 0) {
+            monthMemoListDtos.add(MonthMemoListDto.builder()
+                    .memoTypeSeq(1L)
+                    .count(textLists.size())
+                    .memoSeqList(textLists)
+                    .build());
+        }
+        if(accountBookLists.size() != 0) {
+            monthMemoListDtos.add(MonthMemoListDto.builder()
+                    .memoTypeSeq(2L)
+                    .count(accountBookLists.size())
+                    .memoSeqList(accountBookLists)
+                    .build());
+        }
+        if(checklistLists.size() != 0) {
+            monthMemoListDtos.add(MonthMemoListDto.builder()
+                    .memoTypeSeq(3L)
+                    .count(checklistLists.size())
+                    .memoSeqList(checklistLists)
+                    .build());
+        }
+        monthFilterDtos.add(
+                MonthFilterDto.builder()
+                        .diaryDate(String.valueOf(backgrounds.get(dateFilter).getDiaryDate()))
+                        .monthMemoListDto(monthMemoListDtos)
+                        .build()
+        );
+
+        return monthFilterDtos;
+    }
+
+    @Override
+    public List<MonthFilterDto> searchBox(Long type, String keyword, CustomUserDetails details) {
+
+        List<Long> accountBookLists = new ArrayList<>();
+        List<Long> checklistLists = new ArrayList<>();
+        List<Long> textLists = new ArrayList<>();
+        List<MemberMemo> memberMemos = new ArrayList<>();
+        List<Background> backgrounds = new ArrayList<>();
+        List<Text> texts = new ArrayList<>();
+        List<AccountBookItem> accountBookItems = new ArrayList<>();
+        List<Checklist> checklists = new ArrayList<>();
+        List<ChecklistItem> checklistItems = new ArrayList<>();
+
+        List<MonthMemoListDto> monthMemoListDtos = new ArrayList<>();
+        List<MonthFilterDto> monthFilterDtos = new ArrayList<>();
+        List<MemoType> memoTypes = new ArrayList<>();
+
+        List<Long> memoSeqList = new ArrayList<>();
+        List<Long> dateList = new ArrayList<>();
+
+        Member member = memberRepository.findByMemberId(details.getUsername())
+                .orElseThrow(() -> new CustomException(LogUtil.getElement(), MEMBER_NOT_FOUND));
+        backgrounds = backgroundRepository.findByMember(member);
+
+        if(type == 0){
+            texts = textRepository.findAllByHeaderContainsOrContentContains(keyword, keyword);
+            accountBookItems = accountBookItemRepository.findAllByContentContains(keyword);
+            checklists = checklistRepository.findAllByChecklistHeaderContains(keyword);
+            checklistItems = checklistItemRepository.findAllByContentContainsOrChecklistIn(keyword, checklists);
+            memoTypes = memoTypeRepository.findAll();
+
+            for(Text t: texts){
+                memoSeqList.add(t.getTextSeq());
+            }
+            for(AccountBookItem ABI: accountBookItems){
+                memoSeqList.add(ABI.getAccountBook().getAccountBookSeq());
+            }
+            for(ChecklistItem CI: checklistItems){
+                memoSeqList.add(CI.getChecklist().getChecklistSeq());
+            }
+        } else if(type == 1){
+            texts = textRepository.findAllByHeaderContainsOrContentContains(keyword, keyword);
+            memoTypes = memoTypeRepository.findAllByMemoTypeSeq(type);
+
+            for(Text t: texts){
+                memoSeqList.add(t.getTextSeq());
+            }
+        } else if(type == 2){
+            accountBookItems = accountBookItemRepository.findAllByContentContains(keyword);
+            memoTypes = memoTypeRepository.findAllByMemoTypeSeq(type);
+
+            for(AccountBookItem ABI: accountBookItems){
+                memoSeqList.add(ABI.getAccountBook().getAccountBookSeq());
+            }
+        } else if(type == 3){
+            checklists = checklistRepository.findAllByChecklistHeaderContains(keyword);
+            checklistItems = checklistItemRepository.findAllByContentContainsOrChecklistIn(keyword, checklists);
+            memoTypes = memoTypeRepository.findAllByMemoTypeSeq(type);
+            for(ChecklistItem CI: checklistItems){
+                memoSeqList.add(CI.getChecklist().getChecklistSeq());
+            }
+        } else{
+            throw new CustomException(LogUtil.getElement(), WRONG_MEMO_Type);
+        }
+
+        memberMemos = memberMemoRepository.findAllByBackgroundInAndMemoSeqInAndMemoTypeInOrderByBackgroundAsc(backgrounds, memoSeqList, memoTypes);
+
+        for (Background back: backgrounds) {
+            dateList.add(back.getBackgroundSeq());
+        }
+
+        int dateFilter = 0;
+        for (MemberMemo memo : memberMemos) {
+
+            if (memo.getBackground().getBackgroundSeq() != dateList.get(dateFilter)) {
+                if(textLists.size() != 0) {
+                    monthMemoListDtos.add(MonthMemoListDto.builder()
+                            .memoTypeSeq(1L)
+                            .count(textLists.size())
+                            .memoSeqList(textLists)
+                            .build());
+                }
+                if(accountBookLists.size() != 0) {
+                    monthMemoListDtos.add(MonthMemoListDto.builder()
+                            .memoTypeSeq(2L)
+                            .count(accountBookLists.size())
+                            .memoSeqList(accountBookLists)
+                            .build());
+                }
+                if(checklistLists.size() != 0) {
+                    monthMemoListDtos.add(MonthMemoListDto.builder()
+                            .memoTypeSeq(3L)
+                            .count(checklistLists.size())
+                            .memoSeqList(checklistLists)
+                            .build());
+                }
+
+                monthFilterDtos.add(
+                        MonthFilterDto.builder()
+                                .diaryDate(String.valueOf(backgrounds.get(dateFilter).getDiaryDate()))
+                                .monthMemoListDto(monthMemoListDtos)
+                                .build()
+                );
+
+                monthMemoListDtos = new ArrayList<>();
+                accountBookLists = new ArrayList<>();
+                checklistLists = new ArrayList<>();
+                textLists = new ArrayList<>();
+
+                dateFilter++;
+
+            }
+
+            if (memo.getMemoType().getMemoTypeSeq() == 1) {
+                textLists.add(memo.getMemoSeq());
+            } else if (memo.getMemoType().getMemoTypeSeq() == 2) {
+                accountBookLists.add(memo.getMemoSeq());
+            } else if (memo.getMemoType().getMemoTypeSeq() == 3){
+                checklistLists.add(memo.getMemoSeq());
+            }
+
+        }
+
+        if(textLists.size() != 0) {
+            monthMemoListDtos.add(MonthMemoListDto.builder()
+                    .memoTypeSeq(1L)
+                    .count(textLists.size())
+                    .memoSeqList(textLists)
+                    .build());
+        }
+        if(accountBookLists.size() != 0) {
+            monthMemoListDtos.add(MonthMemoListDto.builder()
+                    .memoTypeSeq(2L)
+                    .count(accountBookLists.size())
+                    .memoSeqList(accountBookLists)
+                    .build());
+        }
+        if(checklistLists.size() != 0) {
+            monthMemoListDtos.add(MonthMemoListDto.builder()
+                    .memoTypeSeq(3L)
+                    .count(checklistLists.size())
+                    .memoSeqList(checklistLists)
+                    .build());
+        }
+        monthFilterDtos.add(
+                MonthFilterDto.builder()
+                        .diaryDate(String.valueOf(backgrounds.get(dateFilter).getDiaryDate()))
+                        .monthMemoListDto(monthMemoListDtos)
+                        .build()
+        );
+
+        return monthFilterDtos;
+    }
 }
