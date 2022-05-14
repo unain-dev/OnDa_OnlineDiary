@@ -55,7 +55,7 @@ public class FilterServiceImpl implements FilterService {
 
         List<MonthMemoListDto> monthMemoListDtos = new ArrayList<>();
         List<MonthFilterDto> monthFilterDtos = new ArrayList<>();
-        List<Long> dateList = new ArrayList<>();
+        List<Long> backgroundSeqList = new ArrayList<>();
 
         Member member = memberRepository.findByMemberId(details.getUsername())
                     .orElseThrow(() -> new CustomException(LogUtil.getElement(), MEMBER_NOT_FOUND));
@@ -66,18 +66,18 @@ public class FilterServiceImpl implements FilterService {
         } else if(type == 1 || type == 2 || type == 3){
             memoTypes = memoTypeRepository.findAllByMemoTypeSeq(type);
         } else{
-            throw new CustomException(LogUtil.getElement(), WRONG_MEMO_TYPE);
+            throw new CustomException(LogUtil.getElement(), INVALID_DATA_FORMAT);
         }
         memberMemos = memberMemoRepository.findAllByBackgroundInAndMemoTypeInOrderByBackgroundAsc(backgrounds, memoTypes);
 
         for (Background back: backgrounds) {
-            dateList.add(back.getBackgroundSeq());
+            backgroundSeqList.add(back.getBackgroundSeq());
         }
 
         int dateFilter = 0;
         for (MemberMemo memo : memberMemos) {
 
-            if (memo.getBackground().getBackgroundSeq() != dateList.get(dateFilter)) {
+            if (memo.getBackground().getBackgroundSeq() != backgroundSeqList.get(dateFilter)) {
                 if(textLists.size() != 0) {
                     monthMemoListDtos.add(MonthMemoListDto.builder()
                             .memoTypeSeq(1L)
@@ -175,7 +175,7 @@ public class FilterServiceImpl implements FilterService {
         List<MemoType> memoTypes = new ArrayList<>();
 
         List<Long> memoSeqList = new ArrayList<>();
-        List<Long> dateList = new ArrayList<>();
+        List<Long> backgroundSeqList = new ArrayList<>();
 
         Member member = memberRepository.findByMemberId(details.getUsername())
                 .orElseThrow(() -> new CustomException(LogUtil.getElement(), MEMBER_NOT_FOUND));
@@ -219,19 +219,19 @@ public class FilterServiceImpl implements FilterService {
                 memoSeqList.add(CI.getChecklist().getChecklistSeq());
             }
         } else {
-            throw new CustomException(LogUtil.getElement(), WRONG_MEMO_TYPE);
+            throw new CustomException(LogUtil.getElement(), INVALID_DATA_FORMAT);
         }
 
         memberMemos = memberMemoRepository.findAllByBackgroundInAndMemoSeqInAndMemoTypeInOrderByBackgroundAsc(backgrounds, memoSeqList, memoTypes);
 
         for (Background back : backgrounds) {
-            dateList.add(back.getBackgroundSeq());
+            backgroundSeqList.add(back.getBackgroundSeq());
         }
 
         int dateFilter = 0;
         for (MemberMemo memo : memberMemos) {
 
-            if (memo.getBackground().getBackgroundSeq() != dateList.get(dateFilter)) {
+            if (memo.getBackground().getBackgroundSeq() != backgroundSeqList.get(dateFilter)) {
                 if (textLists.size() != 0) {
                     monthMemoListDtos.add(MonthMemoListDto.builder()
                             .memoTypeSeq(1L)
