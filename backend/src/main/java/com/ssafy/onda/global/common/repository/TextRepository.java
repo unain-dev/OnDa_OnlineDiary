@@ -9,4 +9,5 @@ public interface TextRepository extends JpaRepository<Text, Long> {
 
     List<Text> findAllByTextSeqIn(List<Long> textSeqs);
 
+    List<Text> findAllByHeaderContainsOrContentContains(String keyword, String keyword1);
 }

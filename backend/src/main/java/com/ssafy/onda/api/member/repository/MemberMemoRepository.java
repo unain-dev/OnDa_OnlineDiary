@@ -11,6 +11,10 @@ public interface MemberMemoRepository extends JpaRepository<MemberMemo, Long>, M
 
     List<MemberMemo> findAllByBackground(Background background);
 
+    List<MemberMemo> findAllByBackgroundInAndMemoSeqInAndMemoTypeInOrderByBackgroundAsc(List<Background> backgrounds, List<Long> memoSeqList, List<MemoType> type);
+
+    List<MemberMemo> findAllByBackgroundInAndMemoTypeInOrderByBackgroundAsc(List<Background> backgrounds, List<MemoType> memoTypes);
+
     List<MemberMemo> findAllByMemoTypeAndMemoSeqIn(MemoType memoType, List<Long> memoSeqs);
 
 }

@@ -9,4 +9,5 @@ public interface ChecklistRepository extends JpaRepository<Checklist, Long> {
 
     List<Checklist> findAllByChecklistSeqIn(List<Long> checklistSeqs);
 
+    List<Checklist> findAllByChecklistHeaderContains(String keyword);
 }
