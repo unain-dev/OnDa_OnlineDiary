@@ -8,18 +8,18 @@ import lombok.ToString;
 
 import java.util.List;
 
-@ToString(of = { "DiaryDate", "monthMemoListDto"})
+@ToString(of = { "diaryDate", "monthMemoListDto"})
 @NoArgsConstructor
 @Getter
 public class MonthFilterDto {
 
-    private String DiaryDate;
+    private String diaryDate;
 
     private List<MonthMemoListDto> monthMemoListDto;
 
     @Builder
     public MonthFilterDto(String diaryDate, List<MonthMemoListDto> monthMemoListDto) {
-        DiaryDate = diaryDate;
+        this.diaryDate = diaryDate;
         this.monthMemoListDto = monthMemoListDto;
     }
 }

@@ -66,7 +66,7 @@ public class FilterServiceImpl implements FilterService {
         } else if(type == 1 || type == 2 || type == 3){
             memoTypes = memoTypeRepository.findAllByMemoTypeSeq(type);
         } else{
-            throw new CustomException(LogUtil.getElement(), WRONG_MEMO_Type);
+            throw new CustomException(LogUtil.getElement(), WRONG_MEMO_TYPE);
         }
         memberMemos = memberMemoRepository.findAllByBackgroundInAndMemoTypeInOrderByBackgroundAsc(backgrounds, memoTypes);
 
@@ -219,7 +219,7 @@ public class FilterServiceImpl implements FilterService {
                 memoSeqList.add(CI.getChecklist().getChecklistSeq());
             }
         } else {
-            throw new CustomException(LogUtil.getElement(), WRONG_MEMO_Type);
+            throw new CustomException(LogUtil.getElement(), WRONG_MEMO_TYPE);
         }
 
         memberMemos = memberMemoRepository.findAllByBackgroundInAndMemoSeqInAndMemoTypeInOrderByBackgroundAsc(backgrounds, memoSeqList, memoTypes);

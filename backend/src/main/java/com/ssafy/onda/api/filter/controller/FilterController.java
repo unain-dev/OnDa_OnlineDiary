@@ -26,7 +26,7 @@ public class FilterController {
 
     @GetMapping("/")
     public BaseResponseDto searchFilter(Authentication authentication,
-                             @RequestParam(required = false) Long type,
+                             @RequestParam Long type,
                              @RequestParam(required = false) String keyword) {
 
         log.info("Called API: {}", LogUtil.getClassAndMethodName());
