@@ -13,9 +13,10 @@ import com.ssafy.onda.api.member.repository.MemberRepository;
 import com.ssafy.onda.global.common.auth.CustomUserDetails;
 import com.ssafy.onda.global.common.dto.*;
 import com.ssafy.onda.global.common.entity.*;
+import com.ssafy.onda.global.common.entity.embedded.FileInfo;
 import com.ssafy.onda.global.common.entity.embedded.Memo;
 import com.ssafy.onda.global.common.repository.*;
-import com.ssafy.onda.global.common.service.FileInfoService;
+import com.ssafy.onda.global.common.service.FileHandler;
 import com.ssafy.onda.global.common.util.LogUtil;
 import com.ssafy.onda.global.error.exception.CustomException;
 
@@ -59,7 +60,7 @@ public class DiaryServiceImpl implements DiaryService {
 
     private final StickerRepository stickerRepository;
 
-    private final FileInfoService fileInfoService;
+    private final FileHandler fileHandler;
 
     @Transactional
     @Override
@@ -92,11 +93,34 @@ public class DiaryServiceImpl implements DiaryService {
         // 기존 : 메모지 -> 아이템 -> 멤버메모 -> 백그라운드
         // 바뀜 : 다이어리 -> 메모지 -> 아이템
 
+        // 다이어리를 미리 저장하기 위해 먼저 삭제하면 안 되는 파일을 찾아야 한다
+        Set<Image> archivedImages = new HashSet<>();
         ObjectMapper mapper = new ObjectMapper();
         // 입력을 떡메 단위로 분류
         List<MemoListDto> memoListDtos = reqDiaryDto.getMemoList();
         if (memoListDtos.size() == 0) {
             throw new CustomException(LogUtil.getElement(), NO_MEMO_AVAILABLE);
+        }
+
+        for (MemoListDto memoListDto : memoListDtos) {
+            if (memoListDto.getMemoTypeSeq() == 4) {
+                String imageInfo = memoListDto.getInfo().toString();
+
+                // 기존에 있던 파일을 그대로 가져온 경우
+                if (imageInfo.startsWith("http://")) {
+
+                    // 기존 이미지 메모지를 db에서 찾아와야 함
+                    int indexOf = imageInfo.lastIndexOf(File.separator) + 1;
+                    String encodedName = imageInfo.substring(indexOf);
+
+                    Image archivedImage = imageRepository.findByFileInfoEncodedName(encodedName)
+                            .orElseThrow(() -> new CustomException(LogUtil.getElement(), ENTITY_NOT_FOUND));
+
+                    // 좌표만 업데이트
+                    archivedImage.changeMemoEntity(memoListDto.getX(), memoListDto.getY(), memoListDto.getWidth(), memoListDto.getHeight());
+                    archivedImages.add(archivedImage);
+                }
+            }
         }
 
         // 1. 다이어리 저장
@@ -112,8 +136,7 @@ public class DiaryServiceImpl implements DiaryService {
         List<Text> texts = new ArrayList<>();
         List<AccountBook> accountBooks = new ArrayList<>();
         List<Checklist> checklists = new ArrayList<>();
-        List<Image> savedImages = new ArrayList<>();
-        Set<Image> archivedImages = new HashSet<>();
+        List<Image> images = new ArrayList<>();
         List<Sticker> stickers = new ArrayList<>();
 
         Map<AccountBook, List<AccountBookItemDto>> accountBookMap = new HashMap<>();
@@ -165,22 +188,8 @@ public class DiaryServiceImpl implements DiaryService {
             } else if (memoTypeSeq == 4) {
                 String imageInfo = memoListDto.getInfo().toString();
 
-                // 기존에 있던 파일을 그대로 가져온 경우
-                if (imageInfo.startsWith("http://")) {
-
-                    // 기존 이미지 메모지를 db에서 찾아와야 함
-                    int indexOf = imageInfo.lastIndexOf(File.separator) + 1;
-                    String encodedName = imageInfo.substring(indexOf);
-
-                    Image archivedImage = imageRepository.findByFileInfoEncodedName(encodedName)
-                            .orElseThrow(() -> new CustomException(LogUtil.getElement(), ENTITY_NOT_FOUND));
-
-                    // 좌표만 업데이트
-                    archivedImage.changeMemoEntity(memoListDto.getX(), memoListDto.getY(), memoListDto.getWidth(), memoListDto.getHeight());
-                    savedImages.add(archivedImage);
-                    archivedImages.add(archivedImage);
-
-                } else {
+                // 새로운 파일 저장
+                if (!imageInfo.startsWith("http://")) {
                     int fileIdx = Integer.parseInt(imageInfo);
                     if (multipartFiles == null) {
                         throw new CustomException(LogUtil.getElement(), NO_DATA_TO_SAVE);
@@ -188,16 +197,19 @@ public class DiaryServiceImpl implements DiaryService {
                         throw new CustomException(LogUtil.getElement(), FILE_INDEX_OUT_OF_BOUNDS);
                     }
 
-                    Image image = Image.builder()
-                            .memo(Memo.builder()
-                                    .x(memoListDto.getX())
-                                    .y(memoListDto.getY())
-                                    .width(memoListDto.getWidth())
-                                    .height(memoListDto.getHeight())
-                                    .build())
-                            .build();
                     try {
-                        savedImages.add(fileInfoService.save(image, multipartFiles.get(fileIdx)));
+                        Image image = Image.builder()
+                                .memo(Memo.builder()
+                                        .x(memoListDto.getX())
+                                        .y(memoListDto.getY())
+                                        .width(memoListDto.getWidth())
+                                        .height(memoListDto.getHeight())
+                                        .build())
+                                .fileInfo(fileHandler.parseFileInfo(multipartFiles.get(fileIdx)))
+                                .diary(diary)
+                                .build();
+
+                        images.add(image);
                         fileCnt++;
                     } catch (IOException e) {
                         throw new CustomException(LogUtil.getElement(), FAIL_TO_SAVE_IMAGE);
@@ -229,6 +241,7 @@ public class DiaryServiceImpl implements DiaryService {
         textRepository.saveAll(texts);
         List<AccountBook> savedAccountBooks = accountBookRepository.saveAll(accountBooks);
         List<Checklist> savedChecklists = checklistRepository.saveAll(checklists);
+        imageRepository.saveAll(images);
         stickerRepository.saveAll(stickers);
 
         // 3. 떡메 항목 저장
@@ -301,13 +314,25 @@ public class DiaryServiceImpl implements DiaryService {
         textRepository.deleteAllInBatch(findMemosDto.getTexts());
         accountBookRepository.deleteAllInBatch(findMemosDto.getAccountBooks());
         checklistRepository.deleteAllInBatch(findMemosDto.getChecklists());
+        List<Image> images = new ArrayList<>();
         for (Image image : findMemosDto.getImages()) {
             if (!archivedImage.contains(image)) {
-                fileInfoService.delete(image);
+
+                FileInfo fileInfo = image.getFileInfo();
+
+                File file = new File(fileInfo.getSavedPath() + File.separator + fileInfo.getEncodedName());
+                if (file.exists()) {
+                    file.delete();
+                } else {
+                    log.info("no image available to delete");
+                }
+                images.add(image);
             } else {
+                // 이게 필요한가?
                 archivedImage.remove(image);
             }
         }
+        imageRepository.deleteAllInBatch(images);
         stickerRepository.deleteAllInBatch(findMemosDto.getStickers());
     }
 
@@ -402,15 +427,21 @@ public class DiaryServiceImpl implements DiaryService {
         }
 
         for (Image image : findMemosDto.getImages()) {
-            memoListDtos.add(MemoListDto.builder()
-                    .id(id++)
-                    .width(image.getMemo().getWidth())
-                    .height(image.getMemo().getHeight())
-                    .x(image.getMemo().getX())
-                    .y(image.getMemo().getY())
-                    .memoTypeSeq(4)
-                    .info(fileInfoService.loadPath(image))
-                    .build());
+            FileInfo fileInfo = image.getFileInfo();
+
+            if (fileInfo != null) {
+                memoListDtos.add(MemoListDto.builder()
+                        .id(id++)
+                        .width(image.getMemo().getWidth())
+                        .height(image.getMemo().getHeight())
+                        .x(image.getMemo().getX())
+                        .y(image.getMemo().getY())
+                        .memoTypeSeq(4)
+                        .info("http://k6a107.p.ssafy.io/" + fileInfo.getSavedPath() + File.separator + fileInfo.getEncodedName())
+                        .build());
+            } else {
+                throw new CustomException(LogUtil.getElement(), NO_MEMO_AVAILABLE);
+            }
         }
 
         for (Sticker sticker : findMemosDto.getStickers()) {

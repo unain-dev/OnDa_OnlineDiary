@@ -1,7 +1,6 @@
 package com.ssafy.onda.api.filter.service;
 
-import com.ssafy.onda.api.member.dto.MemberDto;
-import com.ssafy.onda.api.member.repository.MemberMemoRepository;
+import com.ssafy.onda.api.member.entity.Member;
 import com.ssafy.onda.api.member.repository.MemberRepository;
 import com.ssafy.onda.global.common.auth.CustomUserDetails;
 import com.ssafy.onda.global.common.dto.*;
@@ -26,8 +25,6 @@ public class FilterServiceImpl implements FilterService {
 
     private final MemberRepository memberRepository;
 
-    private final MemberMemoRepository memberMemoRepository;
-
     private final TextRepository textRepository;
 
     private final AccountBookRepository accountBookRepository;
@@ -41,7 +38,7 @@ public class FilterServiceImpl implements FilterService {
     @Override
     public Object preview(CustomUserDetails details, int memoTypeSeq, String memoSeqList) {
 
-        MemberDto memberDto = memberRepository.findMemberDtoByMemberId(details.getUsername())
+        Member member = memberRepository.findByMemberId(details.getUsername())
                 .orElseThrow(() -> new CustomException(LogUtil.getElement(), MEMBER_NOT_FOUND));
 
         Object memoList = null;
@@ -60,19 +57,14 @@ public class FilterServiceImpl implements FilterService {
             throw new CustomException(LogUtil.getElement(), INVALID_INPUT_VALUE);
         }
 
-        // 떡메 식별자와 떡메 타입 식별자로 회원 찾기
-        List<Long> foundMemberSeqs = memberMemoRepository.findAllMemberSeqsByMemoTypeSeqAndMemoSeqs(memoTypeSeq, memoSeqs);
-        for (Long foundMemberSeq : foundMemberSeqs) {
-            if (!memberDto.getMemberSeq().equals(foundMemberSeq)) {
-                throw new CustomException(LogUtil.getElement(), ACCESS_DENIED);
-            }
-        }
-
         switch (memoTypeSeq) {
             case 1:
                 List<Text> texts = textRepository.findAllByTextSeqIn(memoSeqs);
                 List<TextDto> textDtos = new ArrayList<>();
                 for (Text text : texts) {
+                    if (!text.getDiary().getMember().equals(member)) {
+                        throw new CustomException(LogUtil.getElement(), ACCESS_DENIED);
+                    }
                     textDtos.add(TextDto.builder()
                             .header(text.getHeader())
                             .content(text.getContent())
@@ -85,6 +77,9 @@ public class FilterServiceImpl implements FilterService {
                 List<AccountBook> accountBooks = accountBookRepository.findAllByAccountBookSeqIn(memoSeqs);
                 List<AccountBookDto> accountBookDtos = new ArrayList<>();
                 for (AccountBook accountBook : accountBooks) {
+                    if (!accountBook.getDiary().getMember().equals(member)) {
+                        throw new CustomException(LogUtil.getElement(), ACCESS_DENIED);
+                    }
                     accountBookDtos.add(AccountBookDto.builder()
                             .accountBookItems(new ArrayList<>() {{
                                 for (AccountBookItem accountBookItem : accountBookItemRepository.findByAccountBook(accountBook)) {
@@ -104,6 +99,9 @@ public class FilterServiceImpl implements FilterService {
                 List<Checklist> checklists = checklistRepository.findAllByChecklistSeqIn(memoSeqs);
                 List<ChecklistDto> checklistDtos = new ArrayList<>();
                 for (Checklist checklist : checklists) {
+                    if (!checklist.getDiary().getMember().equals(member)) {
+                        throw new CustomException(LogUtil.getElement(), ACCESS_DENIED);
+                    }
                     checklistDtos.add(ChecklistDto.builder()
                             .checklistHeader(checklist.getChecklistHeader())
                             .checklistItems(new ArrayList<>() {{
