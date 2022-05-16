@@ -150,7 +150,7 @@ const diary = ({ diaryDate }) => {
             삭제하기
           </button>
         </span>
-        <span className={styles.closeBtnImgContainer}>
+        <div className={styles.pannelBtnImgContainer}>
           {!pannelIsOpen && (
             <Image
               src={hamburgerIcon}
@@ -159,9 +159,10 @@ const diary = ({ diaryDate }) => {
               onClick={(e) => {
                 setPannelIsOpen(true)
               }}
+              className={styles.pannelBtn}
             />
           )}
-        </span>
+        </div>
       </div>
       <div className={styles.saveBtnWrapper}>
         <button className={styles.saveBtn} onClick={onClickSave}>
@@ -169,51 +170,54 @@ const diary = ({ diaryDate }) => {
         </button>
       </div>
       {todaysInfo.memoList.map((c, index) => (
-        <RND
-          style={{
-            background: `${c.memoTypeSeq === 5 ? 'transparent' : '#ffc'}`,
-            borderRadius: '10px',
-            boxShadow: '0 5px 5px `rgba(0,0,0,0.4)`',
-            borderStyle: `${c.isEditing ? 'dashed' : 'none'}`,
-          }}
-          content={c}
-          key={index}
-          onDragStop={(e, d) => {
-            if (d.x > 0 && d.y > 0 && d.x < viewSize.width) {
+        <div>
+          <RND
+            style={{
+              background: `${c.memoTypeSeq === 5 ? 'transparent' : '#ffc'}`,
+              borderRadius: '10px',
+              boxShadow: '0 5px 5px `rgba(0,0,0,0.4)`',
+              borderStyle: `${c.isEditing ? 'dashed' : 'none'}`,
+            }}
+            content={c}
+            key={index}
+            onDragStop={(e, d) => {
+              if (d.x > 0 && d.y > 0) {
+                console.log(viewSize)
+                dispatch(
+                  changeMemoState({
+                    ...c,
+                    x: d.x,
+                    y: d.y,
+                  }),
+                )
+              }
+            }}
+            onResizeStop={(e, direction, ref, delta, position) => {
               dispatch(
                 changeMemoState({
                   ...c,
-                  x: d.x,
-                  y: d.y,
+                  width: Number(
+                    ref.style.width.substring(0, ref.style.width.length - 2),
+                  ),
+                  height: Number(
+                    ref.style.height.substring(0, ref.style.height.length - 2),
+                  ),
                 }),
               )
-            }
-          }}
-          onResizeStop={(e, direction, ref, delta, position) => {
-            dispatch(
-              changeMemoState({
-                ...c,
-                width: Number(
-                  ref.style.width.substring(0, ref.style.width.length - 2),
-                ),
-                height: Number(
-                  ref.style.height.substring(0, ref.style.height.length - 2),
-                ),
-              }),
-            )
-          }}
-          disableDragging={!draggableState[index]}
-        >
-          <MemoSeparator
-            memoInfo={c} // memoInfo = memoList의 한 요소 전체 정보(width, height, x, y, info(content, header))
-            memoTypeSeq={c.memoTypeSeq}
-            drag={{
-              enableDragging: () => enableDragging(index),
-              disableDragging: () => disableDragging(index),
             }}
-            onDeleteMemo={onDeleteMemo}
-          />
-        </RND>
+            disableDragging={!draggableState[index]}
+          >
+            <MemoSeparator
+              memoInfo={c} // memoInfo = memoList의 한 요소 전체 정보(width, height, x, y, info(content, header))
+              memoTypeSeq={c.memoTypeSeq}
+              drag={{
+                enableDragging: () => enableDragging(index),
+                disableDragging: () => disableDragging(index),
+              }}
+              onDeleteMemo={onDeleteMemo}
+            />
+          </RND>
+        </div>
       ))}
 
       {pannelIsOpen && (
