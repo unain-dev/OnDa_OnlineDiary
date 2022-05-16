@@ -10,4 +10,6 @@ public interface MemoTypeRepository extends JpaRepository<MemoType, Long> {
     MemoType findByMemoTypeSeq(Long memoTypeSeq);
 
     List<MemoType> findAllByMemoTypeSeq(Long type);
+
+    List<MemoType> findAllByMemoTypeSeqIn(List<Long> listTemp);
 }
