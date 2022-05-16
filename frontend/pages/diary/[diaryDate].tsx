@@ -20,6 +20,7 @@ import moment from 'moment'
 import SsrCookie from 'ssr-cookie'
 
 const diary = ({ diaryDate, ctxCookie }) => {
+  console.log(ctxCookie.member)
   const todaysInfo = useSelector(({ diary }) => diary)
   const len = todaysInfo.memoList.length
   const lastId = todaysInfo.lastId
