@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from '../../../styles/scss/Memo.module.scss'
 import { useDispatch } from 'react-redux'
 import { changeMemoState } from '../../../core/store/modules/diary'
@@ -13,11 +13,12 @@ interface Props {
   onDeleteMemo: any
 }
 const MemoChecklist = ({ memoInfo, drag, onDeleteMemo }) => {
+  console.log(memoInfo)
   const { width, height, info } = memoInfo
+  console.log(info)
   const dispatch = useDispatch()
-  const [checkboxFullInfo, setCheckboxFullInfo] = useState({ ...info })
   const [checkboxInfo, setCheckboxInfo] = useState(
-    checkboxFullInfo.length > 0 ? [...checkboxFullInfo.checklistItems] : [],
+    info.checklistItems.length > 0 ? [...info.checklistItems] : [],
   )
   const [content, setContent] = useState('')
   const [isEditable, setIsEditable] = useState(false)
@@ -87,7 +88,9 @@ const MemoChecklist = ({ memoInfo, drag, onDeleteMemo }) => {
     ])
   }
   const [mouseState, setMouseState] = useState(false)
-
+  useEffect(()=>{
+    console.log(checkboxInfo)
+  },[checkboxInfo])
   const mouseOverEvent = () => {
     setMouseState(true)
   }

@@ -2,11 +2,13 @@ import { createSlice } from '@reduxjs/toolkit'
 import {
   getCollectionAction,
   getCollectionMemoAction,
+  getCollectionMemoListAction,
 } from '../actions/collection'
 
 let initialCollection = {
   collectionInfo: [],
   collectionMemoInfo: [],
+  collectionMemoListInfo: [],
 }
 
 const collectionSlice = createSlice({
@@ -29,6 +31,10 @@ const collectionSlice = createSlice({
       .addCase(getCollectionAction.fulfilled, (state, action) => {
         // console.log(action.payload)
         alert(action.payload.data.msg)
+      })
+      .addCase(getCollectionMemoListAction.fulfilled, (state, action) => {
+        state.collectionMemoListInfo = action.payload
+        console.log(state.collectionMemoListInfo)
       }),
 })
 
