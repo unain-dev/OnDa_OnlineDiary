@@ -68,7 +68,7 @@ public class DiaryServiceImpl implements DiaryService {
 
         // 회원 확인
         Member member = memberRepository.findByMemberId(details.getUsername())
-                .orElseThrow(() -> new CustomException(LogUtil.getElement(), MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(details.getUsername(), LogUtil.getElement(), MEMBER_NOT_FOUND));
 
         // 날짜 확인
         LocalDate diaryDate = checkDateValidation(reqDiaryDto.getDiaryDate());
@@ -76,7 +76,7 @@ public class DiaryServiceImpl implements DiaryService {
         // 입력을 떡메 단위로 분류
         List<MemoListDto> memoListDtos = reqDiaryDto.getMemoList();
         if (memoListDtos.size() == 0) {
-            throw new CustomException(LogUtil.getElement(), NO_MEMO_AVAILABLE);
+            throw new CustomException(details.getUsername(), "memoListDtos.size() == 0", LogUtil.getElement(), NO_MEMO_AVAILABLE);
         }
         // 다이어리를 미리 저장하기 위해 먼저 삭제하면 안 되는 파일을 찾아야 한다
         Set<Image> archivedImages = getArchivedImages(memoListDtos);
@@ -109,7 +109,7 @@ public class DiaryServiceImpl implements DiaryService {
                     String encodedName = imageInfo.substring(indexOf);
 
                     Image archivedImage = imageRepository.findByFileInfoEncodedName(encodedName)
-                            .orElseThrow(() -> new CustomException(LogUtil.getElement(), ENTITY_NOT_FOUND));
+                            .orElseThrow(() -> new CustomException("file " + encodedName, LogUtil.getElement(), ENTITY_NOT_FOUND));
 
                     // 좌표만 업데이트
                     archivedImage.changeMemoEntity(memoListDto.getX(), memoListDto.getY(), memoListDto.getWidth(), memoListDto.getHeight());
@@ -187,9 +187,10 @@ public class DiaryServiceImpl implements DiaryService {
                     if (!imageInfo.startsWith("http://")) {
                         int fileIdx = Integer.parseInt(imageInfo);
                         if (multipartFiles == null) {
-                            throw new CustomException(LogUtil.getElement(), NO_DATA_TO_SAVE);
+                            throw new CustomException("multipartFiles == null", LogUtil.getElement(), NO_DATA_TO_SAVE);
                         } else if (multipartFiles.size() <= fileIdx) {
-                            throw new CustomException(LogUtil.getElement(), FILE_INDEX_OUT_OF_BOUNDS);
+                            throw new CustomException("multipartFiles.size() = " + multipartFiles.size() + ", fileIdx = " + fileIdx,
+                                    LogUtil.getElement(), FILE_INDEX_OUT_OF_BOUNDS);
                         }
 
                         try {
@@ -227,7 +228,7 @@ public class DiaryServiceImpl implements DiaryService {
                             .build());
                 } else {
                     deleteAlreadySavedFile(savedFile);
-                    throw new CustomException(LogUtil.getElement(), INVALID_MEMO_TYPE);
+                    throw new CustomException(memoTypeSeq.toString(), LogUtil.getElement(), INVALID_MEMO_TYPE);
                 }
             }
         } catch (IllegalArgumentException | ClassCastException e) {
@@ -314,7 +315,6 @@ public class DiaryServiceImpl implements DiaryService {
     @Override
     public void deleteAlreadySavedFile(Set<FileInfo> fileInfos) {
         log.info("delete Already Saved File");
-        System.out.println("fileInfos = " + fileInfos);
 
         for (FileInfo fileInfo : fileInfos) {
             File file = new File(fileInfo.getSavedPath() + File.separator + fileInfo.getEncodedName());
