@@ -24,7 +24,7 @@ public class FilterController {
 
     private final FilterService filterService;
 
-    @GetMapping("/")
+    @GetMapping("")
     public BaseResponseDto searchFilter(Authentication authentication,
                              @RequestParam Long type,
                              @RequestParam(required = false) String keyword) {

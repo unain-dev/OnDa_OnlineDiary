@@ -62,7 +62,11 @@ public class FilterServiceImpl implements FilterService {
         backgrounds = backgroundRepository.findByMember(member);
 
         if(type == 0) {
-            memoTypes = memoTypeRepository.findAll();
+            List<Long> ListTemp = new ArrayList<>();
+            ListTemp.add(1L);
+            ListTemp.add(2L);
+            ListTemp.add(3L);
+            memoTypes = memoTypeRepository.findAllByMemoTypeSeqIn(ListTemp);
         } else if(type == 1 || type == 2 || type == 3){
             memoTypes = memoTypeRepository.findAllByMemoTypeSeq(type);
         } else{
