@@ -18,9 +18,10 @@ import { calNextDate, calPrevDate } from 'core/common/date'
 import DatePickerModule from 'component/diary/DatePickerModule/DatePickerModule'
 import moment from 'moment'
 import SsrCookie from 'ssr-cookie'
+import cookies from 'next-cookies'
 
-const diary = ({ diaryDate, ctxCookie }) => {
-  console.log(ctxCookie.member)
+const diary = ({ diaryDate, token }) => {
+  console.log(token)
   const todaysInfo = useSelector(({ diary }) => diary)
   const len = todaysInfo.memoList.length
   const lastId = todaysInfo.lastId
@@ -54,7 +55,7 @@ const diary = ({ diaryDate, ctxCookie }) => {
 
   // const cookie = new SsrCookie()
   // const token = cookie.get('member')
-  const token = ctxCookie.member
+  // const token = ctxToken
 
   const onClickDelete = (date) => {
     const params = {
@@ -235,29 +236,10 @@ const diary = ({ diaryDate, ctxCookie }) => {
 }
 
 export async function getServerSideProps(context) {
-  const cookieStringToObject = (cookieString) => {
-    if (!cookieString) {
-      return ''
-    } else {
-      cookieString = cookieString.split('; ')
-      let result = {}
-
-      for (var i = 0; i < cookieString.length; i++) {
-        var cur = cookieString[i].split('=')
-        result[cur[0]] = cur[1]
-      }
-      return result
-    }
-  }
-
-  const cookie = context.req
-    ? cookieStringToObject(context.req.headers.cookie)
-    : ''
-
   return {
     props: {
       diaryDate: context.params.diaryDate,
-      ctxCookie: cookie,
+      token: cookies(context).member,
     },
   }
 }
