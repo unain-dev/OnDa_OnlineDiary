@@ -22,6 +22,7 @@ class MyDocument extends Document {
             href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@300&display=swap"
             rel="stylesheet"
           />
+          <title>온 다: 온라인 다이어리</title>
         </Head>
         <body>
           <Main />

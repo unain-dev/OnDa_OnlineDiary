@@ -181,7 +181,7 @@ const diary = ({ diaryDate }) => {
             content={c}
             key={index}
             onDragStop={(e, d) => {
-              if (d.x > 0 && d.y > 0) {
+              if (d.x > 0 && d.y > 0 && d.x < viewSize.width) {
                 console.log(viewSize)
                 dispatch(
                   changeMemoState({
