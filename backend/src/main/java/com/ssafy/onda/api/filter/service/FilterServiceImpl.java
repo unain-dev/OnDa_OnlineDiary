@@ -59,7 +59,10 @@ public class FilterServiceImpl implements FilterService {
 
         Member member = memberRepository.findByMemberId(details.getUsername())
                     .orElseThrow(() -> new CustomException(LogUtil.getElement(), MEMBER_NOT_FOUND));
-        backgrounds = backgroundRepository.findByMember(member);
+        backgrounds = backgroundRepository.findByMemberOrderByBackgroundSeqAsc(member);
+        if(backgrounds.size() == 0){
+            throw new CustomException(LogUtil.getElement(), BACKGROUND_NOT_FOUND);
+        }
 
         if(type == 0) {
             List<Long> ListTemp = new ArrayList<>();
@@ -183,7 +186,10 @@ public class FilterServiceImpl implements FilterService {
 
         Member member = memberRepository.findByMemberId(details.getUsername())
                 .orElseThrow(() -> new CustomException(LogUtil.getElement(), MEMBER_NOT_FOUND));
-        backgrounds = backgroundRepository.findByMember(member);
+        backgrounds = backgroundRepository.findByMemberOrderByBackgroundSeqAsc(member);
+        if(backgrounds.size() == 0){
+            throw new CustomException(LogUtil.getElement(), BACKGROUND_NOT_FOUND);
+        }
 
         if (type == 0) {
             texts = textRepository.findAllByHeaderContainsOrContentContains(keyword, keyword);
@@ -305,6 +311,7 @@ public class FilterServiceImpl implements FilterService {
                     .memoSeqList(checklistLists)
                     .build());
         }
+
         monthFilterDtos.add(
                 MonthFilterDto.builder()
                         .diaryDate(String.valueOf(backgrounds.get(dateFilter).getDiaryDate()))

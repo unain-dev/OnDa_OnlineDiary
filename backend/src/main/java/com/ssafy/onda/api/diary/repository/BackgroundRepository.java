@@ -12,8 +12,7 @@ public interface BackgroundRepository extends JpaRepository<Background, Long>, B
 
     Optional<Background> findByMemberAndDiaryDate(Member member, LocalDate diaryDate);
 
-    List<Background> findByMember(Member member);
-
     List<Background> findAllByMember(Member member);
 
+    List<Background> findByMemberOrderByBackgroundSeqAsc(Member member);
 }
