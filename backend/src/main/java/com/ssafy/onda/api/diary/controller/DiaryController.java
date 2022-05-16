@@ -76,7 +76,7 @@ public class DiaryController {
         }
 
         CustomUserDetails details = (CustomUserDetails) authentication.getDetails();
-        diaryService.deleteByMemberAndDiaryDate(details, diaryDate);
+        diaryService.delete(details, diaryDate);
 
         return BaseResponseDto.builder()
                 .status(OK.value())

@@ -1,7 +1,9 @@
 package com.ssafy.onda.global.common.entity;
 
+import com.ssafy.onda.api.diary.entity.Diary;
 import com.ssafy.onda.global.common.entity.embedded.Memo;
 import lombok.*;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 
@@ -25,9 +27,15 @@ public class AccountBook {
     })
     private Memo memo;
 
+    @JoinColumn(name = "diary_seq", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+//    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Diary diary;
+
     @Builder
-    public AccountBook(Long accountBookSeq, Memo memo) {
+    public AccountBook(Long accountBookSeq, Memo memo, Diary diary) {
         this.accountBookSeq = accountBookSeq;
         this.memo = memo;
+        this.diary = diary;
     }
 }

@@ -1,5 +1,6 @@
 package com.ssafy.onda.global.common.entity;
 
+import com.ssafy.onda.api.diary.entity.Diary;
 import com.ssafy.onda.global.common.entity.embedded.FileInfo;
 import com.ssafy.onda.global.common.entity.embedded.Memo;
 import lombok.*;
@@ -34,10 +35,16 @@ public class Video {
     })
     private Memo memo;
 
+    @JoinColumn(name = "diary_seq", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+//    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Diary diary;
+
     @Builder
-    public Video(Long videoSeq, FileInfo fileInfo, Memo memo) {
+    public Video(Long videoSeq, FileInfo fileInfo, Memo memo, Diary diary) {
         this.videoSeq = videoSeq;
         this.fileInfo = fileInfo;
         this.memo = memo;
+        this.diary = diary;
     }
 }
