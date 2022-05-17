@@ -7,12 +7,16 @@ import { wrapper } from '../core/store'
 import type { AppProps } from 'next/app'
 
 import Header from 'component/common/header/Header'
-import 'styles/css/globals.css'
+import 'styles/css/font.css'
+import 'styles/css/framer.css'
+import { useRouter } from 'next/router'
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const router = useRouter()
+  const path = router.asPath
   return (
     <>
-      <Header />
+      {path !== '/' && <Header />}
       <Component {...pageProps} />
     </>
   )
