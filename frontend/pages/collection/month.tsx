@@ -62,7 +62,12 @@ const month = ({token}) => {
         if(e.key === 'Enter')   searchByKeyword();
     }
     const searchByKeyword = () => {
-        console.log(searchInput);
+        let params = {
+            type: selectType,
+            token: token,
+            keyword: searchInput,
+        }
+        appDispatch(getCollectionMemoListAction(params))
     }
     const [doubleClickState, setDoubleClickState] = useState({state: false, date:''});
     let doubleClickThrottle;
