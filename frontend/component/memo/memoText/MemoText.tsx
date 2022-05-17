@@ -25,7 +25,7 @@ const QuillWrapper = dynamic(() => import('react-quill'), {
 
 const MemoText: NextPage<Props> = ({ memoInfo, drag, onDeleteMemo }) => {
   const dispatch = useDispatch()
-
+  console.log(memoInfo)
   // memoInfo의 변수들을 나눠서 설정(최대한 기존 코드의 네이밍을 건드리지 않기 위해서)
   const { width, height, info } = memoInfo
   const { content, header } = info
@@ -38,6 +38,13 @@ const MemoText: NextPage<Props> = ({ memoInfo, drag, onDeleteMemo }) => {
 
   useEffect(() => {}, [textEditMode])
   useEffect(() => {}, [text, headerText])
+  useEffect(()=>{
+    console.log(text)
+    setHeaderContent(header);
+    setHeaderText(header)
+    setTextContent(content);
+    setText(content);
+  },[content, header])
   useEffect(() => {
     if (textEditMode) {
       setTextContent(showInputTag('CONTENT'))
@@ -47,7 +54,7 @@ const MemoText: NextPage<Props> = ({ memoInfo, drag, onDeleteMemo }) => {
       setTextContent(text)
       setHeaderContent(showHeaderTag)
     }
-  })
+  },[])
   const toolbarOptions = useMemo(()=> ({
     toolbar: {
       container: [

@@ -11,7 +11,11 @@ const MemoSticker = ({ memoInfo, drag, onDeleteMemo }) => {
   const [text, setText] = useState(info)
   const [finalEmoji, setFinalEmoji] = useState(info)
   const [size, setSize] = useState((width * height) / 400)
-
+  useEffect(()=>{
+    console.log(text)
+    setFinalEmoji(info);
+    setText(info);
+  },[info])
   useEffect(() => {
     setSize(Math.pow(Math.min(width, height), 2) / 400)
     console.log(width)
@@ -21,7 +25,7 @@ const MemoSticker = ({ memoInfo, drag, onDeleteMemo }) => {
     setFinalEmoji(text)
   }
   const onUpdateButtonClick = () => {
-    console.log('d')
+    console.log(text)
     setIsEditable(true)
     drag.disableDragging()
     dispatch(
@@ -30,20 +34,34 @@ const MemoSticker = ({ memoInfo, drag, onDeleteMemo }) => {
         isEditing: true,
       }),
     )
+    console.log(text)
   }
   const onApproveUpdateClick = () => {
-    console.log('d')
-    setIsEditable(false)
-    if (text !== '') handleOnEnter(text)
-    drag.enableDragging()
     console.log(text)
-    dispatch(
-      changeMemoState({
-        ...memoInfo,
-        info: text,
-        isEditing: false,
-      }),
-    )
+    console.log(typeof text)
+    console.log(text.length)
+    setIsEditable(false)
+    if (text !== '') {
+      handleOnEnter(text)
+      drag.enableDragging()
+      console.log(text)
+      dispatch(
+        changeMemoState({
+          ...memoInfo,
+          info: text,
+          isEditing: false,
+        }),
+      )
+    }
+    else{
+      drag.enableDragging()
+      dispatch(
+        changeMemoState({
+          ...memoInfo,
+          isEditing: false,
+        }),
+      )
+    }
   }
   const onDeleteButtonClick = () => {
     onDeleteMemo(memoInfo.id)
