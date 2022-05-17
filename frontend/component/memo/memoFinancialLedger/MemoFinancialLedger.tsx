@@ -27,6 +27,9 @@ const MemoFinancialLedger = ({ memoInfo, drag, onDeleteMemo }) => {
     outcome: '',
   })
   const [isEditable, setIsEditable] = useState(false)
+  useEffect(()=>{
+    setFinanceLedger(info)
+  },[info])
   useEffect(() => {
     let tempIncome = 0
     let tempOutcome = 0

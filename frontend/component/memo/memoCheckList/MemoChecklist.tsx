@@ -22,6 +22,12 @@ const MemoChecklist = ({ memoInfo, drag, onDeleteMemo }) => {
   )
   const [content, setContent] = useState('')
   const [isEditable, setIsEditable] = useState(false)
+  const [header, setHeader] = useState(info.checklistHeader)
+  useEffect(()=>{
+    setHeader(info.checklistHeader);
+    setCheckboxInfo([...info.checklistItems])
+  },[info.checklistHeader, info.checklistItems])
+
   const onCheckboxClick = (index) => {
     const temp = JSON.parse(JSON.stringify(checkboxInfo))
     temp[index].isChecked = !temp[index].isChecked
@@ -97,7 +103,7 @@ const MemoChecklist = ({ memoInfo, drag, onDeleteMemo }) => {
   const mouseLeaveEvent = () => {
     setMouseState(false)
   }
-  const [header, setHeader] = useState(info.checklistHeader)
+
   return (
     <div
       className={styles.checklist}

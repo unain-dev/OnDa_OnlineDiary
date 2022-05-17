@@ -16,11 +16,23 @@ interface Props {
 export default function MemoImage({ memoInfo, drag, onDeleteMemo }) {
   const dispatch = useDispatch()
   const { width, height, info } = memoInfo
+  console.log(info)
   const [file, setFile] = useState(null)
   const [previewImage, setPreviewImage] = useState(info)
   const [isEditable, setIsEditable] = useState(false)
+  useEffect(()=>{
+    console.log(info)
+    console.log(info.name)
+    // console.log(URL.createObjectURL(info))
+    if(info.name !== null && info.name !== undefined) {
+      console.log("in")
+      // setFile(info)
+      setPreviewImage(URL.createObjectURL(info))
+    }
+  },[info])
   const handleChange = (file) => {
     setFile(file)
+    console.log(file)
   }
   const onUpdateButtonClick = () => {
     setIsEditable(true)
