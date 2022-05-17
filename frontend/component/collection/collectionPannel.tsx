@@ -9,34 +9,18 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getCollectionAction,getCollectionMemoAction } from 'core/store/actions/collection'
 import { AppDispatch } from 'core/store'
 import { useRouter } from 'next/router'
-import SsrCookie from "ssr-cookie";
+import cookies from 'next-cookies'
 
-// const token =
-// 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MDEiLCJpc3MiOiJvbmRhLnNzYWZ5LmNvbSIsImV4cCI6MTY1MzM1Nzk4NywiaWF0IjoxNjUyMDYxOTg3fQ._yDfuQ4lL5tbYci6CFY-x08muvg71L5wo1uTH6FMMls_2IVep7jGlh5BMVWtqPXYoLp5Zm6UbzRY1aJYagiLrg'
-
-
-const CollectionPannel = ({ onCloseBtn, info }) => {
-  const cookie = new SsrCookie();
-  const token= cookie.get('member');
+const CollectionPannel = ({ onCloseBtn, info, token }) => {
+  console.log(info)
   const router = useRouter();
   const previewInfo = useSelector(({ collection }) => collection)
+  console.log(previewInfo)
   const appDispatch:AppDispatch = useDispatch();
 
-  const getPreviewInfo = () =>{
-    const params = {
-      memoTypeSeq: info.memoTypeSeq,
-      memoSeqList: info.memoSeqList.toString(),
-      token: token,
-    }
-    appDispatch(getCollectionMemoAction(params))
-
-  }
   const moveToDate = () =>{
     router.push(`/diary/${info.dateProp}`)
   }
-  useEffect(()=>{
-    getPreviewInfo();
-  },[])
   return (
     <div className={styles.pannel}>
       <div className={styles.closeBtnImgContainer}>
@@ -62,5 +46,12 @@ const CollectionPannel = ({ onCloseBtn, info }) => {
     </div>
   )
 }
-
+export async function getServerSideProps(context) {
+  return {
+    props: {
+      diaryDate: context.params.diaryDate,
+      token: cookies(context).member,
+    },
+  }
+}
 export default CollectionPannel
