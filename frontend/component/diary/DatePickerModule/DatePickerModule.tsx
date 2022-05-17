@@ -26,6 +26,8 @@ const DatePickerModule = ({ startDate, setStartDate, token }) => {
     }
   }, [startDate])
 
+  const month = Number.parseInt(moment(startDate).format('M')) - 1
+
   return (
     <>
       <DatePicker
@@ -35,15 +37,11 @@ const DatePickerModule = ({ startDate, setStartDate, token }) => {
         onChange={(date) => setStartDate(date)}
         className={styles.datePicker}
         dayClassName={(d) => {
-          // console.log(d.getMonth())
-          // if (d.getMonth() != startDate.getMonth()) {
-          //   //   setStartDate(moment(d).format('YYYY-MM-DD'))
-          //   console.log('unmatched')
-          // }
-          const date = d.getDate()
+          const nowMonth = d.getMonth()
+          const nowDate = d.getDate()
           let isMatched = false
           diaryDays.map((m) => {
-            if (date == m) {
+            if (nowDate == m && nowMonth == month) {
               isMatched = true
             }
           })
