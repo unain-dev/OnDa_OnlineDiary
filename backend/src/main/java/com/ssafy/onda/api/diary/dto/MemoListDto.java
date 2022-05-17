@@ -10,7 +10,7 @@ import lombok.ToString;
 @Getter
 public class MemoListDto {
 
-    private Long id;
+    private Integer id;
 
     private Long width;
 
@@ -27,7 +27,7 @@ public class MemoListDto {
     private Object info;
 
     @Builder
-    public MemoListDto(Long id, Long width, Long height, Long x, Long y, Integer memoTypeSeq, Object info) {
+    public MemoListDto(Integer id, Long width, Long height, Long x, Long y, Integer memoTypeSeq, Object info) {
         this.id = id;
         this.width = width;
         this.height = height;

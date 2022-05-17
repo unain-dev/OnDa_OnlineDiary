@@ -1,8 +1,5 @@
 package com.ssafy.onda.api.member.service;
 
-import com.ssafy.onda.api.diary.entity.Background;
-import com.ssafy.onda.api.diary.repository.BackgroundRepository;
-import com.ssafy.onda.api.diary.service.DiaryService;
 import com.ssafy.onda.api.member.dto.MemberDto;
 import com.ssafy.onda.api.member.dto.request.ReqLoginMemberDto;
 import com.ssafy.onda.api.member.dto.request.ReqMemberDto;
@@ -28,8 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Random;
 import java.util.regex.Pattern;
 
@@ -48,10 +43,6 @@ public class MemberServiceImpl implements MemberService {
     private final EmailAuthRepository emailAuthRepository;
 
     private final DeleteEmailAuthRepository deleteEmailAuthRepository;
-
-    private final BackgroundRepository backgroundRepository;
-
-    private final DiaryService diaryService;
 
     @Autowired
     private final JavaMailSender javaMailSender;
@@ -249,12 +240,6 @@ public class MemberServiceImpl implements MemberService {
         } else if (!passwordEncoder.matches(reqLoginMemberDto.getPassword(), member.getPassword())) {
             throw new CustomException(LogUtil.getElement(), PASSWORD_NOT_MATCH);
         }
-
-        List<Background> backgrounds = backgroundRepository.findAllByMember(member);
-        for (Background background : backgrounds) {
-            diaryService.delete(background, new HashSet<>());
-        }
-        backgroundRepository.deleteAllInBatch(backgrounds);
 
         memberRepository.delete(member);
     }
