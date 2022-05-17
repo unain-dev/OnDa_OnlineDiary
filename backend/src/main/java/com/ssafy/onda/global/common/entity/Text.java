@@ -1,5 +1,6 @@
 package com.ssafy.onda.global.common.entity;
 
+import com.ssafy.onda.api.diary.entity.Diary;
 import com.ssafy.onda.global.common.entity.embedded.Memo;
 import lombok.*;
 
@@ -31,11 +32,17 @@ public class Text {
     })
     private Memo memo;
 
+    @JoinColumn(name = "diary_seq", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+//    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Diary diary;
+
     @Builder
-    public Text(Long textSeq, String header, String content, Memo memo) {
+    public Text(Long textSeq, String header, String content, Memo memo, Diary diary) {
         this.textSeq = textSeq;
         this.header = header;
         this.content = content;
         this.memo = memo;
+        this.diary = diary;
     }
 }

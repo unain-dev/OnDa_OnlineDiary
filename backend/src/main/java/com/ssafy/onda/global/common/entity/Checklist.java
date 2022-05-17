@@ -1,5 +1,6 @@
 package com.ssafy.onda.global.common.entity;
 
+import com.ssafy.onda.api.diary.entity.Diary;
 import com.ssafy.onda.global.common.entity.embedded.Memo;
 import lombok.*;
 
@@ -28,10 +29,16 @@ public class Checklist {
     })
     private Memo memo;
 
+    @JoinColumn(name = "diary_seq", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+//    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Diary diary;
+
     @Builder
-    public Checklist(Long checklistSeq, String checklistHeader, Memo memo) {
+    public Checklist(Long checklistSeq, String checklistHeader, Memo memo, Diary diary) {
         this.checklistSeq = checklistSeq;
         this.checklistHeader = checklistHeader;
         this.memo = memo;
+        this.diary = diary;
     }
 }

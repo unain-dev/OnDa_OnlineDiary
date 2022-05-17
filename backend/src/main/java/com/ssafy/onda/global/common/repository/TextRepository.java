@@ -1,5 +1,6 @@
 package com.ssafy.onda.global.common.repository;
 
+import com.ssafy.onda.api.diary.entity.Diary;
 import com.ssafy.onda.global.common.entity.Text;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -9,5 +10,6 @@ public interface TextRepository extends JpaRepository<Text, Long> {
 
     List<Text> findAllByTextSeqIn(List<Long> textSeqs);
 
-    List<Text> findAllByHeaderContainsOrContentContains(String keyword, String keyword1);
+    List<Text> findAllByDiary(Diary diary);
+
 }

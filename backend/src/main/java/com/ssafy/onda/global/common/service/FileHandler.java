@@ -1,6 +1,8 @@
 package com.ssafy.onda.global.common.service;
 
 import com.ssafy.onda.global.common.entity.embedded.FileInfo;
+import com.ssafy.onda.global.common.util.LogUtil;
+import com.ssafy.onda.global.error.exception.CustomException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -9,13 +11,15 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import static com.ssafy.onda.global.error.dto.ErrorStatus.NO_DATA_TO_SAVE;
+
 @Component
 public class FileHandler {
 
     public FileInfo parseFileInfo(MultipartFile multipartFile) throws IOException {
 
         if (multipartFile == null) {
-            return null;
+            throw new CustomException(LogUtil.getElement(), NO_DATA_TO_SAVE);
         }
 
         String absolutePath = new File("").getAbsolutePath() + File.separator;
