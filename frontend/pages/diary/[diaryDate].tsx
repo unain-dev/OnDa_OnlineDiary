@@ -111,7 +111,7 @@ const diary = ({ diaryDate, token }) => {
         <span>
           <button
             onClick={async () => {
-              const date = calPrevDate(diaryDate)
+              const date = calPrevDate(goDate)
               await setGoDate(date)
               router.push(`/diary/${date}`)
             }}
@@ -131,8 +131,8 @@ const diary = ({ diaryDate, token }) => {
           </span>
           <button
             onClick={async () => {
-              const date = calNextDate(diaryDate)
-              await setGoDate(calNextDate(diaryDate))
+              const date = calNextDate(goDate)
+              await setGoDate(date)
               router.push(`/diary/${date}`)
             }}
           >
