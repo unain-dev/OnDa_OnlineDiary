@@ -5,10 +5,8 @@ import com.ssafy.onda.api.member.dto.request.ReqLoginMemberDto;
 import com.ssafy.onda.api.member.dto.request.ReqMemberDto;
 import com.ssafy.onda.api.member.dto.request.ReqUpdatePasswordDto;
 import com.ssafy.onda.api.member.dto.response.ResMemberDto;
-import com.ssafy.onda.api.member.entity.DeleteEmailAuth;
 import com.ssafy.onda.api.member.entity.EmailAuth;
 import com.ssafy.onda.api.member.entity.Member;
-import com.ssafy.onda.api.member.repository.DeleteEmailAuthRepository;
 import com.ssafy.onda.api.member.repository.EmailAuthRepository;
 import com.ssafy.onda.api.member.repository.MemberRepository;
 import com.ssafy.onda.global.common.auth.CustomUserDetails;
@@ -25,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Random;
 import java.util.regex.Pattern;
 
@@ -42,8 +41,6 @@ public class MemberServiceImpl implements MemberService {
 
     private final EmailAuthRepository emailAuthRepository;
 
-    private final DeleteEmailAuthRepository deleteEmailAuthRepository;
-
     @Autowired
     private final JavaMailSender javaMailSender;
 
@@ -54,7 +51,7 @@ public class MemberServiceImpl implements MemberService {
         Pattern pattern = Pattern.compile(regx);
 
         if (!pattern.matcher(memberId).matches()) {
-            throw new CustomException(LogUtil.getElement(), INVALID_ID_FORMAT);
+            throw new CustomException(memberId, LogUtil.getElement(), INVALID_ID_FORMAT);
         }
 
         return memberRepository.existsByMemberId(memberId);
@@ -67,7 +64,7 @@ public class MemberServiceImpl implements MemberService {
         Pattern pattern = Pattern.compile(regx);
 
         if (!pattern.matcher(email).matches()) {
-            throw new CustomException(LogUtil.getElement(), INVALID_EMAIL_FORMAT);
+            throw new CustomException(email, LogUtil.getElement(), INVALID_EMAIL_FORMAT);
         }
 
         return memberRepository.existsByEmail(email);
@@ -81,11 +78,11 @@ public class MemberServiceImpl implements MemberService {
 
         // validation & duplication check
         if (hasMemberId(memberId)) {
-            throw new CustomException(LogUtil.getElement(), MEMBERID_DUPLICATION);
+            throw new CustomException(memberId, LogUtil.getElement(), MEMBERID_DUPLICATION);
         } else if (reqMemberDto.getPassword().contains(memberId)) {
-            throw new CustomException(LogUtil.getElement(), PASSWORD_CONTAINED_MEMBERID);
+            throw new CustomException(memberId, LogUtil.getElement(), PASSWORD_CONTAINED_MEMBERID);
         } else if (hasEmail(reqMemberDto.getEmail())) {
-            throw new CustomException(LogUtil.getElement(), EMAIL_DUPLICATION);
+            throw new CustomException(reqMemberDto.getEmail(), LogUtil.getElement(), EMAIL_DUPLICATION);
         }
 
         String encryptedPassword = passwordEncoder.encode(reqMemberDto.getPassword());
@@ -102,10 +99,10 @@ public class MemberServiceImpl implements MemberService {
     public MemberDto findMemberDtoInLogin(ReqLoginMemberDto reqLoginMemberDto) {
 
         MemberDto memberDto = memberRepository.findMemberDtoByMemberId(reqLoginMemberDto.getMemberId())
-                .orElseThrow(() -> new CustomException(LogUtil.getElement(), MEMBERID_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(reqLoginMemberDto.getMemberId(), LogUtil.getElement(), MEMBER_NOT_FOUND));
 
         if (!passwordEncoder.matches(reqLoginMemberDto.getPassword(), memberDto.getPassword())) {
-            throw new CustomException(LogUtil.getElement(), PASSWORD_NOT_MATCH);
+            throw new CustomException("member id : " + reqLoginMemberDto.getMemberId(), LogUtil.getElement(), PASSWORD_NOT_MATCH);
         }
 
         return memberDto;
@@ -114,14 +111,14 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberDto findMemberDtoByMemberId(String memberId) {
         return memberRepository.findMemberDtoByMemberId(memberId)
-                .orElseThrow(() -> new CustomException(LogUtil.getElement(), MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(memberId, LogUtil.getElement(), MEMBER_NOT_FOUND));
     }
 
     @Override
     public ResMemberDto findResMemberDto(CustomUserDetails details) {
 
         MemberDto memberDto = memberRepository.findMemberDtoByMemberId(details.getUsername())
-                .orElseThrow(() -> new CustomException(LogUtil.getElement(), MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(details.getUsername(), LogUtil.getElement(), MEMBER_NOT_FOUND));
 
         return ResMemberDto.builder()
                 .memberId(memberDto.getMemberId())
@@ -135,15 +132,15 @@ public class MemberServiceImpl implements MemberService {
     public void updateMemberPassword(CustomUserDetails details, ReqUpdatePasswordDto reqUpdatePasswordDto) {
 
         Member member = memberRepository.findByMemberId(details.getUsername())
-                .orElseThrow(() -> new CustomException(LogUtil.getElement(), MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(details.getUsername(), LogUtil.getElement(), MEMBER_NOT_FOUND));
 
         String password = member.getPassword();
         if (!passwordEncoder.matches(reqUpdatePasswordDto.getPrePassword(), password)) {
-            throw new CustomException(LogUtil.getElement(), PASSWORD_NOT_MATCH);
+            throw new CustomException("member id : " + details.getUsername(), LogUtil.getElement(), PASSWORD_NOT_MATCH);
         }
 
         if (reqUpdatePasswordDto.getNewPassword().contains(member.getMemberId())) {
-            throw new CustomException(LogUtil.getElement(), PASSWORD_CONTAINED_MEMBERID);
+            throw new CustomException(member.getMemberId(), LogUtil.getElement(), PASSWORD_CONTAINED_MEMBERID);
         }
 
         member.changePassword(passwordEncoder.encode(reqUpdatePasswordDto.getNewPassword()));
@@ -153,19 +150,18 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void authEmail(String userEmail) {
         //인증 번호 생성기
-        StringBuffer temp =new StringBuffer();
+        StringBuilder temp = new StringBuilder();
         Random rnd = new Random();
-        for(int i=0;i<10;i++)
-        {
+        for (int i = 0; i < 10; i++) {
             int rIndex = rnd.nextInt(3);
             switch (rIndex) {
                 case 0:
                     // a-z
-                    temp.append((char) ((int) (rnd.nextInt(26)) + 97));
+                    temp.append((char) (rnd.nextInt(26) + 97));
                     break;
                 case 1:
                     // A-Z
-                    temp.append((char) ((int) (rnd.nextInt(26)) + 65));
+                    temp.append((char) (rnd.nextInt(26) + 65));
                     break;
                 case 2:
                     // 0-9
@@ -174,7 +170,6 @@ public class MemberServiceImpl implements MemberService {
             }
         }
         String AuthenticationKey = temp.toString();
-        LocalDateTime now = LocalDateTime.now();
 
         //메일 전송
         SimpleMailMessage message = new SimpleMailMessage();
@@ -183,19 +178,15 @@ public class MemberServiceImpl implements MemberService {
         message.setSubject("온다 가입 인증");
         message.setText(
                 "다이어리 꾸미기 온다(onda)에 가입 신청해주셔서 감사합니다 "
-                + "\n 인증번호 : "
-                + AuthenticationKey
+                        + "\n 인증번호 : "
+                        + AuthenticationKey
         );
 
-        DeleteEmailAuth deleteEmailAuth = deleteEmailAuthRepository.findByEmail(userEmail);
-
-        deleteEmailAuthRepository.deleteAllInBatch(new ArrayList<>(){{
-            add(deleteEmailAuth);
-        }});
-
-        log.info("------------------------------------");
-
-        EmailAuth emailAuth = new EmailAuth(userEmail,AuthenticationKey,LocalDateTime.now());
+        Optional<EmailAuth> optionalEmailAuth = emailAuthRepository.findByEmail(userEmail);
+        optionalEmailAuth.ifPresent(emailAuth -> emailAuthRepository.deleteAllInBatch(new ArrayList<>() {{
+            add(emailAuth);
+        }}));
+        EmailAuth emailAuth = new EmailAuth(userEmail, AuthenticationKey, LocalDateTime.now());
         emailAuthRepository.save(emailAuth);
         log.info("------------------------------------");
 
@@ -208,12 +199,12 @@ public class MemberServiceImpl implements MemberService {
     public boolean authEmailCheck(String userEmail, String Auth) {
 
         EmailAuth emailAuth = emailAuthRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new CustomException(LogUtil.getElement(), MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(userEmail, LogUtil.getElement(), MEMBER_NOT_FOUND));
 
         if(emailAuth.getEmailAuth().equals(Auth)) {
             emailAuthRepository.deleteByEmail(emailAuth.getEmail());
             return true;
-        } else{
+        } else {
             return false;
         }
     }
@@ -223,7 +214,7 @@ public class MemberServiceImpl implements MemberService {
     public void changeInfo(String email, String nickname) {
 
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(LogUtil.getElement(), MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(email, LogUtil.getElement(), MEMBER_NOT_FOUND));
 
         member.changeNickname(nickname);
     }
@@ -233,12 +224,12 @@ public class MemberServiceImpl implements MemberService {
     public void delete(CustomUserDetails details, ReqLoginMemberDto reqLoginMemberDto) {
 
         Member member = memberRepository.findByMemberId(details.getUsername())
-                .orElseThrow(() -> new CustomException(LogUtil.getElement(), MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(details.getUsername(), LogUtil.getElement(), MEMBER_NOT_FOUND));
 
         if (!member.getMemberId().equals(reqLoginMemberDto.getMemberId())) {
-            throw new CustomException(LogUtil.getElement(), ACCESS_DENIED);
+            throw new CustomException(details.getUsername(), LogUtil.getElement(), ACCESS_DENIED);
         } else if (!passwordEncoder.matches(reqLoginMemberDto.getPassword(), member.getPassword())) {
-            throw new CustomException(LogUtil.getElement(), PASSWORD_NOT_MATCH);
+            throw new CustomException("member id : " + details.getUsername(), LogUtil.getElement(), PASSWORD_NOT_MATCH);
         }
 
         memberRepository.delete(member);
