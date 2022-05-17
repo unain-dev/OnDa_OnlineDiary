@@ -23,7 +23,7 @@ const MemoSeparator: NextPage<Props> = ({
   drag,
   onDeleteMemo,
 }) => {
-  // console.log(memoInfo)
+  console.log(memoInfo)
   const props = {
     memoInfo,
     drag,
