@@ -2,10 +2,15 @@ package com.ssafy.onda.api.diary.entity;
 
 import com.querydsl.core.annotations.QueryProjection;
 import com.ssafy.onda.api.member.entity.Member;
+import com.ssafy.onda.global.common.entity.*;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+import static javax.persistence.CascadeType.ALL;
 
 @Getter
 @ToString(of = {"diarySeq", "diaryDate"})
@@ -31,8 +36,22 @@ public class Diary {
 
     @JoinColumn(name = "member_seq", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
-//    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Member member;
+
+    @OneToMany(mappedBy = "diary", cascade = ALL)
+    private List<Text> texts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "diary", cascade = ALL)
+    private List<AccountBook> accountBooks = new ArrayList<>();
+
+    @OneToMany(mappedBy = "diary", cascade = ALL)
+    private List<Checklist> checklists = new ArrayList<>();
+
+    @OneToMany(mappedBy = "diary", cascade = ALL)
+    private List<Image> images = new ArrayList<>();
+
+    @OneToMany(mappedBy = "diary", cascade = ALL)
+    private List<Sticker> stickers = new ArrayList<>();
 
     @QueryProjection
     @Builder
