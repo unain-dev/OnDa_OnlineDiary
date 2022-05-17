@@ -2,7 +2,7 @@ export const calToday = (year, month, day) => {
   const today = new Date()
 }
 
-const dateToString = (date: Date) => {
+export const dateToString = (date: Date) => {
   const year = date.getFullYear()
   let month: any = date.getMonth() + 1
   let day: any = date.getDate()
