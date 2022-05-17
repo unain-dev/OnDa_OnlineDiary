@@ -44,11 +44,11 @@ function transForm(param) {
   let files = []
   let numbering = 0
 
-  param.memoList.forEach((memo) => {
-    if (memo.memoTypeSeq === 4) {
-      files.push(memo.info)
-    }
-  })
+  // param.memoList.forEach((memo) => {
+  //   if (memo.memoTypeSeq === 4) {
+  //     files.push(memo.info)
+  //   }
+  // })
 
   param.memoList.forEach((memo)=>{
     console.log(typeof memo.info)
@@ -84,7 +84,9 @@ function transForm(param) {
   const p = JSON.stringify(newParam)
   const blob = new Blob([p], { type: 'application/json' })
   formData.append('reqDiaryDto', blob)
-  files.forEach((file) => formData.append('files', file))
+  files.forEach((file, index) => {
+    console.log(index)
+    formData.append('files', file)})
   return formData
 }
 
