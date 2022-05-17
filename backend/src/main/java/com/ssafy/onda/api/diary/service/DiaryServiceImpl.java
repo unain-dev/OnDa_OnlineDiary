@@ -210,7 +210,7 @@ public class DiaryServiceImpl implements DiaryService {
                             images.add(image);
                             fileCnt++;
                         } catch (IOException e) {
-                            throw new CustomException(LogUtil.getElement(), FAIL_TO_SAVE_IMAGE);
+                            throw new CustomException(multipartFiles.get(fileIdx).toString(), LogUtil.getElement(), FAIL_TO_SAVE_IMAGE);
                         }
                     }
 
@@ -240,7 +240,8 @@ public class DiaryServiceImpl implements DiaryService {
 
         if (multipartFiles != null && multipartFiles.size() != fileCnt + archivedImageCnt) {
             deleteAlreadySavedFile(savedFile);
-            throw new CustomException(LogUtil.getElement(), MISMATCH_IN_NUMBER_OF_FILES_AND_IMAGES);
+            throw new CustomException("multipartFiles.size() = " + multipartFiles.size() + ", fileCnt = " + fileCnt + ", archivedImageCnt = " + archivedImageCnt,
+                    LogUtil.getElement(), MISMATCH_IN_NUMBER_OF_FILES_AND_IMAGES);
         }
 
         return FindMemosDto.builder()
@@ -283,7 +284,7 @@ public class DiaryServiceImpl implements DiaryService {
                 }
                 if (accountBookItems.size() == 0) {
                     deleteAlreadySavedFile(findMemosDto.getSavedFile());
-                    throw new CustomException(LogUtil.getElement(), NO_DATA_TO_SAVE);
+                    throw new CustomException(savedAccountBook.toString(), LogUtil.getElement(), NO_DATA_TO_SAVE);
                 }
                 accountBookItemRepository.saveAll(accountBookItems);
             }
@@ -300,7 +301,7 @@ public class DiaryServiceImpl implements DiaryService {
                 }
                 if (checklistItems.size() == 0) {
                     deleteAlreadySavedFile(findMemosDto.getSavedFile());
-                    throw new CustomException(LogUtil.getElement(), NO_DATA_TO_SAVE);
+                    throw new CustomException(savedChecklist.toString(), LogUtil.getElement(), NO_DATA_TO_SAVE);
                 }
                 checklistItemRepository.saveAll(checklistItems);
             }
@@ -332,13 +333,11 @@ public class DiaryServiceImpl implements DiaryService {
 
         // 회원 확인
         Member member = memberRepository.findByMemberId(details.getUsername())
-                .orElseThrow(() -> new CustomException(LogUtil.getElement(), MEMBER_NOT_FOUND));
-        // 날짜 확인
-        checkDateValidation(diaryDate);
+                .orElseThrow(() -> new CustomException(details.getUsername(), LogUtil.getElement(), MEMBER_NOT_FOUND));
 
         // 멤버와 날짜로 배경판을 찾기
-        Diary diary = diaryRepository.findByMemberAndDiaryDate(member, LocalDate.parse(diaryDate))
-                .orElseThrow(() -> new CustomException(LogUtil.getElement(), DIARY_NOT_FOUND));
+        Diary diary = diaryRepository.findByMemberAndDiaryDate(member, checkDateValidation(diaryDate))
+                .orElseThrow(() -> new CustomException(details.getUsername(), diaryDate, LogUtil.getElement(), DIARY_NOT_FOUND));
 
         deleteMemosByDiary(diary, new HashSet<>());
         diaryRepository.deleteAllInBatch(new ArrayList<>(){{
@@ -391,7 +390,7 @@ public class DiaryServiceImpl implements DiaryService {
         try {
             dateFormat.parse(date);
         } catch (ParseException e) {
-            throw new CustomException(LogUtil.getElement(), INVALID_DATE_FORMAT);
+            throw new CustomException(date, LogUtil.getElement(), INVALID_DATE_FORMAT);
         }
         return LocalDate.parse(date);
     }
@@ -401,18 +400,16 @@ public class DiaryServiceImpl implements DiaryService {
 
         // 회원 확인
         Member member = memberRepository.findByMemberId(details.getUsername())
-                .orElseThrow(() -> new CustomException(LogUtil.getElement(), MEMBER_NOT_FOUND));
-        // 날짜 확인
-        checkDateValidation(diaryDate);
+                .orElseThrow(() -> new CustomException(details.getUsername(), LogUtil.getElement(), MEMBER_NOT_FOUND));
 
         // diary 존재 여부 확인
-        Diary diary = diaryRepository.findByMemberAndDiaryDate(member, LocalDate.parse(diaryDate))
-                .orElseThrow(() -> new CustomException(LogUtil.getElement(), DIARY_NOT_FOUND));
+        Diary diary = diaryRepository.findByMemberAndDiaryDate(member, checkDateValidation(diaryDate))
+                .orElseThrow(() -> new CustomException(details.getUsername(), diaryDate, LogUtil.getElement(), DIARY_NOT_FOUND));
         FindMemosDto findMemosDto = findByDiary(diary);
 
         List<MemoListDto> memoListDtos = new ArrayList<>();
 
-        Integer id = 0;
+        int id = 0;
         for (Text text : findMemosDto.getTexts()) {
             memoListDtos.add(MemoListDto.builder()
                     .id(id++)
@@ -488,7 +485,7 @@ public class DiaryServiceImpl implements DiaryService {
                         .info("http://k6a107.p.ssafy.io/" + fileInfo.getSavedPath() + File.separator + fileInfo.getEncodedName())
                         .build());
             } else {
-                throw new CustomException(LogUtil.getElement(), NO_MEMO_AVAILABLE);
+                throw new CustomException(details.getUsername(), image.toString() + " - fileInfo is null", LogUtil.getElement(), NO_MEMO_AVAILABLE);
             }
         }
 
@@ -540,10 +537,8 @@ public class DiaryServiceImpl implements DiaryService {
 
         // 회원 확인
         Member member = memberRepository.findByMemberId(details.getUsername())
-                .orElseThrow(() -> new CustomException(LogUtil.getElement(), MEMBER_NOT_FOUND));
-        // 날짜 확인
-        checkDateValidation(diaryDate);
-        List<LocalDate> diaryDays = diaryRepository.findByMemberAndDiaryDateLike(member, LocalDate.parse(diaryDate));
+                .orElseThrow(() -> new CustomException(details.getUsername(), LogUtil.getElement(), MEMBER_NOT_FOUND));
+        List<LocalDate> diaryDays = diaryRepository.findByMemberAndDiaryDateLike(member, checkDateValidation(diaryDate));
 
         List<Integer> days = new ArrayList<>();
         for (LocalDate diaryDay : diaryDays) {

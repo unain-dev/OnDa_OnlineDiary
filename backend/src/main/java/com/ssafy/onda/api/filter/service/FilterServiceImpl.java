@@ -45,11 +45,11 @@ public class FilterServiceImpl implements FilterService {
     public List<MonthFilterDto> search(int memoTypeSeq, String keyword, CustomUserDetails details) {
 
         Member member = memberRepository.findByMemberId(details.getUsername())
-                .orElseThrow(() -> new CustomException(LogUtil.getElement(), MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(details.getUsername(), LogUtil.getElement(), MEMBER_NOT_FOUND));
 
         List<Diary> diarys = diaryRepository.findByMemberOrderByDiarySeqAsc(member);
         if (diarys.size() == 0) {
-            throw new CustomException(LogUtil.getElement(), DIARY_NOT_FOUND);
+            throw new CustomException(details.getUsername(), "diary.size() == 0", LogUtil.getElement(), DIARY_NOT_FOUND);
         }
 
         List<MonthFilterDto> monthFilterDtos = new ArrayList<>();
@@ -92,7 +92,7 @@ public class FilterServiceImpl implements FilterService {
                     }
                     break;
                 default:
-                    throw new CustomException(LogUtil.getElement(), INVALID_MEMO_TYPE);
+                    throw new CustomException(member.getMemberId(), diary.toString(), LogUtil.getElement(), INVALID_MEMO_TYPE);
             }
 
             if (monthMemoListDtos.size() != 0) {
@@ -145,7 +145,7 @@ public class FilterServiceImpl implements FilterService {
     public Object preview(CustomUserDetails details, int memoTypeSeq, String memoSeqList) {
 
         Member member = memberRepository.findByMemberId(details.getUsername())
-                .orElseThrow(() -> new CustomException(LogUtil.getElement(), MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(details.getUsername(), LogUtil.getElement(), MEMBER_NOT_FOUND));
 
         Object memoList = null;
         List<Long> memoSeqs = new ArrayList<>();
@@ -156,11 +156,11 @@ public class FilterServiceImpl implements FilterService {
                 memoSeqs.add(Long.valueOf((stringTokenizer.nextToken())));
             }
         } catch (NumberFormatException e) {
-            throw new CustomException(LogUtil.getElement(), INVALID_INPUT_VALUE);
+            throw new CustomException(member.getMemberId(), memoSeqList, LogUtil.getElement(), INVALID_INPUT_VALUE);
         }
 
         if (memoSeqs.size() == 0) {
-            throw new CustomException(LogUtil.getElement(), INVALID_INPUT_VALUE);
+            throw new CustomException(member.getMemberId(), "memoSeqs.size() == 0",LogUtil.getElement(), INVALID_INPUT_VALUE);
         }
 
         switch (memoTypeSeq) {
@@ -169,7 +169,7 @@ public class FilterServiceImpl implements FilterService {
                 List<TextDto> textDtos = new ArrayList<>();
                 for (Text text : texts) {
                     if (!text.getDiary().getMember().equals(member)) {
-                        throw new CustomException(LogUtil.getElement(), ACCESS_DENIED);
+                        throw new CustomException(member.getMemberId(), text.getDiary().getMember().toString(), LogUtil.getElement(), ACCESS_DENIED);
                     }
                     textDtos.add(TextDto.builder()
                             .header(text.getHeader())
@@ -184,7 +184,7 @@ public class FilterServiceImpl implements FilterService {
                 List<AccountBookDto> accountBookDtos = new ArrayList<>();
                 for (AccountBook accountBook : accountBooks) {
                     if (!accountBook.getDiary().getMember().equals(member)) {
-                        throw new CustomException(LogUtil.getElement(), ACCESS_DENIED);
+                        throw new CustomException(member.getMemberId(), accountBook.getDiary().getMember().toString(), LogUtil.getElement(), ACCESS_DENIED);
                     }
                     accountBookDtos.add(AccountBookDto.builder()
                             .accountBookItems(new ArrayList<>() {{
@@ -206,7 +206,7 @@ public class FilterServiceImpl implements FilterService {
                 List<ChecklistDto> checklistDtos = new ArrayList<>();
                 for (Checklist checklist : checklists) {
                     if (!checklist.getDiary().getMember().equals(member)) {
-                        throw new CustomException(LogUtil.getElement(), ACCESS_DENIED);
+                        throw new CustomException(member.getMemberId(), checklist.getDiary().getMember().toString(), LogUtil.getElement(), ACCESS_DENIED);
                     }
                     checklistDtos.add(ChecklistDto.builder()
                             .checklistHeader(checklist.getChecklistHeader())
@@ -224,7 +224,7 @@ public class FilterServiceImpl implements FilterService {
                 break;
 
             default:
-                throw new CustomException(LogUtil.getElement(), INVALID_MEMO_TYPE);
+                throw new CustomException(member.getMemberId(), memoTypeSeq + " ", LogUtil.getElement(), INVALID_MEMO_TYPE);
         }
 
         return memoList;
