@@ -17,11 +17,9 @@ import { useRouter } from 'next/router'
 import { calNextDate, calPrevDate } from 'core/common/date'
 import DatePickerModule from 'component/diary/DatePickerModule/DatePickerModule'
 import moment from 'moment'
-import SsrCookie from 'ssr-cookie'
 import cookies from 'next-cookies'
 
 const diary = ({ diaryDate, token }) => {
-  console.log(token)
   const todaysInfo = useSelector(({ diary }) => diary)
   const len = todaysInfo.memoList.length
   const lastId = todaysInfo.lastId
@@ -53,10 +51,6 @@ const diary = ({ diaryDate, token }) => {
     setDraggableState(Array(len).fill(true))
   }, [len])
 
-  // const cookie = new SsrCookie()
-  // const token = cookie.get('member')
-  // const token = ctxToken
-
   const onClickDelete = (date) => {
     const params = {
       diaryDate: date,
@@ -69,7 +63,7 @@ const diary = ({ diaryDate, token }) => {
     todaysInfo.memoList.length <= 0
       ? appDispatch(
           deleteDayDiary({
-            param: goDate,
+            diaryDate: goDate,
             token: token,
           }),
         )
