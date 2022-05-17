@@ -1,7 +1,7 @@
 import type { NextPage } from 'next'
 import styles from 'styles/scss/Main.module.scss'
 import Login from './user/login'
-import Intro from '../component/main/intro'
+import Intro from '../component/main/Intro'
 
 const Home: NextPage = () => {
   return (

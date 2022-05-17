@@ -10,12 +10,16 @@ import Header from 'component/common/header/Header'
 import 'styles/css/font.css'
 import 'styles/css/framer.css'
 import { useRouter } from 'next/router'
+import Head from 'next/head'
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter()
   const path = router.asPath
   return (
     <>
+      <Head>
+        <title>온 다: 온라인 다이어리</title>
+      </Head>
       {path !== '/' && <Header />}
       <Component {...pageProps} />
     </>
