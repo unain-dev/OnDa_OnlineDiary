@@ -280,4 +280,19 @@ public class MemberController {
                 .msg(msg)
                 .build();
     }
+
+    @GetMapping("/check")
+    public BaseResponseDto check(Authentication authentication) {
+        log.info("Called API: {}", LogUtil.getClassAndMethodName());
+
+        if (authentication == null) {
+            throw new CustomException(LogUtil.getElement(), UNAUTHORIZED_ACCESS);
+        }
+
+        return BaseResponseDto.builder()
+                .status(OK.value())
+                .msg("유효한 토큰입니다.")
+                .data(new HashMap<>())
+                .build();
+    }
 }
