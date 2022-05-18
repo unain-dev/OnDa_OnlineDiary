@@ -10,7 +10,6 @@ const loginForm = ({
   passwordHandler,
   loginFormSubmit,
   onkeydown,
-  logout,
 }) => {
   
 
@@ -24,7 +23,6 @@ const loginForm = ({
         <input type="password" className='password' value={password} onChange={passwordHandler} onKeyDown={onkeydown} placeholder='비밀번호를 입력해주세요' />
         <button className={styles.btn_login} type='button' onClick={loginFormSubmit}>로그인</button>
         <button className={styles.btn_signup} onClick={() => { router.push(`/user/signup`)}}>회원가입</button>
-        <button className={styles.btn_login} type='button' onClick={logout}>로그아웃</button>
       </div>
     </div>
   );
