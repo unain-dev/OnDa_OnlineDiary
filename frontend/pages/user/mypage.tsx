@@ -1,9 +1,15 @@
-import MypageForm from "component/user/mypageForm";
-import { useEffect, useState } from "react";
-import cookies from 'next-cookies';
+import MypageForm from 'component/user/mypageForm'
+import { useEffect, useState } from 'react'
+import cookies from 'next-cookies'
 import styles from 'styles/scss/User.module.scss'
-import { deleteMember, getMemberInfo, modifyMemberInfo, modifyPassword } from "core/api/memberApi";
-import { useRouter } from "next/router";
+import {
+  deleteMember,
+  getMemberInfo,
+  modifyMemberInfo,
+  modifyPassword,
+} from 'core/api/memberApi'
+import { useRouter } from 'next/router'
+import { getIsMember } from 'core/api/auth'
 
 const mypage = ({ token }) => {
   const [memberId, setMember] = useState('')
@@ -18,34 +24,32 @@ const mypage = ({ token }) => {
     nicknameRegex: true,
     passwordRegex: false,
     passwordConfirm: false,
-  });
+  })
   // error Message
   const errorMsg = {
-    passwordRegex: '8자 이상의 영문/숫자/특수문자(공백 제외)만 허용하며, 2개 이상 조합',
+    passwordRegex:
+      '8자 이상의 영문/숫자/특수문자(공백 제외)만 허용하며, 2개 이상 조합',
     passwordConfirm: '동일한 비밀번호를 입력해주세요.',
     nicknameRegex: '3자 이상의 한글/영문/숫자 조합',
-  };
-  
+  }
+
   useEffect(() => {
     const promise = getMemberInfo(token)
     const getData = () => {
       promise.then((appData) => {
-        const memberInfo = appData.data.memberInfo;
+        const memberInfo = appData.data.memberInfo
         setMember(memberInfo.memberId)
         setEmail(memberInfo.email)
         setNickname(memberInfo.nickname)
       })
     }
     getData()
-    return () => {
-    };
-  }, []);
-
-
+    return () => {}
+  }, [])
 
   // 닉네임 유효성 검사
   const checkNicknameValid = (e) => {
-    const checkNick = /^[a-zA-Zㄱ-힣0-9]{3,12}$/g.test(e.target.value);
+    const checkNick = /^[a-zA-Zㄱ-힣0-9]{3,12}$/g.test(e.target.value)
     if (!checkNick) {
       setErrorState({
         ...errorState,
@@ -57,7 +61,7 @@ const mypage = ({ token }) => {
         nicknameRegex: true,
       })
     }
-  }  
+  }
 
   // 회원 정보 수정
   const onModify = async () => {
@@ -70,18 +74,18 @@ const mypage = ({ token }) => {
     }
   }
 
-  const router = useRouter();
+  const router = useRouter()
 
   // 회원 탈퇴
   const onWithdraw = async () => {
     if (password == '') {
-      alert("비밀번호를 입력해주세요.")
+      alert('비밀번호를 입력해주세요.')
     } else {
-      confirm("정말로 탈퇴하시겠습니까?");
+      confirm('정말로 탈퇴하시겠습니까?')
       const result = await deleteMember(token, memberId, password)
       if (result.status == 200) {
-        alert("탈퇴처리가 완료되었습니다.")
-        document.cookie = `member = ; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT`;
+        alert('탈퇴처리가 완료되었습니다.')
+        document.cookie = `member = ; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT`
         router.push('/user/login')
       } else {
         alert(result.msg)
@@ -91,17 +95,21 @@ const mypage = ({ token }) => {
 
   // 비밀번호 유효성 검사
   const checkPasswordValid = (e) => {
-    const pw = e.target.value;
-    const num = pw.search(/[0-9]/g);
-    const eng = pw.search(/[A-Za-z]/ig);
-    const spe = pw.search(/[`~!@@#$%^&*|₩₩₩'₩";:₩/?]/gi);
+    const pw = e.target.value
+    const num = pw.search(/[0-9]/g)
+    const eng = pw.search(/[A-Za-z]/gi)
+    const spe = pw.search(/[`~!@@#$%^&*|₩₩₩'₩";:₩/?]/gi)
 
     if (pw.length < 8) {
       setErrorState({
         ...errorState,
         passwordRegex: false,
       })
-    } else if ((num<0 && eng<0) || (eng<0 && spe<0) || (spe<0 && num<0)) {
+    } else if (
+      (num < 0 && eng < 0) ||
+      (eng < 0 && spe < 0) ||
+      (spe < 0 && num < 0)
+    ) {
       setErrorState({
         ...errorState,
         passwordRegex: false,
@@ -113,10 +121,10 @@ const mypage = ({ token }) => {
       })
     }
   }
-  
+
   // 비밀번호 재입력 확인
   const checkPasswordConfirm = (e) => {
-    const pwc = e.target.value;
+    const pwc = e.target.value
     if (pwc != newPassword) {
       setErrorState({
         ...errorState,
@@ -133,11 +141,11 @@ const mypage = ({ token }) => {
   // 비밀번호 변경
   const changePassword = async () => {
     if (!curPassword || !newPassword || !checkPassword) {
-      alert("비밀번호를 입력해주세요.")
+      alert('비밀번호를 입력해주세요.')
     } else if (!errorState.passwordRegex) {
-      alert("비밀번호 형식에 맞지 않습니다.")
+      alert('비밀번호 형식에 맞지 않습니다.')
     } else if (!errorState.passwordConfirm) {
-      alert("새로운 비밀번호 확인이 일치하지 않습니다.")
+      alert('새로운 비밀번호 확인이 일치하지 않습니다.')
     } else {
       const result = await modifyPassword(token, curPassword, newPassword)
       if (result.status == 200) {
@@ -147,7 +155,7 @@ const mypage = ({ token }) => {
       }
       setCurPassword('')
       setNewPassword('')
-      setCheckPassword('') 
+      setCheckPassword('')
     }
   }
 
@@ -171,9 +179,9 @@ const mypage = ({ token }) => {
     onWithdraw,
     checkPasswordValid,
     checkPasswordConfirm,
-    changePassword
+    changePassword,
   }
-  
+
   return (
     <div className="mypage">
       <MypageForm {...props} />
@@ -182,11 +190,18 @@ const mypage = ({ token }) => {
 }
 
 export async function getServerSideProps(context) {
+  const t = cookies(context).member
+  const token = t === undefined ? null : t
+  const isMember =
+    t === undefined ? false : await getIsMember(cookies(context).member)
+
   return {
     props: {
-      token: cookies(context).member,
+      // diaryDate: context.params.diaryDate,
+      isMember: isMember,
+      token: token,
     },
   }
 }
 
-export default mypage;
+export default mypage

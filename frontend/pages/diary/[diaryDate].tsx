@@ -18,6 +18,7 @@ import { calNextDate, calPrevDate } from 'core/common/date'
 import DatePickerModule from 'component/diary/DatePickerModule/DatePickerModule'
 import moment from 'moment'
 import cookies from 'next-cookies'
+import { getIsMember } from 'core/api/auth'
 
 const diary = ({ diaryDate, token }) => {
   const todaysInfo = useSelector(({ diary }) => diary)
@@ -225,10 +226,16 @@ const diary = ({ diaryDate, token }) => {
 }
 
 export async function getServerSideProps(context) {
+  const t = cookies(context).member
+  const token = t === undefined ? null : t
+  const isMember =
+    t === undefined ? false : await getIsMember(cookies(context).member)
+
   return {
     props: {
-      diaryDate: context.params.diaryDate,
-      token: cookies(context).member,
+      // diaryDate: context.params.diaryDate,
+      isMember: isMember,
+      token: token,
     },
   }
 }
