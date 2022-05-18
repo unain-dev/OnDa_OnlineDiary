@@ -90,7 +90,7 @@ export const getCollectionMemoListAction = createAsyncThunk<
             dto.monthMemoListDto.map((memo)=>{
                 let type = '';
                 if(memo.memoTypeSeq === 1) type = '텍스트 +';
-                else if(memo.memoTypeSeq === 2) type = '가게부 +';
+                else if(memo.memoTypeSeq === 2) type = '가계부 +';
                 else if(memo.memoTypeSeq === 3) type = '체크리스트 +'
                 temp.push({title: type+memo.count, date: dto.diaryDate, dateProp: dto.diaryDate, memoTypeSeq: memo.memoTypeSeq, memoSeqList: memo.memoSeqList})
             })
