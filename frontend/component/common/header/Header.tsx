@@ -15,32 +15,25 @@ const Header = () => {
   return (
     <div className={styles.naviWrapper}>
       <div className={styles.logo}>
-        <Image
-          src={onda}
-          height="80"
-          width="130"
-          onClick={() => Router.push('/')}
-        />
+        <Link href="/">
+          <Image
+            src={onda}
+            height="80"
+            width="130"
+            onClick={() => Router.push('/')}
+          />
+        </Link>
       </div>
       <div className={styles.menuContainer}>
         {menus.map((m) => (
-          <div
-            className={styles.menu}
-            onClick={() =>
-              // document.location.href = m.url
-              Router.push(m.url)
-            }
-          >
-            {m.name}
+          <div className={styles.menu}>
+            <Link href={m.url}>{m.name}</Link>
           </div>
         ))}
         <div className={styles.auth}>
           {/* 토큰 여부 검사 후 선택적 렌더링 */}
-          <div
-            className={styles.menu}
-            onClick={() => Router.push('/user/login')}
-          >
-            로그인
+          <div className={styles.menu}>
+            <Link href="user/login">로그인</Link>
           </div>
           <div
             className={styles.menu}
