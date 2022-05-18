@@ -1,15 +1,20 @@
 import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import styles from 'styles/scss/Main.module.scss'
+import Login from './user/login'
+import Intro from '../component/main/Intro'
 
 const Home: NextPage = () => {
   return (
-    <>
-      <div className={styles.container}>
-        <h1>Home</h1>
+    <div className={styles.container}>
+      <div className={styles.sideContainer}>
+        <div className={styles.introContainer}>
+          <Intro />
+        </div>
       </div>
-    </>
+      <div className={styles.sideContainer}>
+        <Login />
+      </div>
+    </div>
   )
 }
 

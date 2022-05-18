@@ -61,7 +61,7 @@ const diarySlice = createSlice({
         alert(action.payload.data.msg)
       })
       .addCase(deleteDayDiary.fulfilled, (state, action) => {
-        console.log(action.payload.data.msg)
+        alert(action.payload.data.msg)
         state.memoList = []
       }),
 })

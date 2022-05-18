@@ -18,6 +18,7 @@ import { calNextDate, calPrevDate } from 'core/common/date'
 import DatePickerModule from 'component/diary/DatePickerModule/DatePickerModule'
 import moment from 'moment'
 import cookies from 'next-cookies'
+import { getIsMember } from 'core/api/auth'
 
 const diary = ({ diaryDate, token }) => {
   const todaysInfo = useSelector(({ diary }) => diary)
@@ -45,8 +46,6 @@ const diary = ({ diaryDate, token }) => {
     // alert('추가되었습니다.')
   }
 
-  const [goDate, setGoDate] = useState(diaryDate)
-
   useEffect(() => {
     setDraggableState(Array(len).fill(true))
   }, [len])
@@ -63,7 +62,7 @@ const diary = ({ diaryDate, token }) => {
     todaysInfo.memoList.length <= 0
       ? appDispatch(
           deleteDayDiary({
-            diaryDate: goDate,
+            diaryDate: diaryDate,
             token: token,
           }),
         )
@@ -102,8 +101,8 @@ const diary = ({ diaryDate, token }) => {
   }
 
   useEffect(() => {
-    setTodaysInfo(goDate)
-  }, [goDate])
+    setTodaysInfo(diaryDate)
+  }, [diaryDate])
 
   return (
     <>
@@ -112,7 +111,6 @@ const diary = ({ diaryDate, token }) => {
           <button
             onClick={async () => {
               const date = calPrevDate(diaryDate)
-              await setGoDate(date)
               router.push(`/diary/${date}`)
             }}
           >
@@ -120,10 +118,9 @@ const diary = ({ diaryDate, token }) => {
           </button>
           <span>
             <DatePickerModule
-              startDate={Date.parse(goDate)}
+              startDate={Date.parse(diaryDate)}
               setStartDate={(date) => {
                 const d = moment(date).format('YYYY-MM-DD')
-                setGoDate(d)
                 router.push(`/diary/${d}`)
               }}
               token={token}
@@ -132,7 +129,6 @@ const diary = ({ diaryDate, token }) => {
           <button
             onClick={async () => {
               const date = calNextDate(diaryDate)
-              await setGoDate(calNextDate(diaryDate))
               router.push(`/diary/${date}`)
             }}
           >
@@ -141,7 +137,7 @@ const diary = ({ diaryDate, token }) => {
           <button
             className={styles.deleteBtn}
             onClick={async () => {
-              onClickDelete(goDate)
+              onClickDelete(diaryDate)
             }}
           >
             삭제하기
@@ -230,10 +226,16 @@ const diary = ({ diaryDate, token }) => {
 }
 
 export async function getServerSideProps(context) {
+  const t = cookies(context).member
+  const token = t === undefined ? null : t
+  const isMember =
+    t === undefined ? false : await getIsMember(cookies(context).member)
+
   return {
     props: {
-      diaryDate: context.params.diaryDate,
-      token: cookies(context).member,
+      // diaryDate: context.params.diaryDate,
+      isMember: isMember,
+      token: token,
     },
   }
 }

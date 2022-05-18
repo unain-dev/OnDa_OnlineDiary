@@ -2,6 +2,8 @@ import LoginForm from 'component/user/loginForm'
 import { onLogin } from 'core/api/memberApi'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
+import cookies from 'next-cookies'
+import { getIsMember } from 'core/api/auth'
 
 const login = () => {
   const [memberId, setMemberId] = useState('')
@@ -36,7 +38,7 @@ const login = () => {
 
   // 로그아웃 테스트 버튼
   const logout = () => {
-    document.cookie = `member = ; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT`;
+    document.cookie = `member = ; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT`
     router.push(`/user/login`)
   }
 
@@ -55,6 +57,21 @@ const login = () => {
       <LoginForm {...props} />
     </div>
   )
+}
+
+export async function getServerSideProps(context) {
+  const t = cookies(context).member
+  const token = t === undefined ? null : t
+  const isMember =
+    t === undefined ? false : await getIsMember(cookies(context).member)
+
+  return {
+    props: {
+      // diaryDate: context.params.diaryDate,
+      isMember: isMember,
+      token: token,
+    },
+  }
 }
 
 export default login

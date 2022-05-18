@@ -1,0 +1,37 @@
+/*framer-motion*/
+span.grab {
+  cursor: grab;
+  cursor: -webkit-grab;
+  /* font-size: 2rem; */
+  /* font-weight: bold; */
+}
+span.grab:active {
+  cursor: grabbing;
+  cursor: -webkit-grabbing;
+}
+
+span.imo {
+  font-size: 5rem;
+}
+
+.dragger {
+  position: absolute;
+  bottom: 1rem;
+  /* display: block;
+  width: 100%; */
+}
+
+.inline {
+  display: block;
+  /* height: 10rem; */
+  margin: 50px;
+}
+
+.drag-box {
+  height: 100%;
+  width: 100%;
+  padding: 1rem;
+  /* position: fixed; */
+  /* top: 0; */
+  left: 0;
+}
