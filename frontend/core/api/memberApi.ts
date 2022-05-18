@@ -101,3 +101,15 @@ export const modifyPassword = async (token, curPwd, newPwd) => {
   console.log(response.data)
   return response.data
 }
+
+// 토큰 유효성 검사
+export const checkToken = async (token) => {
+  console.log("api: "+ token)
+  const response = await instance.get(COMMON + '/check', {
+    headers: {
+      Authorization: `Bearer ` + token,
+      'Content-Type': 'application/json',
+    },
+  })
+  return response.data;
+}
