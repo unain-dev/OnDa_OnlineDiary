@@ -20,7 +20,7 @@ const Header = () => {
             src={onda}
             height="80"
             width="130"
-            onClick={() => Router.push('/')}
+            // onClick={() => Router.push('/')}
           />
         </Link>
       </div>
@@ -33,24 +33,23 @@ const Header = () => {
         <div className={styles.auth}>
           {/* 토큰 여부 검사 후 선택적 렌더링 */}
           <div className={styles.menu}>
-            <Link href="user/login">로그인</Link>
+            <Link href="/user/login">로그인</Link>
           </div>
           <div
             className={styles.menu}
             onClick={() => Router.push('/user/mypage')}
           >
-            마이페이지  
+            마이페이지
           </div>
           <div
             className={styles.menu}
             onClick={() => {
-              document.cookie = `member = ; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT`;
+              document.cookie = `member = ; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT`
               Router.push(`/user/login`)
             }}
           >
             로그아웃
           </div>
-          
         </div>
       </div>
     </div>

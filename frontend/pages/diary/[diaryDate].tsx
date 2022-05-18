@@ -45,8 +45,6 @@ const diary = ({ diaryDate, token }) => {
     // alert('추가되었습니다.')
   }
 
-  const [goDate, setGoDate] = useState(diaryDate)
-
   useEffect(() => {
     setDraggableState(Array(len).fill(true))
   }, [len])
@@ -63,7 +61,7 @@ const diary = ({ diaryDate, token }) => {
     todaysInfo.memoList.length <= 0
       ? appDispatch(
           deleteDayDiary({
-            diaryDate: goDate,
+            diaryDate: diaryDate,
             token: token,
           }),
         )
@@ -102,8 +100,8 @@ const diary = ({ diaryDate, token }) => {
   }
 
   useEffect(() => {
-    setTodaysInfo(goDate)
-  }, [goDate])
+    setTodaysInfo(diaryDate)
+  }, [diaryDate])
 
   return (
     <>
@@ -111,8 +109,7 @@ const diary = ({ diaryDate, token }) => {
         <span>
           <button
             onClick={async () => {
-              const date = calPrevDate(goDate)
-              await setGoDate(date)
+              const date = calPrevDate(diaryDate)
               router.push(`/diary/${date}`)
             }}
           >
@@ -120,10 +117,9 @@ const diary = ({ diaryDate, token }) => {
           </button>
           <span>
             <DatePickerModule
-              startDate={Date.parse(goDate)}
+              startDate={Date.parse(diaryDate)}
               setStartDate={(date) => {
                 const d = moment(date).format('YYYY-MM-DD')
-                setGoDate(d)
                 router.push(`/diary/${d}`)
               }}
               token={token}
@@ -131,8 +127,7 @@ const diary = ({ diaryDate, token }) => {
           </span>
           <button
             onClick={async () => {
-              const date = calNextDate(goDate)
-              await setGoDate(date)
+              const date = calNextDate(diaryDate)
               router.push(`/diary/${date}`)
             }}
           >
@@ -141,7 +136,7 @@ const diary = ({ diaryDate, token }) => {
           <button
             className={styles.deleteBtn}
             onClick={async () => {
-              onClickDelete(goDate)
+              onClickDelete(diaryDate)
             }}
           >
             삭제하기
