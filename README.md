@@ -1,3 +1,6 @@
+
+![image](/uploads/37e7a9eea112366fe637195e972f16f5/image.png)
+
 # :bookmark: 목차
 
 - [**서비스 소개**](#pushpin-서비스-소개)
@@ -16,9 +19,6 @@
 
 
 # :family: 팀 소개
-![image](/uploads/37e7a9eea112366fe637195e972f16f5/image.png)
-
-#### 팀 구성
 |이름|역할|비고|
 |------|----|-------|
 |유재룡|팀장|BE개발 - Spring-boot, 인프라 조성|
@@ -51,4 +51,5 @@
 <img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white">
 
 
-
+# :bookmark_tabs: ERD
+![Copy_of_댜뀨댜뀨](/uploads/1132d5527453e8394a4c6ce789ac97b9/Copy_of_댜뀨댜뀨.png)
