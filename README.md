@@ -51,7 +51,7 @@
 
 
 # :bookmark_tabs: ERD
-![Copy_of_댜뀨댜뀨](/uploads/1132d5527453e8394a4c6ce789ac97b9/Copy_of_댜뀨댜뀨.png)
+![image](/uploads/4f4ac65309bcc96a2abcbff42ac49c01/image.png)
 
 # :books: 사이트 레이아웃
 #### :book: 메인화면
