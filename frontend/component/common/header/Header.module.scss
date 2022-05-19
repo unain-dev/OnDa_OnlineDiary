@@ -6,7 +6,10 @@
 
 .naviWrapper {
   height: 120px;
+  width: 100vw;
   border-bottom: solid 2px rgb(186, 186, 186);
+  box-shadow: 0 0 10px grey;
+  // border-radius: 0 0 0 20px;
   position: relative;
   .logo {
     text-align: center;

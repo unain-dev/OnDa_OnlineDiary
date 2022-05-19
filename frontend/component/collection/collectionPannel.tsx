@@ -6,19 +6,22 @@ import CheckListView from './views/checkListView'
 import FinanceView from './views/financeView'
 import TextView from './views/textView'
 import { useDispatch, useSelector } from 'react-redux'
-import { getCollectionAction,getCollectionMemoAction } from 'core/store/actions/collection'
+import {
+  getCollectionAction,
+  getCollectionMemoAction,
+} from 'core/store/actions/collection'
 import { AppDispatch } from 'core/store'
 import { useRouter } from 'next/router'
 import cookies from 'next-cookies'
 
 const CollectionPannel = ({ onCloseBtn, info, token }) => {
   console.log(info)
-  const router = useRouter();
+  const router = useRouter()
   const previewInfo = useSelector(({ collection }) => collection)
   console.log(previewInfo)
-  const appDispatch:AppDispatch = useDispatch();
+  const appDispatch: AppDispatch = useDispatch()
 
-  const moveToDate = () =>{
+  const moveToDate = () => {
     router.push(`/diary/${info.dateProp}`)
   }
   return (
@@ -31,18 +34,25 @@ const CollectionPannel = ({ onCloseBtn, info, token }) => {
           height="36"
           onClick={onCloseBtn}
         />
-        <button className={styles.dateMoveButton} onClick={moveToDate}>{info.dateProp} 날짜 상세보기</button>
-        {info.memoTypeSeq === 1 && previewInfo.collectionMemoInfo.memoList !== undefined && previewInfo.collectionMemoInfo.memoList.map((memoSeq)=>{
-          return (<TextView memoSeq={memoSeq}/>)
-        })}
-        {info.memoTypeSeq === 2 && previewInfo.collectionMemoInfo.memoList !== undefined && previewInfo.collectionMemoInfo.memoList.map((memoSeq)=>{
-          return (<FinanceView memoSeq={memoSeq}/>)
-        })}
-        {info.memoTypeSeq === 3 && previewInfo.collectionMemoInfo.memoList !== undefined && previewInfo.collectionMemoInfo.memoList.map((memoSeq)=>{
-          return (<CheckListView memoSeq={memoSeq}/>)
-        })}
+        <div className={styles.dateMoveButton} onClick={moveToDate}>
+          👉 {info.dateProp} 날짜 상세보기
+        </div>
+        {info.memoTypeSeq === 1 &&
+          previewInfo.collectionMemoInfo.memoList !== undefined &&
+          previewInfo.collectionMemoInfo.memoList.map((memoSeq) => {
+            return <TextView memoSeq={memoSeq} />
+          })}
+        {info.memoTypeSeq === 2 &&
+          previewInfo.collectionMemoInfo.memoList !== undefined &&
+          previewInfo.collectionMemoInfo.memoList.map((memoSeq) => {
+            return <FinanceView memoSeq={memoSeq} />
+          })}
+        {info.memoTypeSeq === 3 &&
+          previewInfo.collectionMemoInfo.memoList !== undefined &&
+          previewInfo.collectionMemoInfo.memoList.map((memoSeq) => {
+            return <CheckListView memoSeq={memoSeq} />
+          })}
       </div>
-      
     </div>
   )
 }

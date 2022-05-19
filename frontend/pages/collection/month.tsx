@@ -14,13 +14,13 @@ import {
 } from 'core/store/actions/collection'
 import cookies from 'next-cookies'
 import { getIsMember } from 'core/api/auth'
-import DatePicker from "react-datepicker";
+import DatePicker from 'react-datepicker'
 // import "@fullcalendar/core/main.css";
-import "@fullcalendar/daygrid/main.css";
-import "@fullcalendar/timegrid/main.css";
+import '@fullcalendar/daygrid/main.css'
+import '@fullcalendar/timegrid/main.css'
 import MonthPickerModule from 'component/collection/MonthPickerModule/MonthPickerModule'
 const month = ({ token }) => {
-  const calenderRef = useRef();
+  const calenderRef = useRef()
   const router = useRouter()
   const appDispatch: AppDispatch = useDispatch()
   const [collectionPannelIsOpen, setCollectionPannelIsOpen] = useState(false)
@@ -115,10 +115,10 @@ const month = ({ token }) => {
   }
   //date picker
   const gotoDate = (date) => {
-    let calendarApi = calenderRef.current.getApi();
-    calendarApi.gotoDate(date); // call a method on the Calendar object
-  };
-  const [startDate, setStartDate] = useState(new Date());
+    let calendarApi = calenderRef.current.getApi()
+    calendarApi.gotoDate(date) // call a method on the Calendar object
+  }
+  const [startDate, setStartDate] = useState(new Date())
   return (
     <div>
       <div className={styles.month}>
@@ -139,7 +139,7 @@ const month = ({ token }) => {
           <option value={3}>체크리스트</option>
         </select>
         <div className={styles.selectMonthBtn}>
-          <MonthPickerModule gotoDate={gotoDate}/>
+          <MonthPickerModule gotoDate={gotoDate} />
           {/* <button onClick={gotoDate}>test button</button> */}
         </div>
       </div>
