@@ -1,4 +1,3 @@
-
 # :bookmark: 목차
 
 - [**서비스 소개**](#pushpin-서비스-소개)
@@ -17,7 +16,7 @@
 
 
 # :family: 팀 소개
-![Team](./frontend/src/assets/logo_r2.png)
+![image](/uploads/37e7a9eea112366fe637195e972f16f5/image.png)
 
 #### 팀 구성
 |이름|역할|비고|
