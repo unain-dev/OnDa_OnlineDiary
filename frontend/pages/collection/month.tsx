@@ -115,8 +115,10 @@ const month = ({ token }) => {
   }
   //date picker
   const gotoDate = (date) => {
-    let calendarApi = calenderRef.current.getApi()
-    calendarApi.gotoDate(date) // call a method on the Calendar object
+    
+    // let calendarApi = calenderRef.current.getApi()
+    const calendarApi = calenderRef.current as any
+    calendarApi?.getApi().gotoDate(date) // call a method on the Calendar object
   }
   const [startDate, setStartDate] = useState(new Date())
   return (
