@@ -1,4 +1,3 @@
-
 ![image](/uploads/37e7a9eea112366fe637195e972f16f5/image.png)
 
 # :bookmark: 목차
@@ -53,3 +52,11 @@
 
 # :bookmark_tabs: ERD
 ![Copy_of_댜뀨댜뀨](/uploads/1132d5527453e8394a4c6ce789ac97b9/Copy_of_댜뀨댜뀨.png)
+
+# :books: 사이트 레이아웃
+#### :book: 메인화면
+![image](/uploads/d8cf03e45696339747fb4a8f4e31e943/image.png)
+#### :book: 월별 모아보기
+![image](/uploads/c639405a4d31b8d60fbc3dc0c5b84e83/image.png)
+#### :book: 오늘의 다이어리
+![image](/uploads/788b6d011277465ac53a8074fcac95b5/image.png)
