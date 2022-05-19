@@ -13,7 +13,7 @@ const menus = [
   { name: '오늘의 다이어리', url: `/diary/${dateToString(new Date())}` },
 ]
 
-const Header = ({ token, isMember }) => {
+const Header = ({ token, isMember, path }) => {
   return (
     <div className={styles.naviWrapper}>
       <div className={styles.logo}>
@@ -27,11 +27,13 @@ const Header = ({ token, isMember }) => {
         </Link>
       </div>
       <div className={styles.menuContainer}>
-        {menus.map((m) => (
-          <div className={styles.menu}>
-            <Link href={m.url}>{m.name}</Link>
-          </div>
-        ))}
+        {path != '/user/login' &&
+          path != '/user/signup' &&
+          menus.map((m) => (
+            <div className={styles.menu}>
+              <Link href={m.url}>{m.name}</Link>
+            </div>
+          ))}
         <div className={styles.auth}>
           {!isMember && (
             <div className={styles.menu}>
