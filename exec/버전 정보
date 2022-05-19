@@ -4,3 +4,10 @@ BE
 - queryDSL - 5.0.0
 - smtp - 1.6.2
 - mysql - Ver 8.0.29-0ubuntu0.20.04.3 for Linux on x86_64 ((Ubuntu))
+
+FE
+- React - 18.0.0
+- next - 12.1.5
+- typescript - 4.6.3
+- React Redux - 8.0.1
+- sass - 1.50.1
