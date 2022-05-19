@@ -30,13 +30,13 @@
       color: white;
     }
   }
-  .deleteBtn {
-    width: 70px;
-    margin: 10px;
-    border-radius: 10%;
-    background-color: rgb(0, 198, 135);
-    color: white;
-  }
+  // .deleteBtn {
+  //   width: 70px;
+  //   margin: 10px;
+  //   border-radius: 10%;
+  //   background-color: rgb(0, 198, 135);
+  //   color: white;
+  // }
 }
 
 @mixin styledButton {
@@ -47,14 +47,29 @@
   box-shadow: 3px 3px 5px grey;
 }
 
+@mixin fixedButton {
+  margin: 30px;
+  position: fixed;
+  bottom: 0;
+  z-index: 1;
+  &:hover {
+    background-color: #137cbf;
+    color: white;
+  }
+}
+
 .saveBtnWrapper {
   position: absolute;
   .saveBtn {
     @include styledButton();
-    margin: 30px;
-    position: fixed;
-    bottom: 0;
-    z-index: 1;
+    @include fixedButton();
+  }
+  .deleteBtn {
+    @include styledButton();
+    @include fixedButton();
+    background-color: #082f47;
+    color: white;
+    left: 100px;
   }
 }
 

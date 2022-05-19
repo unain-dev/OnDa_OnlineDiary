@@ -3,11 +3,16 @@ import React, { useEffect, useState } from 'react'
 import 'react-datepicker/dist/react-datepicker.css'
 import styles from './MonthPickerModule.module.scss'
 import ko from 'date-fns/locale/ko'
+import { NextPage } from 'next/types'
+interface Props {
+  value?: any;
+  onClick?: any;
+}
 
 const MonthPickerModule = ({gotoDate}) => {
   const [startDate, setStartDate] = useState(new Date());
 
-  const ExampleCustomInput = ({ value, onClick }) => (
+  const ExampleCustomInput: NextPage<Props> = ({ value, onClick }) => (
     <button className={styles.monthBtn} onClick={onClick}>
       월별 선택
     </button>
