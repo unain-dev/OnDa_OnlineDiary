@@ -22,9 +22,13 @@
     color: white;
 }
 .dropdownBar{
+    display: flex;
     margin: 0 auto;
     margin-top: 40px;
     margin-bottom: 20px;
+}
+.selectMonthBtn{
+    margin-left: auto;
 }
 .calender{
     margin: 0 auto;
