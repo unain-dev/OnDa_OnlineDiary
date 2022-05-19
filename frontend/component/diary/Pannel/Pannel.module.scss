@@ -12,12 +12,12 @@
   top: 0;
   bottom: 0;
   right: 0;
-  // border-left: solid 1px grey;
   overflow: auto;
-  background-color: #cfe1ec;
+  background-color: #efefef;
+  border-radius: 10px 0px 0px 10px;
+  box-shadow: 5px 5px 5px 8px rgb(130, 130, 130);
   .closeBtnImg {
     right: 0;
-    // background-color: red;
     @include cursor();
   }
 }

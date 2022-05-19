@@ -1,151 +1,164 @@
 @mixin cursor {
-    &:hover {
-      cursor: pointer;
-    }
+  &:hover {
+    cursor: pointer;
   }
-.month{
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    margin-top: 50px;
 }
-.searchInput{
-    width: 50%;
-    height: 30px;
-    border: 2px solid blueviolet;
-
+.month {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
 }
-.searchBtn{
-    width: 40px;
-    background-color: blueviolet;
-    border: 0;
-    color: white;
+.searchInput {
+  width: 35%;
+  height: 40px;
+  border: none;
+  border-bottom: 2px solid;
+  //   border-radius: 10px 0px 0px 10px;
 }
-.dropdownBar{
-    display: flex;
-    margin: 0 auto;
-    margin-top: 40px;
-    margin-bottom: 20px;
+.searchBtn {
+  width: 50px;
+  //   background-color: #c2deff;
+  border: 2px solid;
+  border-radius: 10%;
+  background-color: black;
+  color: white;
 }
-.selectMonthBtn{
-    margin-left: auto;
+.dropdownBar {
+  display: flex;
+  margin: 0 auto;
+  margin-top: 40px;
+  margin-bottom: 20px;
 }
-.calender{
-    margin: 0 auto;
-    padding: 10px;
-    border: 20px solid blueviolet;
-    border-radius: 10px;
+.selectMonthBtn {
+  margin-left: auto;
+}
+.calender {
+  margin: 0 auto;
+  padding: 10px;
+  //   border: 20px solid;
+  box-shadow: 5px 5px 5px 8px rgb(197, 197, 197);
+  border-radius: 10px;
 }
 // 판넬
 .pannel {
-    width: 40%;
-    height: 100%;
-    // float: right;
-    position: fixed;
-    top: 0;
-    bottom: 0;
+  width: 25%;
+  height: 100%;
+  // float: right;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  // border-left: solid 1px grey;
+  overflow: auto;
+  background-color: #e0e0e0;
+  border-radius: 10px 0px 0px 10px;
+  box-shadow: 5px 5px 5px 8px rgb(130, 130, 130);
+  .closeBtnImg {
     right: 0;
-    // border-left: solid 1px grey;
-    overflow: auto;
-    background-color: #cfe1ec;
-    .closeBtnImg {
-    right: 0;
-      // background-color: red;
+    // background-color: red;
     @include cursor();
-    }
-    z-index: 1000;
+  }
+  z-index: 1000;
 }
 .closeBtnImgContainer {
-    text-align: right;
-    padding: 20px;
-    padding-bottom: 0;
+  text-align: right;
+  padding: 20px;
+  padding-bottom: 0;
 }
 .selectBox {
-    width: 120px;
-    height: 30px;
-    border: 3px solid blueviolet;
-    border-radius: 5px;
+  width: 120px;
+  height: 30px;
+  //   border: 3px solid blueviolet;
+  border-radius: 5px;
 }
-.textView{
-    position: relative;
-    background-color: #ffc;
-    width: 400px;
-    height: 200px;
-    margin-bottom: 40px;
-    overflow: hidden;
+.textView {
+  position: relative;
+  background-color: #ffc;
+  width: 330px;
+  height: 200px;
+  margin-bottom: 40px;
+  overflow: hidden;
 }
-.header{
-    position: absolute;
-    top: 0%;
-    left: 0%;
-    margin: 10px;
+.header {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  margin: 10px;
 }
-.content{
-    position: absolute;
-    margin: 20px;
-    top: 20px;
-    left: 0%;
+.content {
+  position: absolute;
+  margin: 20px;
+  top: 20px;
+  left: 0%;
 }
-.financeView{
-    position: relative;
-    background-color: #ffc;
-    width: 400px;
-    height: 200px;
-    margin-bottom: 40px;
-    overflow: hidden;
+.financeView {
+  position: relative;
+  background-color: #ffc;
+  width: 330px;
+  height: 200px;
+  margin-bottom: 40px;
+  overflow: hidden;
 }
-.financeNavHeader{
-    margin-top: 5px;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    text-align: center;
+.financeNavHeader {
+  margin-top: 5px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  text-align: center;
 }
-.checklistHeader{
-    position: absolute;
-    top: 0%;
-    left: 0%;
-    margin: 5px;
+.checklistHeader {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  margin: 5px;
 }
-.financeBody{
-    position: relative;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    text-align: center;
-    margin: 0px;
-    top: 30px;
-    left: 0%;
+.financeBody {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  text-align: center;
+  margin: 0px;
+  top: 30px;
+  left: 0%;
 }
-.financeFooter{
-    position: absolute;
-    width: 100%;
-    display: grid;
-    text-align: center;
-    grid-template-columns: 1fr 1fr 1fr;
-    bottom: 5px;
+.financeFooter {
+  position: absolute;
+  width: 100%;
+  display: grid;
+  text-align: center;
+  grid-template-columns: 1fr 1fr 1fr;
+  bottom: 5px;
 }
-.checklistView{
-    position: relative;
-    background-color: #ffc;
-    width: 400px;
-    height: 200px;
-    margin-bottom: 40px;
-    overflow: hidden;
+.checklistView {
+  position: relative;
+  background-color: #ffc;
+  width: 330px;
+  height: 200px;
+  margin-bottom: 40px;
+  overflow: hidden;
 }
-.checklistBody{
-    padding-left: 20px;
-    position: relative;
-    margin: 0px;
-    top: 30px;
-    left: 0%;
-    text-align: left;
+.checklistBody {
+  padding-left: 20px;
+  position: relative;
+  margin: 0px;
+  top: 30px;
+  left: 0%;
+  text-align: left;
 }
-.dateMoveButton{
-    position: absolute;
-    padding: 10px 100px;
-    left: 30px;
-    border: 3px solid blueviolet;
-    border-radius: 5px;
-    background-color: blueviolet;
-    color: white;
-    font-weight: bold;
+.dateMoveButton {
+  //   position: absolute;
+  //   padding: 10px;
+  //   left: 30px;
+  //   border: 3px solid #ebf5fc;
+  //   border-radius: 5px;
+  //   background-color: #ebf5fc;
+  color: black;
+  font-weight: bold;
+  margin: 20px;
+  text-align: center;
+  text-decoration: underline;
+  font-size: 1.2rem;
+  &:hover {
+    cursor: pointer;
+  }
 }

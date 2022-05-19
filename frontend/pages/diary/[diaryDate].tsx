@@ -134,14 +134,6 @@ const diary = ({ diaryDate, token }) => {
           >
             &gt;
           </button>
-          <button
-            className={styles.deleteBtn}
-            onClick={async () => {
-              onClickDelete(diaryDate)
-            }}
-          >
-            삭제하기
-          </button>
         </span>
         <div className={styles.pannelBtnImgContainer}>
           {!pannelIsOpen && (
@@ -160,6 +152,16 @@ const diary = ({ diaryDate, token }) => {
       <div className={styles.saveBtnWrapper}>
         <button className={styles.saveBtn} onClick={onClickSave}>
           저장하기
+        </button>
+      </div>
+      <div className={styles.saveBtnWrapper}>
+        <button
+          className={styles.deleteBtn}
+          onClick={async () => {
+            onClickDelete(diaryDate)
+          }}
+        >
+          삭제하기
         </button>
       </div>
       {todaysInfo.memoList.map((c, index) => (
