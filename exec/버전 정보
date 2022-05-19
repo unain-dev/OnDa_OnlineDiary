@@ -1,0 +1,6 @@
+BE
+- java - corretto 11
+- gradle - 7.4.1
+- queryDSL - 5.0.0
+- smtp - 1.6.2
+- mysql  Ver 8.0.29-0ubuntu0.20.04.3 for Linux on x86_64 ((Ubuntu))
