@@ -20,9 +20,13 @@ const MemoSticker = ({ memoInfo, drag, onDeleteMemo }) => {
     setSize(Math.pow(Math.min(width, height), 2) / 400)
     console.log(width)
   }, [width, height])
+  useEffect(()=>{
+    console.log(text, finalEmoji);
+  },[text, finalEmoji])
   const handleOnEnter = (text) => {
     console.log('enter', text)
     setFinalEmoji(text)
+    setText(text);
   }
   const onUpdateButtonClick = () => {
     console.log(text)
@@ -99,9 +103,9 @@ const MemoSticker = ({ memoInfo, drag, onDeleteMemo }) => {
           <InputEmoji
             value={text}
             onChange={setText}
-            cleanOnEnter
+            // cleanOnEnter 엔터 시 state가 늦게 반영되서 지워지는 현상 발생
             onEnter={handleOnEnter}
-            placeholder="이모지를 선택해주세요!"
+
             maxLength={1}
           />
         </div>
